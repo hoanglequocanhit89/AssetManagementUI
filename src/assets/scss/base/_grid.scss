@@ -33,8 +33,6 @@ $gutters: (
 .container-fluid {
     --grid-gutter-x: #{$grid-gutter-width};
     --grid-gutter-y: 0;
-
-    width: 1644px;
     margin-left: auto;
     margin-right: auto;
     @extend %gutter-padding;
@@ -42,7 +40,6 @@ $gutters: (
 
 .container {
     @extend .container-fluid;
-    width: 1644px;
 }
 
 .row {
