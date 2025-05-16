@@ -1,7 +1,8 @@
 @use "../abstracts";
 
 html {
-    --text-color: rgba(33, 37, 41, 1);
+    --text-black-color: rgba(33, 37, 41, 1);
+    --text-white-color: rgba(250,252,252,1);
     --body-bg: #fff;
     --primary-color: rgb(207,35,56);
 

@@ -1,6 +1,8 @@
+import "./style.scss";
+
 const Sidebar = () => {
     return (
-        <aside className="sidebar">
+        <aside className="sidebar text-center">
             Sidebar
         </aside>
     )

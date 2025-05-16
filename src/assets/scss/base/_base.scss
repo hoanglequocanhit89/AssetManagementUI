@@ -1,5 +1,7 @@
 @use "../abstracts";
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 *,
 ::before,
 ::after {
@@ -16,8 +18,7 @@ html {
 
 body {
     font-size: 1.6rem;
-    font-family: Lato, sans-serif;
-    color: var(--text-color);
+    font-family: "Roboto", sans-serif;
     background: var(--body-bg);
 }
 

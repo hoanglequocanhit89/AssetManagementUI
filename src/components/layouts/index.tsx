@@ -8,7 +8,7 @@ const DefaultLayout = () => {
             <Header />
             <div className="container">
                 <div className="row row-cols-2">
-                    <div className="col">
+                    <div className="col col-3">
                         <Sidebar />
                     </div>
                     <div className="col">
