@@ -4,14 +4,14 @@ import DropDown from "../../ui/dropdown";
 
 interface HeaderProps {
     isLogin?: boolean,
-    title?: string
+    title: string
 }
 
-const Header = ({ isLogin = true, title = 'Home' }: HeaderProps) => {
+const Header = ({ isLogin = true, title }: HeaderProps) => {
     return (
         <header className="header">
             <div className="container">
-                <div className="header__inner d-flex justify-between items-center px-20">
+                <div className="header__inner d-flex justify-between items-center">
                     {!isLogin ? (
                         <div className="d-flex align-center">
                             <img src={nashtechLogo} alt="Nashtech" className="header__logo" />

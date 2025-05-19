@@ -30,8 +30,12 @@ const navItems = [
     }
 ];
 
+interface SidebarProps {
+    setTitle: (x: string) => void
+}
 
-const Sidebar = () => {
+
+const Sidebar = (props: SidebarProps) => {
 
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -41,8 +45,10 @@ const Sidebar = () => {
         };
     }, []);
 
-    const handleChangeTag = (tag: string) => {
+
+    const handleChangeTag = (tag: string, title: string) => {
         setSearchParams({'tag': tag});
+        props.setTitle(title);
     };
 
     return (
@@ -57,7 +63,7 @@ const Sidebar = () => {
                         {
                             navItems?.map((item, idx) => (
                                 <li key={idx} 
-                                    onClick={() => handleChangeTag(item.tag)} 
+                                    onClick={() => handleChangeTag(item.tag, item.title)} 
                                     className={`sidebar-nav__item ${searchParams.get('tag') === item.tag ? 'active' : ''}`}
                                 >
                                     {item.title}
