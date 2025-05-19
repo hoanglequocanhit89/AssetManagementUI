@@ -6,15 +6,13 @@ const DefaultLayout = () => {
     return (
         <>
             <Header />
-            <div className="container">
-                <div className="content-wrapper">
-                    <div className="row row-cols-2">
-                        <div className="col col-3">
-                            <Sidebar />
-                        </div>
-                        <div className="col">
-                            <Outlet />
-                        </div>
+            <div className="container py-[60px]">
+                <div className="row row-cols-2">
+                    <div className="col col-3">
+                        <Sidebar />
+                    </div>
+                    <div className="col">
+                        <Outlet />
                     </div>
                 </div>
             </div>

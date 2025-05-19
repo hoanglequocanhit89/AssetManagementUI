@@ -6,17 +6,23 @@ import AdminDashboard from "../pages/admin";
 import Login from "../pages/auth/login";
 import SignUp from "../pages/auth/sign-up";
 import Home from "../pages/home";
+import ManageAsset from "../pages/manage-asset";
+import ManageAssignment from "../pages/manage-assignment";
+import ManageUser from "../pages/manage-user";
+import Report from "../pages/report";
+import RequestForReturn from "../pages/request-return";
 import StaffDashboard from "../pages/staff";
 import { Protected } from "./protected";
 
 const router = createBrowserRouter([
     {
-        element: <DefaultLayout />,//Loading component
+        element: <DefaultLayout />,
         path: '/',
         errorElement: '',//Show when loading error,
         children: [
             {
                 index: true,
+                path: 'home',
                 element: <Home />
             },
             {
@@ -26,6 +32,26 @@ const router = createBrowserRouter([
             {
                 path: 'sign-up',
                 element: <SignUp />
+            },
+            {
+                path: 'manage-user',
+                element: <ManageUser />
+            },
+            {
+                path: 'manage-asset',
+                element: <ManageAsset />
+            },
+            {
+                path: 'manage-assignment',
+                element: <ManageAssignment />
+            },
+            {
+                path: 'request-return',
+                element: <RequestForReturn />
+            },
+            {
+                path: 'report',
+                element: <Report />
             },
             {
                 element: <Protected requiredRole="admin" />,
