@@ -1,32 +1,31 @@
-import "./style.scss";
 import nashtechLogo from "../../../assets/images/nashtech-logo.png";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import "./style.scss";
 
 const navItems = [
     {
         title: 'Home',
-        tag: 'home'
+        tag: 'home',
     },
     {
         title: 'Manage User',
-        tag: 'manage-user'
+        tag: 'manage-user',
     },
     {
         title: 'Manage Asset',
-        tag: 'manage-asset'
+        tag: 'manage-asset',
     },
     {
         title: 'Manage Assignment',
-        tag: 'manage-assignment'
+        tag: 'manage-assignment',
     },
     {
         title: 'Request for Returning',
-        tag: 'request-return'
+        tag: 'request-return',
     },
     {
         title: 'Report',
-        tag: 'report'
+        tag: 'report',
     }
 ];
 
@@ -37,19 +36,9 @@ interface SidebarProps {
 
 const Sidebar = (props: SidebarProps) => {
 
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    useEffect(() => {
-        if(!searchParams.get('tag')) {
-            setSearchParams({'tag': 'home'});
-        };
-    }, []);
-
-
-    const handleChangeTag = (tag: string, title: string) => {
-        setSearchParams({'tag': tag});
-        props.setTitle(title);
-    };
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { setTitle } = props;
 
     return (
         <aside className="sidebar">
@@ -62,9 +51,12 @@ const Sidebar = (props: SidebarProps) => {
                     <ul className="sidebar-nav__list">
                         {
                             navItems?.map((item, idx) => (
-                                <li key={idx} 
-                                    onClick={() => handleChangeTag(item.tag, item.title)} 
-                                    className={`sidebar-nav__item ${searchParams.get('tag') === item.tag ? 'active' : ''}`}
+                                <li key={idx}
+                                    onClick={() => {
+                                        setTitle(item.title);
+                                        navigate(item.tag);
+                                    }}
+                                    className={`sidebar-nav__item ${location.pathname === `/${item.tag}` ? 'active' : ''}`}
                                 >
                                     {item.title}
                                 </li>

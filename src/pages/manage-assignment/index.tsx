@@ -1,11 +1,11 @@
 import ContentWrapper from "../../components/ui/content-wrapper"
 
-const Home = () => {
+const ManageAssignment = () => {
     return (
-        <ContentWrapper title={'My Assignment'}>
+        <ContentWrapper title={'Assignment List'}>
             <h1>heloo</h1>
         </ContentWrapper>
     )
 };
 
-export default Home;
+export default ManageAssignment;

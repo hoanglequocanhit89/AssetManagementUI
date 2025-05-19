@@ -14,7 +14,7 @@ const DefaultLayout = () => {
                         <div className="col col-3">
                             <Sidebar setTitle={setTitle}/>
                         </div>
-                        <div className="col">
+                        <div className="col col-9">
                             <Outlet />
                         </div>
                     </div>
