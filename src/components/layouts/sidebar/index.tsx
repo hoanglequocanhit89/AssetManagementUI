@@ -1,49 +1,39 @@
-import "./style.scss";
 import nashtechLogo from "../../../assets/images/nashtech-logo.png";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import "./style.scss";
 
 const navItems = [
     {
         title: 'Home',
-        tag: 'home'
+        tag: 'home',
     },
     {
         title: 'Manage User',
-        tag: 'manage-user'
+        tag: 'manage-user',
     },
     {
         title: 'Manage Asset',
-        tag: 'manage-asset'
+        tag: 'manage-asset',
     },
     {
         title: 'Manage Assignment',
-        tag: 'manage-assignment'
+        tag: 'manage-assignment',
     },
     {
         title: 'Request for Returning',
-        tag: 'request-return'
+        tag: 'request-return',
     },
     {
         title: 'Report',
-        tag: 'report'
+        tag: 'report',
     }
 ];
 
 
 const Sidebar = () => {
 
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    useEffect(() => {
-        if(!searchParams.get('tag')) {
-            setSearchParams({'tag': 'home'});
-        };
-    }, []);
-
-    const handleChangeTag = (tag: string) => {
-        setSearchParams({'tag': tag});
-    };
+    const location = useLocation();
+    const navigate = useNavigate();
 
     return (
         <aside className="sidebar">
@@ -57,8 +47,8 @@ const Sidebar = () => {
                         {
                             navItems?.map((item, idx) => (
                                 <li key={idx} 
-                                    onClick={() => handleChangeTag(item.tag)} 
-                                    className={`sidebar-nav__item ${searchParams.get('tag') === item.tag ? 'active' : ''}`}
+                                    onClick={() => navigate(item.tag)} 
+                                    className={`sidebar-nav__item ${location.pathname === `/${item.tag}` ? 'active' : ''}`}
                                 >
                                     {item.title}
                                 </li>
