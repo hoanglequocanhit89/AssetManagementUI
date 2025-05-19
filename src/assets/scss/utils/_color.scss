@@ -1,0 +1,11 @@
+@use "../abstracts";
+
+html {
+    --text-black-color: rgba(33, 37, 41, 1);
+    --text-white-color: rgba(250,252,252,1);
+    --body-bg: #fff;
+    --primary-color: rgb(207,35,56);
+
+    --icon-color: brightness(0) saturate(100%) invert(8%) sepia(10%) saturate(4042%) hue-rotate(212deg) brightness(90%)
+        contrast(95%);
+}

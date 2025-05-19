@@ -1,0 +1,52 @@
+.form-modal {
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    min-width: 480px;
+    border: 2px solid rgba(33, 37, 41, 1);
+    border-radius: 12px;
+    overflow: hidden;
+
+    &__overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgb(204, 204, 204, 0.2);
+    }
+    
+    &__top {
+        background-color: rgba(239, 241, 245, 1);
+        padding: 15px 35px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid rgba(33, 37, 41, 1);
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    &__close {
+
+        &--btn {
+            border: 2px solid var(--primary-color);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &--icon {
+            font-size: 2.4rem;
+            color: var(--primary-color);
+        }
+    }
+
+    &__content {
+        padding: 15px 35px;
+
+    }
+}
