@@ -1,0 +1,26 @@
+.header {
+    background-color: var(--primary-color);
+    
+    &__inner {
+        height: 72px;
+    }
+
+    &__title {
+        font-size: var(--title-fz);
+        color: var(--text-white-color);
+        font-weight: bold;
+    }
+
+    &__heading {
+        margin-left: 30px;
+        color: var(--text-white-color);
+        font-weight: bold;
+        font-size: 2.4rem;
+    }
+
+    &__logo {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+    }
+}
