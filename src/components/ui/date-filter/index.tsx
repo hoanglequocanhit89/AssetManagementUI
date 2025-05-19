@@ -1,0 +1,73 @@
+import React, { useState, useRef, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { isSameDay } from "date-fns";
+import "./react-datepicker-overrides.scss"
+
+type DateFilterProps = {
+    label: string;
+    selectedDate?: Date;
+    onSelect: (date: Date) => void;
+    width?: string;
+};
+
+const DateFilter: React.FC<DateFilterProps> = ({
+    label,
+    selectedDate,
+    onSelect
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <div
+            className="relative w-full"
+            ref={ref}
+        >
+            <div className="flex items-stretch border border-gray-500 rounded-md shadow-sm bg-white overflow-hidden">
+                <div className="flex-grow px-3 py-2 text-[1.6rem] text-gray-800 text-left">
+                    {selectedDate ? selectedDate.toLocaleDateString() : label}
+                </div>
+
+                <button
+                    onClick={() => setIsOpen((prev) => !prev)}
+                    className="flex items-center justify-center px-3 py-2 border-l border-gray-500 hover:bg-gray-100 text-gray-600 hover:text-black focus:outline-none"
+                >
+                    <i className="fa-solid fa-calendar"></i>
+                </button>
+            </div>
+
+            {isOpen && (
+                <div className="absolute right-0 mt-1 z-10">
+                    <DatePicker
+                        selected={selectedDate}
+                        onChange={(date) => {
+                            if (date) {
+                                onSelect(date);
+                                setIsOpen(false);
+                            }
+                        }}
+                        inline
+                        dayClassName={(date) =>
+                            selectedDate && isSameDay(date, selectedDate)
+                                ? "bg-red-500 text-white rounded-full"
+                                : ""
+                        }
+                    />
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default DateFilter;
