@@ -9,73 +9,9 @@ import DetailUser from "./detail-user";
 import DisableUser from "./disable-user";
 import Pagination from "../../components/ui/pagination";
 import { useNavigate } from "react-router-dom";
+import { users } from "../../data/users";
 
-const data: User[] = [
-    {
-        id: 1,
-        staffCode: "SD1901",
-        fullName: "Vo Thao Vy",
-        userName: "vyvt",
-        joinedDate: "08/03/2018",
-        role: "Staff"
-    },
-    {
-        id: 2,
-        staffCode: "SD1902",
-        fullName: "Thao Vy",
-        userName: "vyvt",
-        joinedDate: "08/03/2018",
-        role: "Staff"
-    },
-    {
-        id: 3,
-        staffCode: "SD1902",
-        fullName: "Thao Vy",
-        userName: "vyvt",
-        joinedDate: "08/03/2018",
-        role: "Staff"
-    },
-    {
-        id: 4,
-        staffCode: "SD1902",
-        fullName: "Thao Vy",
-        userName: "vyvt",
-        joinedDate: "08/03/2018",
-        role: "Staff"
-    },
-    {
-        id: 5,
-        staffCode: "SD1902",
-        fullName: "Thao Vy",
-        userName: "vyvt",
-        joinedDate: "08/03/2018",
-        role: "Staff"
-    },
-    {
-        id: 6,
-        staffCode: "SD1902",
-        fullName: "Thao Vy",
-        userName: "vyvt",
-        joinedDate: "08/03/2018",
-        role: "Staff"
-    },
-    {
-        id: 7,
-        staffCode: "SD1902",
-        fullName: "Thao Vy",
-        userName: "vyvt",
-        joinedDate: "08/03/2018",
-        role: "Staff"
-    },
-    {
-        id: 8,
-        staffCode: "SD1902",
-        fullName: "Thao Vy",
-        userName: "vyvt",
-        joinedDate: "08/03/2018",
-        role: "Staff"
-    }
-]
+const data: User[] = users;
 
 const getColumns = (handlers: {
     onEdit: (row: User) => void;
@@ -132,7 +68,7 @@ const ManageUser = () => {
     }
 
     const handleEdit = (row: User) => {
-        console.log("Edit", row);
+        navigate(`edit/${row.id}`);
     };
 
     const handleDisableUser = (row: User) => {
@@ -162,7 +98,7 @@ const ManageUser = () => {
                     </div>
                     <div className="flex items-center gap-4 flex-shrink-0">
                         <SearchInput onSearch={handleSearch} />
-                        <Button text="Create new user" type="primary" onClick={() => navigate("/manage-user/create")}/>
+                        <Button text="Create new user" type="primary" onClick={() => navigate("create")}/>
                     </div>
                 </div>
 

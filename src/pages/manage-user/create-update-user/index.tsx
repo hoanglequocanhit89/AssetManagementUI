@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ContentWrapper from '../../../components/ui/content-wrapper';
 import InputField from '../../../components/ui/input';
 import DateFilter from '../../../components/ui/date-filter';
@@ -7,6 +7,10 @@ import Select from '../../../components/ui/select';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { differenceInYears, isAfter } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
+import { User } from '../../../types';
+import { users } from '../../../data/users';
+
+const data: User[] = users;
 
 type FormFields = {
   firstName: string;
@@ -54,6 +58,20 @@ const CreateUpdateUser: React.FC = () => {
   const watchDOB = watch("dob");
   const watchUserType = watch("type");
 
+  useEffect(() => {
+    if (isEdit) {
+      const user = users.find(u => u.id === Number(id));
+      if (user) {
+        setValue("firstName", user.firstName);
+        setValue("lastName", user.lastName);
+        setValue("dob", new Date());
+        setValue("gender", "Male");
+        setValue("joinedDate", new Date(user.joinedDate));
+        setValue("type", "staff");
+      }
+    }
+  }, [id]);
+
   const onSubmit: SubmitHandler<FormFields> = (data) => {
     const { firstName, lastName } = getValues();
 
@@ -76,7 +94,7 @@ const CreateUpdateUser: React.FC = () => {
 
   return (
     <ContentWrapper title={id ? 'Edit User' : 'Create New User'}>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-3 gap-y-6 items-center text-[1.6rem] max-w-3xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-3 gap-y-6 items-start text-[1.6rem] max-w-3xl">
         {/* First Name */}
         <label htmlFor="firstName" className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">First Name</label>
         <div className="col-span-2">
@@ -150,7 +168,7 @@ const CreateUpdateUser: React.FC = () => {
                 differenceInYears(new Date(), value) >= 18 || "User is under 18. Please select a different date"
             }}
             render={({ field }) => (
-              <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} />
+              <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} isHighlight={!!errors.dob}/>
             )}
           />
           {errors.dob && <p className='text-red-500'>{errors.dob.message}</p>}
@@ -164,6 +182,7 @@ const CreateUpdateUser: React.FC = () => {
               type="radio"
               value="Female"
               {...register("gender", { required: "This field is required" })}
+              className='accent-[var(--primary-color)]'
             />
             Female
           </label>
@@ -172,6 +191,7 @@ const CreateUpdateUser: React.FC = () => {
               type="radio"
               value="Male"
               {...register("gender", { required: "This field is required" })}
+              className='accent-[var(--primary-color)]'
             />
             Male
           </label>
@@ -186,11 +206,19 @@ const CreateUpdateUser: React.FC = () => {
             name="joinedDate"
             rules={{
               required: "This field is required",
-              validate: (value) =>
-                !watchDOB || isAfter(value, watchDOB) || "Joined date is not later than Date of Birth. Please select a different date"
+              validate: (value) => {
+                if (!watchDOB || !isAfter(value, watchDOB)) {
+                  return "Joined date is not later than Date of Birth. Please select a different date";
+                }
+                const day = new Date(value).getDay(); // 0: Sunday, 6: Saturday
+                if (day === 0 || day === 6) {
+                  return "Joined date is Saturday or Sunday. Please select a different date";
+                }
+                return true;
+              }
             }}
             render={({ field }) => (
-              <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} />
+              <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} isHighlight={!!errors.joinedDate} />
             )}
           />
           {errors.joinedDate && <p className='text-red-500'>{errors.joinedDate.message}</p>}
