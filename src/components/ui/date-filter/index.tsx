@@ -9,12 +9,14 @@ type DateFilterProps = {
     selectedDate?: Date;
     onSelect: (date: Date) => void;
     width?: string;
+    isHighlight?: boolean
 };
 
 const DateFilter: React.FC<DateFilterProps> = ({
     label,
     selectedDate,
     onSelect,
+    isHighlight
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -34,7 +36,7 @@ const DateFilter: React.FC<DateFilterProps> = ({
             className="relative w-full"
             ref={ref}
         >
-            <div className="flex items-stretch border border-gray-500 rounded-md shadow-sm bg-white overflow-hidden">
+            <div className={`flex items-stretch border  rounded-md shadow-sm bg-white overflow-hidden ${isHighlight ? 'border-red-500' : 'border-gray-500'}`}>
                 <div className="flex-grow px-3 py-2 text-[1.6rem] text-gray-800 text-left">
                     {selectedDate ? selectedDate.toLocaleDateString() : label}
                 </div>
