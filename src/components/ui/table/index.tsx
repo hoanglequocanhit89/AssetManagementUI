@@ -17,6 +17,7 @@ interface TableProps<T extends { id: number }> {
     data: T[];
     onSort?: (key: keyof T, direction: 'asc' | 'desc') => void;
     onRowClick?: (id: number) => void;
+    isSort?: boolean;
 }
 
 const Table = <T extends { id: number }>({
@@ -24,6 +25,7 @@ const Table = <T extends { id: number }>({
     data,
     onSort,
     onRowClick,
+    isSort = true
 }: TableProps<T>) => {
     const [sortConfig, setSortConfig] = useState<{
         key: keyof T | null;
@@ -59,16 +61,17 @@ const Table = <T extends { id: number }>({
 
     return (
         <div className="w-full overflow-x-auto">
-            <table className="w-full border-separate border-spacing-x-2">
+            <table className="w-full border-separate border-spacing-x-[10px] border-spacing-y-[10px]">
                 <thead>
                     <tr>
                         {columns.map((column) => (
                             <th
                                 key={String(column.key)}
                                 className={[
-                                    'py-2 text-left text-lg sm:text-xl md:text-2xl font-bold text-gray-900',
+                                    'py-2 text-left text-lg sm:text-[1.4rem] md:text-[1.5rem] lg:text-[1.6rem] font-bold text-gray-900',
+                                    column.key === 'action' ? 'w-0 whitespace-nowrap text-center' : '',
                                     column.key !== 'action' ? 'cursor-pointer' : '',
-                                    column.title ? 'border-b-2 border-black-900' : '',
+                                    column.title ? 'border-b-2 border-[#d1d5db]' : '',
                                 ]
                                     .filter(Boolean)
                                     .join(' ')}
@@ -76,7 +79,7 @@ const Table = <T extends { id: number }>({
                             >
                                 <div className="flex items-center gap-2 whitespace-nowrap">
                                     {column.title}
-                                    {column.title && column.key !== 'action' && getSortIcon(column.key as keyof T)}
+                                    {column.title && column.key !== 'action' && isSort && getSortIcon(column.key as keyof T)}
                                 </div>
                             </th>
                         ))}
@@ -93,28 +96,31 @@ const Table = <T extends { id: number }>({
                                 <td
                                     key={String(column.key)}
                                     className={[
-                                        'py-2 text-base sm:text-lg md:text-xl text-gray-900 max-w-[200px] truncate',
-                                        column.title ? 'border-b-2 border-black-900' : '',
+                                        column.key === 'action' ? 'w-0 whitespace-nowrap text-center' : '',
+                                        'py-2 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate',
+                                        column.title ? 'border-b-2 border-[#e5e7eb]' : '',
                                     ]
                                         .filter(Boolean)
                                         .join(' ')}
                                     title={column.key !== 'action' ? String(row[column.key as keyof T]) : undefined}
                                 >
                                     {column.key === 'action' && column.actions ? (
-                                        <div className="flex gap-2">
-                                            {column.actions.map((action, index) => (
-                                                <div
-                                                    key={index}
-                                                    onClick={(e: MouseEvent) => {
-                                                        e.stopPropagation();
-                                                        action.onClick(row);
-                                                    }}
-                                                >
-                                                    {typeof action.render === 'function'
-                                                        ? action.render(row)
-                                                        : action.render}
-                                                </div>
-                                            ))}
+                                        <div className="flex justify-end w-full">
+                                            <div className="flex justify-between gap-6">
+                                                {column.actions.map((action, index) => (
+                                                    <div
+                                                        key={index}
+                                                        onClick={(e: MouseEvent) => {
+                                                            e.stopPropagation();
+                                                            action.onClick(row);
+                                                        }}
+                                                    >
+                                                        {typeof action.render === 'function'
+                                                            ? action.render(row)
+                                                            : action.render}
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                     ) : column.render ? (
                                         column.render(row[column.key as keyof T], row)
