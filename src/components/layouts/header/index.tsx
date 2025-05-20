@@ -17,7 +17,7 @@ const Header = ({ isLogin = true, title }: HeaderProps) => {
                             <img src={nashtechLogo} alt="Nashtech" className="header__logo" />
                             <h1 className="header__heading">Online Asset Management</h1>
                         </div>
-                    ) : (<h1 className="text-white font-bold px-8">{title}</h1>)}
+                    ) : (<h1 className="text-white font-bold text-[2rem]">{title}</h1>)}
                     {isLogin && <DropDown username="test" />}
                 </div>
             </div>

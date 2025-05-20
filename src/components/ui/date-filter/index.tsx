@@ -14,7 +14,7 @@ type DateFilterProps = {
 const DateFilter: React.FC<DateFilterProps> = ({
     label,
     selectedDate,
-    onSelect
+    onSelect,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -40,6 +40,7 @@ const DateFilter: React.FC<DateFilterProps> = ({
                 </div>
 
                 <button
+                    type="button"
                     onClick={() => setIsOpen((prev) => !prev)}
                     className="flex items-center justify-center px-3 py-2 border-l border-gray-500 hover:bg-gray-100 text-gray-600 hover:text-black focus:outline-none"
                 >
@@ -58,6 +59,9 @@ const DateFilter: React.FC<DateFilterProps> = ({
                             }
                         }}
                         inline
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
                         dayClassName={(date) =>
                             selectedDate && isSameDay(date, selectedDate)
                                 ? "bg-red-500 text-white rounded-full"
