@@ -65,7 +65,6 @@ const DetailAssetModal = (props: DetailedAsssetProps) => {
             closeBtn
             closeModal={props.closeModal}
         >
-
             <FormModalGroup title="Asset Code" value="LA100001" />
             <FormModalGroup title="Asset Name" value={<h1>Hello</h1>} />
         </FormModal>
