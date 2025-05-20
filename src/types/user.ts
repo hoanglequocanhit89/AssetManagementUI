@@ -6,3 +6,10 @@ export interface User {
     joinedDate: string;
     role: string;
 }
+
+export interface DetailUser extends User {
+    dob: string;
+    gender: string;
+    type: string;
+    location: string;
+}

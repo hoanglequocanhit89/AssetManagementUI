@@ -86,9 +86,9 @@ const Table = <T extends { id: number }>({
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((row) => (
+                    {data.map((row, index) => (
                         <tr
-                            key={row.id}
+                            key={row.id ?? index}
                             className="cursor-pointer"
                             onClick={() => onRowClick?.(row.id)}
                         >
