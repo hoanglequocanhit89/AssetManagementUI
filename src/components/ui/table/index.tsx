@@ -60,7 +60,7 @@ const Table = <T extends { id: number }>({
     };
 
     return (
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-y-scroll">
             <table className="w-full border-separate border-spacing-x-[10px] border-spacing-y-[10px]">
                 <thead>
                     <tr>

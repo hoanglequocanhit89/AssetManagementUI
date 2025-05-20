@@ -22,6 +22,153 @@ const assetList: Asset[] = [
         assetName: "Laptop HP Probook 450 G1",
         category: "Laptop",
         state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
+    },
+    {
+        id: 1,
+        assetCode: "LA100001",
+        assetName: "Laptop HP Probook 450 G1",
+        category: "Laptop",
+        state: "Available"
     }
 ];
 
@@ -105,10 +252,10 @@ const ManageAsset = () => {
                 <Table 
                     columns={columns} 
                     data={assetList}
-
                     onSort={(key, direction) => console.log(key, direction)}
                     onRowClick={(id) => handleOnRowClick(id)}
                 />
+                <h1 className="text-right py-[30px]">Paging component</h1>
             </ContentWrapper>
             { editModal && 
                 <DetailAssetModal 
