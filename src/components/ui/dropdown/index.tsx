@@ -29,7 +29,7 @@ const DropDown = ({username, onChangePassword, onLogout}: DropDownProps) => {
         onClick={() => setOpen(!open)}
         className="px-4 py-2 rounded text-white font-bold flex items-center space-x-4"
       >
-        <span>{username}</span>
+        <span className="text-[2rem]">{username}</span>
         <i className="fa-solid fa-caret-down"></i>
       </button>
 

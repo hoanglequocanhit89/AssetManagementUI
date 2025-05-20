@@ -8,6 +8,7 @@ import Table, { Column } from "../../components/ui/table";
 import DetailUser from "./detail-user";
 import DisableUser from "./disable-user";
 import Pagination from "../../components/ui/pagination";
+import { useNavigate } from "react-router-dom";
 
 const data: User[] = [
     {
@@ -57,6 +58,7 @@ const ManageUser = () => {
     const [selectedState, setSelectedState] = useState<string | undefined>();
     const [showModal, setShowModal] = useState(false);
     const [showDisableModal, setShowDisableModal] = useState(false);
+    const navigate = useNavigate();
 
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = 10;
@@ -112,7 +114,7 @@ const ManageUser = () => {
                     </div>
                     <div className="flex items-center gap-4 flex-shrink-0">
                         <SearchInput onSearch={handleSearch} />
-                        <Button text="Create new asset" type="primary" />
+                        <Button text="Create new user" type="primary" onClick={() => navigate("/manage-user/create")}/>
                     </div>
                 </div>
 
