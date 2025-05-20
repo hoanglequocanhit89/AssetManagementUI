@@ -7,7 +7,7 @@ interface contentWrapperProps {
 
 const ContentWrapper = (props: contentWrapperProps) => {
     return (
-        <div className="content-wrapper">
+        <div className="content-wrapper h-full flex flex-col">
             <h2 className="section-title mb-[30px]">{props.title}</h2>
             {props.children}
         </div>

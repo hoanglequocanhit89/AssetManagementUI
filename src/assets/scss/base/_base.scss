@@ -72,6 +72,10 @@ input:-webkit-autofill:hover {
     }
 }
 
+.full-screen {
+    height: calc(100vh - 72px);
+}
+
 i,
 em {
     font-style: italic;
