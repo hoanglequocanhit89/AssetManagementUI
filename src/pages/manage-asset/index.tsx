@@ -6,6 +6,7 @@ import DetailAssetModal from "./components/detail-asset";
 import SelectFilter from "../../components/ui/select-filter";
 import SearchInput from "../../components/ui/search";
 import Button from "../../components/ui/button";
+import Pagination from "../../components/ui/pagination";
 
 interface Asset {
     id: number,
@@ -16,76 +17,6 @@ interface Asset {
 };
 
 const assetList: Asset[] = [
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
     {
         id: 1,
         assetCode: "LA100001",
@@ -219,11 +150,17 @@ const categoryArr = [
     },
 ];
 
+const pagingArr = {
+    currentPage: 1,
+    totalPage: 3
+}
+
 const ManageAsset = () => {
     
     const [editModal, setEditModal] = React.useState<boolean>(false);
     const [stateFilter, setStateFilter] = React.useState<string>('');
     const [categoryFilter, setCategoryFilter] = React.useState<string>('');
+    const [currentPage, setCurrentPage] = React.useState<number>(pagingArr.currentPage)
 
     const handleOnRowClick = (id: number) => {
         setEditModal(true);
@@ -255,12 +192,30 @@ const ManageAsset = () => {
                     onSort={(key, direction) => console.log(key, direction)}
                     onRowClick={(id) => handleOnRowClick(id)}
                 />
-                <h1 className="text-right py-[30px]">Paging component</h1>
+                <div className="self-end mt-[20px]">
+                    <Pagination currentPage={currentPage} totalPages={pagingArr.totalPage} onPageChange={(page) => setCurrentPage(page)} />
+                </div>
             </ContentWrapper>
             { editModal && 
                 <DetailAssetModal 
                     closeModal={() => setEditModal(false)}
-                    
+                    data={{
+                        assetCode: 'a', 
+                        assetName: 'a',
+                        category: 'a',
+                        installedDate: 'a',
+                        state: 'a',
+                        location: 'a',
+                        specification: 'a',
+                        history: [
+                            {
+                                date: 'a',
+                                assignedTo: 'a',
+                                assignedBy: 'a',
+                                returnedDate: 'a'
+                            }
+                        ]
+                    }}
                 />
             }
         </>

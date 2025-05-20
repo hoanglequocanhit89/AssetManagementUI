@@ -1,6 +1,7 @@
+import { data } from "react-router-dom";
 import FormModal from "../../../../components/ui/form-modal";
 import FormModalGroup from "../../../../components/ui/form-modal-group";
-import { Column } from "../../../../components/ui/table";
+import Table, { Column } from "../../../../components/ui/table";
 
 interface History {
     date: string,
@@ -8,13 +9,6 @@ interface History {
     assignedBy: string,
     returnedDate: string
 };
-
-const columns: Column<History>[] = [
-    { key: "date", title: "Date"},
-    { key: "assignedTo", title: "Assigned to"},
-    { key: "assignedBy", title: "Assigned by"},
-    { key: "returnedDate", title: "Returned Date"}
-];
 
 interface DetailAssetData {
     assetCode: string,
@@ -27,14 +21,43 @@ interface DetailAssetData {
     history: History[]
 };
 
-interface DetailedAsssetProps {
-    closeModal: () => void
-    // data: DetailAssetData
+interface DetailAssetTitle {
+    assetCode: string,
+    assetName: string,
+    category: string,
+    installedDate: string,
+    state: string,
+    location: string,
+    specification: string,
+    history: string
 };
 
+interface DetailedAsssetProps {
+    closeModal: () => void
+    data: DetailAssetData
+};
 
+const columns: Column<History>[] = [
+    { key: "date", title: "Date"},
+    { key: "assignedTo", title: "Assigned to"},
+    { key: "assignedBy", title: "Assigned by"},
+    { key: "returnedDate", title: "Returned Date"}
+];
+
+const titles: DetailAssetTitle = {
+    assetCode: 'Asset Code',
+    assetName: 'Asset Name',
+    category: 'Category',
+    installedDate: 'Installed Date',
+    state: 'Available',
+    location: 'Location',
+    specification: 'Specification',
+    history: 'History'
+};
 
 const DetailAssetModal = (props: DetailedAsssetProps) => {
+
+    // const historyTable = <Table columns={columns} data={props.data} />;
 
     return (
         <FormModal 
