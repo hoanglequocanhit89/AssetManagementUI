@@ -26,6 +26,54 @@ const data: User[] = [
         userName: "vyvt",
         joinedDate: "08/03/2018",
         role: "Staff"
+    },
+    {
+        id: 3,
+        staffCode: "SD1902",
+        fullName: "Thao Vy",
+        userName: "vyvt",
+        joinedDate: "08/03/2018",
+        role: "Staff"
+    },
+    {
+        id: 4,
+        staffCode: "SD1902",
+        fullName: "Thao Vy",
+        userName: "vyvt",
+        joinedDate: "08/03/2018",
+        role: "Staff"
+    },
+    {
+        id: 5,
+        staffCode: "SD1902",
+        fullName: "Thao Vy",
+        userName: "vyvt",
+        joinedDate: "08/03/2018",
+        role: "Staff"
+    },
+    {
+        id: 6,
+        staffCode: "SD1902",
+        fullName: "Thao Vy",
+        userName: "vyvt",
+        joinedDate: "08/03/2018",
+        role: "Staff"
+    },
+    {
+        id: 7,
+        staffCode: "SD1902",
+        fullName: "Thao Vy",
+        userName: "vyvt",
+        joinedDate: "08/03/2018",
+        role: "Staff"
+    },
+    {
+        id: 8,
+        staffCode: "SD1902",
+        fullName: "Thao Vy",
+        userName: "vyvt",
+        joinedDate: "08/03/2018",
+        role: "Staff"
     }
 ]
 
@@ -101,7 +149,7 @@ const ManageUser = () => {
         <>
             <ContentWrapper title={'User List'}>
 
-                <div className="flex justify-between items-center w-full">
+                <div className="flex justify-between items-center w-full mb-[20px]">
                     <div className="min-w-[220px]">
                         <SelectFilter
                             label="Type"
@@ -118,17 +166,14 @@ const ManageUser = () => {
                     </div>
                 </div>
 
+                <Table
+                    columns={columns}
+                    data={data}
+                    onSort={(key, direction) => console.log(key, direction)}
+                    onRowClick={(id) => handleClickRow(id)}
+                />
 
-                <div className="mt-10 w-full">
-                    <Table
-                        columns={columns}
-                        data={data}
-                        onSort={(key, direction) => console.log(key, direction)}
-                        onRowClick={(id) => handleClickRow(id)}
-                    />
-                </div>
-
-                <div className="flex justify-end w-ful">
+                <div className="flex justify-end w-full m-auto">
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
@@ -138,6 +183,20 @@ const ManageUser = () => {
                 </div>
 
             </ContentWrapper>
+
+            {showModal &&
+                <DetailUser
+                    showModal={showModal}
+                    closeModal={() => setShowModal(false)}
+                />
+            }
+
+            {showDisableModal &&
+                <DisableUser
+                    showModal={showDisableModal}
+                    closeModal={() => setShowDisableModal(false)}
+                />
+            }
 
         </>
     )
