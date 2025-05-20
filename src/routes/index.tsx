@@ -13,6 +13,7 @@ import Report from "../pages/report";
 import RequestForReturn from "../pages/request-return";
 import StaffDashboard from "../pages/staff";
 import { Protected } from "./protected";
+import CreateUpdateUser from "../pages/manage-user/create-update-user";
 
 const router = createBrowserRouter([
     {
@@ -36,6 +37,14 @@ const router = createBrowserRouter([
             {
                 path: 'manage-user',
                 element: <ManageUser />
+            },
+            {
+                path: 'manage-user/create',
+                element: <CreateUpdateUser />
+            },
+            {
+                path: 'manage-user/edit/:id',
+                element: <CreateUpdateUser />
             },
             {
                 path: 'manage-asset',
