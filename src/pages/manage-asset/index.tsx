@@ -200,7 +200,7 @@ const ManageAsset = () => {
                 <DetailAssetModal 
                     closeModal={() => setEditModal(false)}
                     data={{
-                        assetCode: 'a', 
+                        assetCode: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbb', 
                         assetName: 'a',
                         category: 'a',
                         installedDate: 'a',
@@ -209,6 +209,7 @@ const ManageAsset = () => {
                         specification: 'a',
                         history: [
                             {
+                                id: 1,
                                 date: 'a',
                                 assignedTo: 'a',
                                 assignedBy: 'a',
