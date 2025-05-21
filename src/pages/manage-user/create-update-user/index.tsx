@@ -111,6 +111,7 @@ const CreateUpdateUser: React.FC = () => {
           state: {
             tempUser: {
               ...data,
+              id: Number(id),
               username,
               staffCode,
               fullName: `${data.firstName} ${data.lastName}`,

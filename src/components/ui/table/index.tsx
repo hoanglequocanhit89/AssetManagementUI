@@ -18,6 +18,8 @@ interface TableProps<T extends { id: number }> {
     onSort?: (key: keyof T, direction: 'asc' | 'desc') => void;
     onRowClick?: (id: number) => void;
     isSort?: boolean;
+    sortBy?: keyof T;
+    orderBy?: string
 }
 
 const Table = <T extends { id: number }>({
@@ -25,7 +27,9 @@ const Table = <T extends { id: number }>({
     data,
     onSort,
     onRowClick,
-    isSort = true
+    isSort = true,
+    sortBy,
+    orderBy
 }: TableProps<T>) => {
     const [sortConfig, setSortConfig] = useState<{
         key: keyof T | null;
@@ -43,16 +47,17 @@ const Table = <T extends { id: number }>({
     };
 
     const getSortIcon = (key: keyof T) => {
-        const isActive = sortConfig.key === key;
+        // const isActive = sortConfig.key === key;
+        const isActive = sortBy === key;
 
         return (
             <div className="flex flex-col items-center text-sm sm:text-base leading-none">
                 <i
-                    className={`fa-solid fa-caret-up ${isActive && sortConfig.direction === 'asc' ? 'text-[#CF2338]' : 'text-gray-400'
+                    className={`fa-solid fa-caret-up ${isActive && orderBy === 'asc' ? 'text-[#CF2338]' : 'text-gray-400'
                         }`}
                 />
                 <i
-                    className={`fa-solid fa-caret-down ${isActive && sortConfig.direction === 'desc' ? 'text-[#CF2338]' : 'text-gray-400'
+                    className={`fa-solid fa-caret-down ${isActive && orderBy === 'desc' ? 'text-[#CF2338]' : 'text-gray-400'
                         }`}
                 />
             </div>
@@ -86,51 +91,62 @@ const Table = <T extends { id: number }>({
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((row, index) => (
-                        <tr
-                            key={row.id ?? index}
-                            className="cursor-pointer"
-                            onClick={() => onRowClick?.(row.id)}
-                        >
-                            {columns.map((column) => (
-                                <td
-                                    key={String(column.key)}
-                                    className={[
-                                        column.key === 'action' ? 'w-0 whitespace-nowrap text-center' : '',
-                                        'py-2 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate',
-                                        column.title ? 'border-b-2 border-[#e5e7eb]' : '',
-                                    ]
-                                        .filter(Boolean)
-                                        .join(' ')}
-                                    title={column.key !== 'action' ? String(row[column.key as keyof T]) : undefined}
-                                >
-                                    {column.key === 'action' && column.actions ? (
-                                        <div className="flex justify-end w-full">
-                                            <div className="flex justify-between gap-6">
-                                                {column.actions.map((action, index) => (
-                                                    <div
-                                                        key={index}
-                                                        onClick={(e: MouseEvent) => {
-                                                            e.stopPropagation();
-                                                            action.onClick(row);
-                                                        }}
-                                                    >
-                                                        {typeof action.render === 'function'
-                                                            ? action.render(row)
-                                                            : action.render}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ) : column.render ? (
-                                        column.render(row[column.key as keyof T], row)
-                                    ) : (
-                                        String(row[column.key as keyof T])
-                                    )}
-                                </td>
-                            ))}
+                    {data.length === 0 ? (
+                        <tr>
+                            <td
+                                colSpan={columns.length}
+                                className="text-center py-4 text-gray-500 text-[1.6rem]"
+                            >
+                                No Data
+                            </td>
                         </tr>
-                    ))}
+                    ) :
+                        (data.map((row, index) => (
+                            <tr
+                                key={row.id ?? index}
+                                className="cursor-pointer"
+                                onClick={() => onRowClick?.(row.id)}
+                            >
+                                {columns.map((column) => (
+                                    <td
+                                        key={String(column.key)}
+                                        className={[
+                                            column.key === 'action' ? 'w-0 whitespace-nowrap text-center' : '',
+                                            'py-2 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate',
+                                            column.title ? 'border-b-2 border-[#e5e7eb]' : '',
+                                        ]
+                                            .filter(Boolean)
+                                            .join(' ')}
+                                        title={column.key !== 'action' ? String(row[column.key as keyof T]) : undefined}
+                                    >
+                                        {column.key === 'action' && column.actions ? (
+                                            <div className="flex justify-end w-full">
+                                                <div className="flex justify-between gap-6">
+                                                    {column.actions.map((action, index) => (
+                                                        <div
+                                                            key={index}
+                                                            onClick={(e: MouseEvent) => {
+                                                                e.stopPropagation();
+                                                                action.onClick(row);
+                                                            }}
+                                                        >
+                                                            {typeof action.render === 'function'
+                                                                ? action.render(row)
+                                                                : action.render}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : column.render ? (
+                                            column.render(row[column.key as keyof T], row)
+                                        ) : (
+                                            String(row[column.key as keyof T])
+                                        )}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))
+                        )}
                 </tbody>
             </table>
         </div>
