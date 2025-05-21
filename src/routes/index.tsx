@@ -56,6 +56,10 @@ const router = createBrowserRouter([
                 element: <CreateUpdateAsset />
             },
             {
+                path: 'manage-asset/edit/:id',
+                element: <CreateUpdateAsset />
+            },
+            {
                 path: 'manage-assignment',
                 element: <ManageAssignment />
             },
