@@ -261,8 +261,8 @@ const CreateUpdateUser: React.FC = () => {
 
         {/* Actions */}
         <div className="col-start-2 col-span-2 flex justify-end gap-4 mt-6">
-          <Button text='Save' type="primary" disabled={!isValid} />
-          <Button type="outline" text='Cancel' onClick={() => navigate("/manage-user")} />
+          <Button text='Save' color="primary" disabled={!isValid} />
+          <Button color="outline" text='Cancel' type='button' onClick={() => navigate("/manage-user")} />
         </div>
       </form>
     </ContentWrapper>

@@ -22,11 +22,11 @@ const DisableUser = ({ showModal, closeModal }: DisableUserProps) => {
                             <div className="flex gap-5">
                                 <Button
                                     text="Disable"
-                                    type="primary"
+                                    color="primary"
                                 />
                                 <Button
                                     text="Cancel"
-                                    type="outline"
+                                    color="outline"
                                     onClick={() => closeModal()}
                                 />
                             </div>

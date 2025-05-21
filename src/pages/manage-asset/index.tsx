@@ -7,6 +7,7 @@ import SelectFilter from "../../components/ui/select-filter";
 import SearchInput from "../../components/ui/search";
 import Button from "../../components/ui/button";
 import Pagination from "../../components/ui/pagination";
+import { useNavigate } from "react-router-dom";
 
 interface Asset {
     id: number,
@@ -160,7 +161,8 @@ const ManageAsset = () => {
     const [editModal, setEditModal] = React.useState<boolean>(false);
     const [stateFilter, setStateFilter] = React.useState<string>('');
     const [categoryFilter, setCategoryFilter] = React.useState<string>('');
-    const [currentPage, setCurrentPage] = React.useState<number>(pagingArr.currentPage)
+    const [currentPage, setCurrentPage] = React.useState<number>(pagingArr.currentPage);
+    const navigate = useNavigate();
 
     const handleOnRowClick = (id: number) => {
         setEditModal(true);
@@ -184,7 +186,7 @@ const ManageAsset = () => {
                         selected={categoryFilter}
                     />
                     <SearchInput onSearch={(data) => console.log(data)} />
-                    <Button text="Create new asset" type="primary" onClick={() => console.log("createnew")} />
+                    <Button text="Create new asset" color="primary" onClick={() => navigate("/manage-asset/create")} />
                 </div>
                 <Table 
                     columns={columns} 
