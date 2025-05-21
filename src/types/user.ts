@@ -21,3 +21,23 @@ export interface UserFilterRequest {
     query: string;
     type: string;
 }
+
+export interface CreateUserRequest {
+    firstName: string;
+    lastName: string;
+    gender: "MALE" | "FEMALE";
+    dob: string;
+    joinedDate: string;
+    type: "STAFF" | "ADMIN"
+}
+
+export interface CreateUserResponse {
+    staffCode: string;
+    username: string;
+    joinedDate: Date;
+    location: string;
+    role: string;
+    fullName: string;
+    dob: Date;
+    gender: string
+}
