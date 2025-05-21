@@ -3,23 +3,22 @@ import Button from "../../components/ui/button";
 import ContentWrapper from "../../components/ui/content-wrapper"
 import SearchInput from "../../components/ui/search";
 import SelectFilter from "../../components/ui/select-filter";
-import { User } from "../../types";
+import { BaseResponse, User } from "../../types";
 import Table, { Column } from "../../components/ui/table";
 import DetailUser from "./detail-user";
 import DisableUser from "./disable-user";
 import Pagination from "../../components/ui/pagination";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import userApi from "../../api/userApi";
-
-const data: User[] = [];
+import { useDebounce } from "../../hooks/useDebounce";
 
 const getColumns = (handlers: {
     onEdit: (row: User) => void;
     onDelete: (row: User) => void;
 }): Column<User>[] => [
         { key: 'staffCode', title: 'Staff Code' },
-        { key: 'fullName', title: 'Staff Name' },
-        { key: 'userName', title: 'Username' },
+        { key: 'fullName', title: 'Full Name' },
+        { key: 'username', title: 'Username' },
         { key: 'joinedDate', title: 'Joined Date' },
         { key: 'role', title: 'Type' },
         {
@@ -37,34 +36,43 @@ const getColumns = (handlers: {
         },
     ];
 
+const options = [
+    { value: '', label: 'All' },
+    { value: 'ADMIN', label: 'Admin' },
+    { value: 'STAFF', label: 'Staff' },
+];
+
 const ManageUser = () => {
 
-    const [selectedState, setSelectedState] = useState<string | undefined>();
-    const [showModal, setShowModal] = useState(false);
-    const [showDisableModal, setShowDisableModal] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = 10;
+    const [userData, setUserData] = useState<BaseResponse<User>>();
+    const [userId, setUserId] = useState<number>(0);
 
+    const [selectedType, setSelectedType] = useState<string>(searchParams.get("type") || "");
+    const [textSearch, setTextSearch] = useState<string>("");
+    const debouncedKeyword = useDebounce(textSearch, 500);
 
-    const options = [
-        { value: 'all', label: 'All' },
-        { value: 'admin', label: 'Admin' },
-        { value: 'staff', label: 'Staff' },
-    ];
+    const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "firstName");
+    const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
+    const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get("page")) || 1);
+
+    const [showModal, setShowModal] = useState(false);
+    const [showDisableModal, setShowDisableModal] = useState(false);
 
     const handleSearch = (value: string) => {
-        console.log("Search for:", value);
+        setTextSearch(value)
+        setCurrentPage(1)
     };
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
-        console.log(page)
     };
 
     const handleClickRow = (id: number) => {
         setShowModal(true)
+        setUserId(id)
     }
 
     const handleEdit = (row: User) => {
@@ -81,27 +89,39 @@ const ManageUser = () => {
         onDelete: handleDisableUser,
     });
 
-    useEffect(() => {
-        const fetchAllUserList = async () => {
-            try {
-                const response = await userApi.getUserList(3, {
-                    query: "sd00",
-                    type: "STAFF"
-                },
-                    {
-                        page: 0,
-                        size: 20,
-                        sortBy: 'firstName',
-                        sortDir: 'asc'
-                    }
-                )
-                console.log("response", response)
-            } catch (error) {
-                console.log(error)
-            }
+    const fetchAllUserList = async () => {
+        try {
+            const response = await userApi.getUserList(2, {
+                query: debouncedKeyword,
+                type: selectedType
+            },
+                {
+                    page: currentPage - 1,
+                    size: 20,
+                    sortBy: sortBy,
+                    sortDir: orderBy
+                }
+            )
+
+            setUserData(response)
+        } catch (error) {
+            console.log(error)
         }
+    }
+
+    useEffect(() => {
         fetchAllUserList()
-    }, [])
+    }, [selectedType, sortBy, orderBy, currentPage, debouncedKeyword])
+
+    useEffect(() => {
+        setSearchParams({
+            keyword: debouncedKeyword,
+            type: selectedType,
+            page: currentPage.toString(),
+            sortBy,
+            orderBy
+        })
+    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage, setSearchParams])
 
     return (
         <>
@@ -112,13 +132,13 @@ const ManageUser = () => {
                         <SelectFilter
                             label="Type"
                             options={options}
-                            selected={selectedState}
+                            selected={selectedType}
                             onSelect={(value) => {
-                                setSelectedState(value);
+                                setSelectedType(value)
                             }}
                         />
                     </div>
-                    <div className="flex items-center gap-4 flex-shrink-0">
+                    <div className="flex flex items-center gap-4 flex-shrink-0">
                         <SearchInput onSearch={handleSearch} />
                         <Button text="Create new user" color="primary" onClick={() => navigate("create")} />
                     </div>
@@ -126,15 +146,22 @@ const ManageUser = () => {
 
                 <Table
                     columns={columns}
-                    data={data}
-                    onSort={(key, direction) => console.log(key, direction)}
+                    data={userData?.data.content ?? []}
+                    onSort={(key, direction) => {
+                        if (key === "fullName") {
+                            setSortBy("firstName")
+                        } else {
+                            setSortBy(key)
+                        }
+                        setOrderBy(direction)
+                    }}
                     onRowClick={(id) => handleClickRow(id)}
                 />
 
                 <div className="flex justify-end w-full m-auto">
                     <Pagination
                         currentPage={currentPage}
-                        totalPages={totalPages}
+                        totalPages={userData?.data.totalPages ?? 0}
                         onPageChange={handlePageChange}
                         maxVisiblePages={3}
                     />
@@ -146,6 +173,7 @@ const ManageUser = () => {
                 <DetailUser
                     showModal={showModal}
                     closeModal={() => setShowModal(false)}
+                    userId={userId}
                 />
             }
 

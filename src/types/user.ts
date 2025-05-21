@@ -2,7 +2,7 @@ export interface User {
     id: number;
     staffCode: string;
     fullName: string;
-    userName: string;
+    username: string;
     joinedDate: string;
     role: string;
     canDisable: boolean;
@@ -41,3 +41,5 @@ export interface CreateUserResponse {
     dob: Date;
     gender: string
 }
+
+export type UserDetailResponse = Omit<DetailUser, "id" | "canDisable" | "firstName" | "lastName" | "type">
