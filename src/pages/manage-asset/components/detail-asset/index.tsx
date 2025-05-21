@@ -4,6 +4,7 @@ import FormModalGroup from "../../../../components/ui/form-modal-group";
 import Table, { Column } from "../../../../components/ui/table";
 
 interface History {
+    id: number,
     date: string,
     assignedTo: string,
     assignedBy: string,
@@ -21,17 +22,6 @@ interface DetailAssetData {
     history: History[]
 };
 
-interface DetailAssetTitle {
-    assetCode: string,
-    assetName: string,
-    category: string,
-    installedDate: string,
-    state: string,
-    location: string,
-    specification: string,
-    history: string
-};
-
 interface DetailedAsssetProps {
     closeModal: () => void
     data: DetailAssetData
@@ -44,20 +34,9 @@ const columns: Column<History>[] = [
     { key: "returnedDate", title: "Returned Date"}
 ];
 
-const titles: DetailAssetTitle = {
-    assetCode: 'Asset Code',
-    assetName: 'Asset Name',
-    category: 'Category',
-    installedDate: 'Installed Date',
-    state: 'Available',
-    location: 'Location',
-    specification: 'Specification',
-    history: 'History'
-};
-
 const DetailAssetModal = (props: DetailedAsssetProps) => {
 
-    // const historyTable = <Table columns={columns} data={props.data} />;
+    const { assetCode, assetName, category, installedDate, state, location, specification, history } = props.data;
 
     return (
         <FormModal 
@@ -65,8 +44,17 @@ const DetailAssetModal = (props: DetailedAsssetProps) => {
             closeBtn
             closeModal={props.closeModal}
         >
-            <FormModalGroup title="Asset Code" value="LA100001" />
-            <FormModalGroup title="Asset Name" value={<h1>Hello</h1>} />
+            <FormModalGroup title="Asset Code" value={assetCode} />
+            <FormModalGroup title="Asset Name" value={assetName} />
+            <FormModalGroup title="Category" value={category} />
+            <FormModalGroup title="Installed Date" value={installedDate} />
+            <FormModalGroup title="State" value={state} />
+            <FormModalGroup title="Location" value={location} />
+            <FormModalGroup title="Specification" value={specification} />
+            <FormModalGroup 
+                title="History" 
+                value={ <Table columns={columns} data={history} /> } 
+            />
         </FormModal>
     )
 };
