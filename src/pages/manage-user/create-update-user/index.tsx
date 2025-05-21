@@ -7,10 +7,7 @@ import Select from '../../../components/ui/select';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { differenceInYears, isAfter } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
-import { User } from '../../../types';
 import { users } from '../../../data/users';
-
-const data: User[] = users;
 
 type FormFields = {
   firstName: string;
@@ -168,7 +165,7 @@ const CreateUpdateUser: React.FC = () => {
                 differenceInYears(new Date(), value) >= 18 || "User is under 18. Please select a different date"
             }}
             render={({ field }) => (
-              <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} isHighlight={!!errors.dob}/>
+              <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} isHighlight={!!errors.dob} />
             )}
           />
           {errors.dob && <p className='text-red-500'>{errors.dob.message}</p>}
