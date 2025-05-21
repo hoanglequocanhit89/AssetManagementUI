@@ -1,23 +1,44 @@
+import { useEffect, useState } from "react";
+import userApi from "../../../api/userApi";
 import FormModal from "../../../components/ui/form-modal"
 import FormModalGroup from "../../../components/ui/form-modal-group";
+import { UserDetailResponse } from "../../../types";
 
 interface DetailUserProps {
     showModal: boolean;
     closeModal: () => void;
+    userId: number;
 }
 
-const fields = [
-    { title: "Staff Code", value: 'SD101' },
-    { title: "Full Name", value: '' },
-    { title: "Username", value: '' },
-    { title: "Date of Birth", value: '' },
-    { title: "Gender", value: '' },
-    { title: "Joined Date", value: '' },
-    { title: "Type", value: '' },
-    { title: "Location", value: '' },
-];
+const DetailUser = ({ showModal, closeModal, userId }: DetailUserProps) => {
+    const [userData, setUserData] = useState<UserDetailResponse>();
 
-const DetailUser = ({ showModal, closeModal }: DetailUserProps) => {
+    useEffect(() => {
+        if (!showModal) return;
+        const fetchDetailUser = async () => {
+            try {
+                const response = await userApi.getDetailUser(userId);
+                setUserData(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchDetailUser();
+    }, [userId, showModal]);
+
+    const fields = [
+        { title: "Staff Code", value: userData?.staffCode },
+        { title: "Full Name", value: userData?.fullName },
+        { title: "Username", value: userData?.username },
+        { title: "Date of Birth", value: userData?.dob },
+        { title: "Gender", value: userData?.gender },
+        { title: "Joined Date", value: userData?.joinedDate },
+        { title: "Type", value: userData?.role },
+        { title: "Location", value: userData?.location },
+    ];
+
+    if (!showModal) return null;
+
     return (
         <div>
             {showModal && <FormModal
@@ -32,7 +53,6 @@ const DetailUser = ({ showModal, closeModal }: DetailUserProps) => {
                         value={field.value}
                     />
                 ))}
-
             </FormModal>
             }
         </div>
