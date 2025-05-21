@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../components/ui/button";
 import ContentWrapper from "../../components/ui/content-wrapper"
 import SearchInput from "../../components/ui/search";
@@ -9,9 +9,9 @@ import DetailUser from "./detail-user";
 import DisableUser from "./disable-user";
 import Pagination from "../../components/ui/pagination";
 import { useNavigate } from "react-router-dom";
-import { users } from "../../data/users";
+import userApi from "../../api/userApi";
 
-const data: User[] = users;
+const data: User[] = [];
 
 const getColumns = (handlers: {
     onEdit: (row: User) => void;
@@ -81,6 +81,28 @@ const ManageUser = () => {
         onDelete: handleDisableUser,
     });
 
+    useEffect(() => {
+        const fetchAllUserList = async () => {
+            try {
+                const response = await userApi.getUserList(3, {
+                    query: "sd00",
+                    type: "STAFF"
+                },
+                    {
+                        page: 0,
+                        size: 20,
+                        sortBy: 'firstName',
+                        sortDir: 'asc'
+                    }
+                )
+                console.log("response", response)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchAllUserList()
+    }, [])
+
     return (
         <>
             <ContentWrapper title={'User List'}>
@@ -98,7 +120,7 @@ const ManageUser = () => {
                     </div>
                     <div className="flex items-center gap-4 flex-shrink-0">
                         <SearchInput onSearch={handleSearch} />
-                        <Button text="Create new user" type="primary" onClick={() => navigate("create")}/>
+                        <Button text="Create new user" type="primary" onClick={() => navigate("create")} />
                     </div>
                 </div>
 
