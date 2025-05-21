@@ -1,4 +1,4 @@
-import { BaseParams, BaseResponse, User, UserFilterRequest } from "../types";
+import { BaseParams, BaseResponse, BaseResponseWithoutPagination, CreateUserRequest, CreateUserResponse, User, UserFilterRequest } from "../types";
 import axiosClients from "./axiosClients";
 
 const userApi = {
@@ -10,7 +10,12 @@ const userApi = {
             : params;
 
         return axiosClients.get(url, { params: finalParams })
-    }
+    },
+
+    createUser(body: CreateUserRequest): Promise<BaseResponseWithoutPagination<CreateUserResponse>> {
+        return axiosClients.post("users", body);
+    },
+
 }
 
 export default userApi;

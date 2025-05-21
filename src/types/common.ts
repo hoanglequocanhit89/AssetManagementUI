@@ -17,3 +17,8 @@ export interface BaseParams {
     sortDir: string;
     [key: string]: string | number | undefined;
 }
+
+export interface BaseResponseWithoutPagination<T> {
+    data: T;
+    message: string
+}
