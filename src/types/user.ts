@@ -42,4 +42,11 @@ export interface CreateUserResponse {
     gender: string
 }
 
-export type UserDetailResponse = Omit<DetailUser, "id" | "canDisable" | "firstName" | "lastName" | "type">
+export type UserDetailResponse = Omit<DetailUser, "id" | "canDisable" | "type">
+
+export interface UpdateUserRequest {
+    dob: string;
+    gender: "MALE" | "FEMALE";
+    joinedDate: string;
+    role: "STAFF" | "ADMIN";
+}

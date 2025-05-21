@@ -8,7 +8,7 @@ import Table, { Column } from "../../components/ui/table";
 import DetailUser from "./detail-user";
 import DisableUser from "./disable-user";
 import Pagination from "../../components/ui/pagination";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import userApi from "../../api/userApi";
 import { useDebounce } from "../../hooks/useDebounce";
 
@@ -46,6 +46,7 @@ const ManageUser = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [userData, setUserData] = useState<BaseResponse<User>>();
     const [userId, setUserId] = useState<number>(0);
@@ -90,24 +91,26 @@ const ManageUser = () => {
     });
 
     const fetchAllUserList = async () => {
-        try {
-            const response = await userApi.getUserList(2, {
-                query: debouncedKeyword,
-                type: selectedType
-            },
-                {
-                    page: currentPage - 1,
-                    size: 20,
-                    sortBy: sortBy,
-                    sortDir: orderBy
-                }
-            )
+        const tempUser = location.state?.tempUser;
+        const response = await userApi.getUserList(1, {
+            query: debouncedKeyword,
+            type: selectedType
+        }, {
+            page: currentPage - 1,
+            size: tempUser ? 19 : 20,
+            sortBy: sortBy,
+            sortDir: orderBy
+        });
 
-            setUserData(response)
-        } catch (error) {
-            console.log(error)
+        let users = response.data.content;
+
+        if (tempUser) {
+            users = users.filter(u => u.id !== tempUser.id);
+            users.unshift(tempUser);
         }
-    }
+
+        setUserData({ ...response, data: { ...response.data, content: users } });
+    };
 
     useEffect(() => {
         fetchAllUserList()
