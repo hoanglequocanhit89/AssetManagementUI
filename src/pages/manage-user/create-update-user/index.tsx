@@ -8,14 +8,17 @@ import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { differenceInYears, isAfter } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
 import { users } from '../../../data/users';
+import { toast } from 'react-toastify';
+import userApi from '../../../api/userApi';
+import { format } from 'date-fns';
 
 type FormFields = {
   firstName: string;
   lastName: string;
   dob: Date;
-  gender: 'Male' | 'Female' | '';
+  gender: 'MALE' | 'FEMALE';
   joinedDate: Date;
-  type: 'admin' | 'staff';
+  type: 'ADMIN' | 'STAFF';
   location?: string;
 };
 
@@ -26,8 +29,8 @@ const locationOptions = [
 ];
 
 const typeOptions = [
-  { value: 'staff', label: 'Staff' },
-  { value: 'admin', label: 'Admin' },
+  { value: 'STAFF', label: 'Staff' },
+  { value: 'ADMIN', label: 'Admin' },
 ];
 
 const CreateUpdateUser: React.FC = () => {
@@ -47,8 +50,7 @@ const CreateUpdateUser: React.FC = () => {
   } = useForm<FormFields>({
     mode: "onChange",
     defaultValues: {
-      gender: '',
-      type: 'staff',
+      type: 'STAFF',
       location: 'HCM',
     }
   });
@@ -63,16 +65,16 @@ const CreateUpdateUser: React.FC = () => {
         setValue("firstName", user.firstName);
         setValue("lastName", user.lastName);
         setValue("dob", new Date("05/20/2004"));
-        setValue("gender", "Male");
+        setValue("gender", "MALE");
         setValue("joinedDate", new Date(user.joinedDate));
-        setValue("type", "staff");
+        setValue("type", "STAFF");
 
         trigger();
       }
     }
   }, [id]);
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {
+  const onSubmit: SubmitHandler<FormFields> = async (data: FormFields) => {
     const { firstName, lastName } = getValues();
 
     let hasError = false;
@@ -89,7 +91,25 @@ const CreateUpdateUser: React.FC = () => {
 
     if (hasError) return;
 
-    console.log(data);
+    try {
+      if (isEdit) {
+        // call edit api
+      }
+      else {
+        console.log(data);
+        await userApi.createUser({
+          ...data,
+          dob: format(data.dob, 'yyyy-MM-dd'),
+          joinedDate: format(data.joinedDate, 'yyyy-MM-dd')
+        });
+        toast.success("User created successfully");
+        navigate("/manage-user");
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+    
   };
 
   return (
@@ -180,7 +200,7 @@ const CreateUpdateUser: React.FC = () => {
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              value="Female"
+              value="FEMALE"
               {...register("gender", { required: "This field is required" })}
               className='accent-[var(--primary-color)]'
             />
@@ -189,7 +209,7 @@ const CreateUpdateUser: React.FC = () => {
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              value="Male"
+              value="MALE"
               {...register("gender", { required: "This field is required" })}
               className='accent-[var(--primary-color)]'
             />
@@ -243,7 +263,7 @@ const CreateUpdateUser: React.FC = () => {
         </div>
 
         {/* Location (only for admin) */}
-        {watchUserType === "admin" && (
+        {watchUserType === "ADMIN" && (
           <>
             <label className='pr-4'>Location</label>
             <div className="col-span-2">
