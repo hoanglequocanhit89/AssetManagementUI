@@ -56,7 +56,7 @@ const Sidebar = (props: SidebarProps) => {
                                         setTitle(item.title);
                                         navigate(item.tag);
                                     }}
-                                    className={`sidebar-nav__item ${location.pathname === `/${item.tag}` ? 'active' : ''}`}
+                                    className={`sidebar-nav__item ${location.pathname.includes(`/${item.tag}`)  ? 'active' : ''}`}
                                 >
                                     {item.title}
                                 </li>

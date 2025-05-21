@@ -120,7 +120,7 @@ const ManageUser = () => {
                     </div>
                     <div className="flex items-center gap-4 flex-shrink-0">
                         <SearchInput onSearch={handleSearch} />
-                        <Button text="Create new user" type="primary" onClick={() => navigate("create")} />
+                        <Button text="Create new user" color="primary" onClick={() => navigate("create")} />
                     </div>
                 </div>
 

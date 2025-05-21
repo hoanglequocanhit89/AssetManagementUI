@@ -14,6 +14,7 @@ import RequestForReturn from "../pages/request-return";
 import StaffDashboard from "../pages/staff";
 import { Protected } from "./protected";
 import CreateUpdateUser from "../pages/manage-user/create-update-user";
+import CreateUpdateAsset from "../pages/manage-asset/create-update-asset";
 
 const router = createBrowserRouter([
     {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
             {
                 path: 'manage-asset',
                 element: <ManageAsset />
+            },
+            {
+                path: 'manage-asset/create',
+                element: <CreateUpdateAsset />
             },
             {
                 path: 'manage-assignment',
