@@ -1,6 +1,6 @@
 export interface BaseResponse<T> {
     data: {
-        content: T[]
+        content: T[];
         totalPages: number;
         totalElements: number;
         size: number;
