@@ -1,13 +1,25 @@
+import userApi from "../../../api/userApi";
 import Button from "../../../components/ui/button";
 import FormModal from "../../../components/ui/form-modal"
 
 interface DisableUserProps {
     showModal: boolean;
     closeModal: () => void;
+    isDisable: boolean;
+    userId: number;
+    onSuccess: () => void;
 }
 
-const DisableUser = ({ showModal, closeModal }: DisableUserProps) => {
-    const isDisable = false;
+const DisableUser = ({ showModal, closeModal, isDisable, userId, onSuccess }: DisableUserProps) => {
+
+    const handleDisableUser = async () => {
+        try {
+            await userApi.disableUser(userId)
+            onSuccess?.()
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <div>
             {showModal && <FormModal
@@ -23,6 +35,7 @@ const DisableUser = ({ showModal, closeModal }: DisableUserProps) => {
                                 <Button
                                     text="Disable"
                                     color="primary"
+                                    onClick={() => handleDisableUser()}
                                 />
                                 <Button
                                     text="Cancel"

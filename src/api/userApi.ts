@@ -17,12 +17,15 @@ const userApi = {
     },
 
     getDetailUser(userId: number): Promise<BaseResponseWithoutPagination<UserDetailResponse>> {
-        const url = `/users/${userId}`
+        const url = `users/${userId}`
         return axiosClients.get(url)
     },
-
     updateUser(userId: number, data: UpdateUserRequest): Promise<BaseResponseWithoutPagination<null>> {
         return axiosClients.put(`users/${userId}`, data);
+    },
+    disableUser(userId: number): Promise<BaseResponseWithoutPagination<null>> {
+        const url = `users/${userId}`
+        return axiosClients.delete(url)
     }
 
 }

@@ -29,7 +29,7 @@ const getColumns = (handlers: {
                     onClick: handlers.onEdit,
                 },
                 {
-                    render: <i className="fa-regular fa-circle-xmark text-[#CF2338]"></i>,
+                    render: (row) => <i className="fa-regular fa-circle-xmark text-[#CF2338]"></i>,
                     onClick: handlers.onDelete,
                 },
             ]
@@ -52,15 +52,18 @@ const ManageUser = () => {
     const [userId, setUserId] = useState<number>(0);
 
     const [selectedType, setSelectedType] = useState<string>(searchParams.get("type") || "");
-    const [textSearch, setTextSearch] = useState<string>("");
+    const [textSearch, setTextSearch] = useState<string>(searchParams.get("keyword") || "");
     const debouncedKeyword = useDebounce(textSearch, 500);
 
     const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "firstName");
+    const [sortFieldForApi, setSortFieldForApi] = useState<string>('firstName');
     const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
     const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get("page")) || 1);
 
     const [showModal, setShowModal] = useState(false);
     const [showDisableModal, setShowDisableModal] = useState(false);
+
+    const [isDisableUser, setIsDisableUser] = useState<boolean>(false);
 
     const handleSearch = (value: string) => {
         setTextSearch(value)
@@ -81,8 +84,9 @@ const ManageUser = () => {
     };
 
     const handleDisableUser = (row: User) => {
+        setIsDisableUser(row.canDisable)
+        setUserId(row.id)
         setShowDisableModal(true)
-        console.log("Delete", row);
     };
 
     const columns = getColumns({
@@ -98,7 +102,7 @@ const ManageUser = () => {
         }, {
             page: currentPage - 1,
             size: tempUser ? 19 : 20,
-            sortBy: sortBy,
+            sortBy: sortFieldForApi,
             sortDir: orderBy
         });
 
@@ -114,7 +118,7 @@ const ManageUser = () => {
 
     useEffect(() => {
         fetchAllUserList()
-    }, [selectedType, sortBy, orderBy, currentPage, debouncedKeyword])
+    }, [selectedType, sortFieldForApi, orderBy, currentPage, debouncedKeyword])
 
     useEffect(() => {
         setSearchParams({
@@ -142,7 +146,9 @@ const ManageUser = () => {
                         />
                     </div>
                     <div className="flex flex items-center gap-4 flex-shrink-0">
-                        <SearchInput onSearch={handleSearch} />
+                        <div className="w-[250px]">
+                            <SearchInput onSearch={handleSearch} value={textSearch} />
+                        </div>
                         <Button text="Create new user" color="primary" onClick={() => navigate("create")} />
                     </div>
                 </div>
@@ -151,14 +157,17 @@ const ManageUser = () => {
                     columns={columns}
                     data={userData?.data.content ?? []}
                     onSort={(key, direction) => {
+                        setSortBy(key);
                         if (key === "fullName") {
-                            setSortBy("firstName")
+                            setSortFieldForApi("firstName")
                         } else {
-                            setSortBy(key)
+                            setSortFieldForApi(key)
                         }
                         setOrderBy(direction)
                     }}
                     onRowClick={(id) => handleClickRow(id)}
+                    sortBy={sortBy as keyof User}
+                    orderBy={orderBy}
                 />
 
                 <div className="flex justify-end w-full m-auto">
@@ -182,7 +191,13 @@ const ManageUser = () => {
 
             {showDisableModal &&
                 <DisableUser
+                    isDisable={isDisableUser}
+                    userId={userId}
                     showModal={showDisableModal}
+                    onSuccess={() => {
+                        setShowDisableModal(false)
+                        fetchAllUserList()
+                    }}
                     closeModal={() => setShowDisableModal(false)}
                 />
             }

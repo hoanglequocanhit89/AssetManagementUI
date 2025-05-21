@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type SearchInputProps = {
     placeholder?: string;
     onSearch: (value: string) => void;
+    value?: string;
 };
 
 const SearchInput: React.FC<SearchInputProps> = ({
     placeholder = "",
     onSearch,
+    value: externalValue = "",
 }) => {
     const [value, setValue] = useState("");
+
+    useEffect(() => {
+        setValue(externalValue);
+    }, [externalValue]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -28,7 +34,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
-                className="flex-grow min-w-[120px] px-3 py-2 text-[1.6rem] text-gray-800 focus:outline-none"
+                className="w-full px-3 py-2 text-[1.6rem] text-gray-800 focus:outline-none"
                 style={{ minWidth: 0 }}
             />
             {value && (
