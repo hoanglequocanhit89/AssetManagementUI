@@ -23,12 +23,14 @@ export interface UserFilterRequest {
 }
 
 export interface CreateUserRequest {
+    adminId?: number;
     firstName: string;
     lastName: string;
     gender: "MALE" | "FEMALE";
     dob: string;
     joinedDate: string;
-    type: "STAFF" | "ADMIN"
+    type: "STAFF" | "ADMIN";
+    location?: "HCM" | "DN" | "HN";
 }
 
 export interface CreateUserResponse {

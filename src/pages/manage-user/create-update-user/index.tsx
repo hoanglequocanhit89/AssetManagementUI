@@ -18,7 +18,7 @@ type FormFields = {
   gender: 'MALE' | 'FEMALE';
   joinedDate: Date;
   type: 'ADMIN' | 'STAFF';
-  location?: string;
+  location?: "HN" | "DN" | "HCM";
 };
 
 const locationOptions = [
@@ -71,7 +71,7 @@ const CreateUpdateUser: React.FC = () => {
           setValue("gender", user.gender as "MALE" | "FEMALE");
           setValue("joinedDate", new Date(user.joinedDate));
           setValue("type", user.role as "ADMIN" | "STAFF");
-          setValue("location", user.location);
+          setValue("location", user.location as "HN" | "DN" | "HCM");
           setStaffCode(user.staffCode);
           setUsername(user.username);
           trigger();
@@ -125,7 +125,8 @@ const CreateUpdateUser: React.FC = () => {
         const response = await userApi.createUser({
           ...data,
           dob: format(data.dob, 'yyyy-MM-dd'),
-          joinedDate: format(data.joinedDate, 'yyyy-MM-dd')
+          joinedDate: format(data.joinedDate, 'yyyy-MM-dd'),
+          adminId: 1
         });
         const newUser = response.data;
         toast.success("User created successfully");
