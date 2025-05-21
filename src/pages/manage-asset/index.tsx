@@ -26,14 +26,14 @@ const assetList: Asset[] = [
         state: "Available"
     },
     {
-        id: 1,
+        id: 2,
         assetCode: "LA100001",
         assetName: "Laptop HP Probook 450 G1",
         category: "Laptop",
-        state: "Available"
+        state: "Assigned"
     },
     {
-        id: 1,
+        id: 3,
         assetCode: "LA100001",
         assetName: "Laptop HP Probook 450 G1",
         category: "Laptop",
@@ -104,19 +104,30 @@ const assetList: Asset[] = [
     }
 ];
 
-const columns: Column<Asset>[] = [
+const getColumns = (handlers: {
+    onEdit: (row: Asset) => void;
+    onDelete: (row: Asset) => void;
+}): Column<Asset>[] => [
     { key: 'assetCode', title: 'Asset Code' },
     { key: 'assetName', title: 'Asset Code' },
     { key: 'category', title: 'Category' },
     { key: 'state', title: 'State' },
     { key: 'action', actions: [
         { 
-            render: (row) => (<i className="fa-solid fa-pen"></i>), 
-            onClick: (row) => console.log("update", row),
+            render: (row) => (
+                <button disabled={row.state === 'Assigned'}>
+                    <i className={`fa-solid fa-pen ${row.state === 'Assigned' ? 'opacity-50 cursor-default' : ''}`}></i>
+                </button>
+                ),
+            onClick: handlers.onEdit,
         },
         { 
-            render: (row) => (<i className="fa-regular fa-circle-xmark"></i>), 
-            onClick: (row) => console.log("Delete", row),
+            render: (row) => (
+                <button disabled={row.state === 'Assigned'}>
+                    <i className={`fa-regular fa-circle-xmark ${row.state === 'Assigned' ? 'opacity-50 cursor-default' : ''}`}></i>
+                </button>
+                ), 
+            onClick: handlers.onDelete,
         }
     ]},
 ];
@@ -158,16 +169,32 @@ const pagingArr = {
 
 const ManageAsset = () => {
     
-    const [editModal, setEditModal] = React.useState<boolean>(false);
+    const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
+    const [viewDeleteModal, setViewDeleteModal] = React.useState<boolean>(false);
     const [stateFilter, setStateFilter] = React.useState<string>('');
     const [categoryFilter, setCategoryFilter] = React.useState<string>('');
     const [currentPage, setCurrentPage] = React.useState<number>(pagingArr.currentPage);
     const navigate = useNavigate();
+    const [searchFilter, setSearchFilter] = React.useState<string>('');
 
     const handleOnRowClick = (id: number) => {
-        setEditModal(true);
+        setViewDetailModal(true);
         console.log(id);
     };
+
+    const handleEdit = (row: Asset) => {
+        navigate(`edit/${row.id}`)
+    };
+
+    const handleDelete = () => {
+        setViewDeleteModal(true);
+        console.log("click delete");
+    }
+
+    const columns = getColumns({
+        onEdit: handleEdit,
+        onDelete: handleDelete 
+    })
 
     return (
         <>
@@ -186,7 +213,7 @@ const ManageAsset = () => {
                         selected={categoryFilter}
                     />
                     <SearchInput onSearch={(data) => console.log(data)} />
-                    <Button text="Create new asset" color="primary" onClick={() => navigate("/manage-asset/create")} />
+                    <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
                 </div>
                 <Table 
                     columns={columns} 
@@ -198,11 +225,11 @@ const ManageAsset = () => {
                     <Pagination currentPage={currentPage} totalPages={pagingArr.totalPage} onPageChange={(page) => setCurrentPage(page)} />
                 </div>
             </ContentWrapper>
-            { editModal && 
+            { viewDetailModal && 
                 <DetailAssetModal 
-                    closeModal={() => setEditModal(false)}
+                    closeModal={() => setViewDetailModal(false)}
                     data={{
-                        assetCode: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbb', 
+                        assetCode: 'a', 
                         assetName: 'a',
                         category: 'a',
                         installedDate: 'a',
