@@ -43,6 +43,7 @@ const CreateUpdateUser: React.FC = () => {
     setValue,
     setError,
     getValues,
+    trigger
   } = useForm<FormFields>({
     mode: "onChange",
     defaultValues: {
@@ -61,10 +62,12 @@ const CreateUpdateUser: React.FC = () => {
       if (user) {
         setValue("firstName", user.firstName);
         setValue("lastName", user.lastName);
-        setValue("dob", new Date());
+        setValue("dob", new Date("05/20/2004"));
         setValue("gender", "Male");
         setValue("joinedDate", new Date(user.joinedDate));
         setValue("type", "staff");
+
+        trigger();
       }
     }
   }, [id]);
