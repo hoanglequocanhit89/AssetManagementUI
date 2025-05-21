@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ContentWrapper from '../../../components/ui/content-wrapper';
 import InputField from '../../../components/ui/input';
 import DateFilter from '../../../components/ui/date-filter';
@@ -7,7 +7,6 @@ import Select from '../../../components/ui/select';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { differenceInYears, isAfter } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
-import { users } from '../../../data/users';
 import { toast } from 'react-toastify';
 import userApi from '../../../api/userApi';
 import { format } from 'date-fns';
@@ -35,6 +34,8 @@ const typeOptions = [
 
 const CreateUpdateUser: React.FC = () => {
   const { id } = useParams();
+  const [staffCode, setStaffCode] = useState("");
+  const [username, setUsername] = useState("");
   const isEdit = !!id;
   const navigate = useNavigate();
   const {
@@ -59,20 +60,26 @@ const CreateUpdateUser: React.FC = () => {
   const watchUserType = watch("type");
 
   useEffect(() => {
-    if (isEdit) {
-      const user = users.find(u => u.id === Number(id));
-      if (user) {
-        setValue("firstName", user.firstName);
-        setValue("lastName", user.lastName);
-        setValue("dob", new Date("05/20/2004"));
-        setValue("gender", "MALE");
-        setValue("joinedDate", new Date(user.joinedDate));
-        setValue("type", "STAFF");
-
-        trigger();
+    const fetchUser = async () => {
+      if (isEdit) {
+        const response = await userApi.getDetailUser(Number(id));
+        const user = response.data;
+        if (user) {
+          setValue("firstName", user.firstName);
+          setValue("lastName", user.lastName);
+          setValue("dob", new Date(user.dob));
+          setValue("gender", user.gender as "MALE" | "FEMALE");
+          setValue("joinedDate", new Date(user.joinedDate));
+          setValue("type", user.role as "ADMIN" | "STAFF");
+          setValue("location", user.location);
+          setStaffCode(user.staffCode);
+          setUsername(user.username);
+          trigger();
+        }
       }
-    }
-  }, [id]);
+    };
+    fetchUser();
+  }, [id, isEdit, setValue, trigger]);
 
   const onSubmit: SubmitHandler<FormFields> = async (data: FormFields) => {
     const { firstName, lastName } = getValues();
@@ -93,23 +100,50 @@ const CreateUpdateUser: React.FC = () => {
 
     try {
       if (isEdit) {
-        // call edit api
+        await userApi.updateUser(Number(id), {
+          ...data,
+          dob: format(data.dob, 'yyyy-MM-dd'),
+          joinedDate: format(data.joinedDate, 'yyyy-MM-dd'),
+          role: data.type
+        });
+        toast.success("Updated successfully");
+        navigate("/manage-user", {
+          state: {
+            tempUser: {
+              ...data,
+              username,
+              staffCode,
+              fullName: `${data.firstName} ${data.lastName}`,
+              joinedDate: format(data.joinedDate, 'yyyy-MM-dd'),
+              role: data.type
+            }
+          }
+        });
       }
       else {
-        console.log(data);
-        await userApi.createUser({
+        const response = await userApi.createUser({
           ...data,
           dob: format(data.dob, 'yyyy-MM-dd'),
           joinedDate: format(data.joinedDate, 'yyyy-MM-dd')
         });
+        const newUser = response.data;
         toast.success("User created successfully");
-        navigate("/manage-user");
+        navigate("/manage-user", {
+          state: {
+            tempUser: {
+              ...data,
+              ...newUser,
+              id: 3
+            }
+          }
+        });
       }
     }
     catch (error) {
       console.log(error);
+      toast.error(`Failed to ${isEdit ? "edit" : "create"} user`);
     }
-    
+
   };
 
   return (
@@ -172,7 +206,12 @@ const CreateUpdateUser: React.FC = () => {
             }}
           />
         </div>
-        {errors.lastName && <p className='col-span-3 text-red-500 text-center -mt-6 -ml-6'>{errors.lastName.message}</p>}
+        {errors.lastName && (
+          <>
+            <div className='col-span-1'></div>
+            <p className='col-span-2 text-red-500 -mt-6'>{errors.lastName.message}</p>
+          </>
+        )}
 
 
 
@@ -263,7 +302,7 @@ const CreateUpdateUser: React.FC = () => {
         </div>
 
         {/* Location (only for admin) */}
-        {watchUserType === "ADMIN" && (
+        {watchUserType === "ADMIN" && !isEdit && (
           <>
             <label className='pr-4'>Location</label>
             <div className="col-span-2">
