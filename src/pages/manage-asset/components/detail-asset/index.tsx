@@ -1,15 +1,7 @@
-import { data } from "react-router-dom";
 import FormModal from "../../../../components/ui/form-modal";
 import FormModalGroup from "../../../../components/ui/form-modal-group";
 import Table, { Column } from "../../../../components/ui/table";
-
-interface History {
-    id: number,
-    date: string,
-    assignedTo: string,
-    assignedBy: string,
-    returnedDate: string
-};
+import { History } from "../../../../types/asset";
 
 interface DetailAssetData {
     assetCode: string,
@@ -28,7 +20,7 @@ interface DetailedAsssetProps {
 };
 
 const columns: Column<History>[] = [
-    { key: "date", title: "Date"},
+    { key: "assignedDate", title: "Date"},
     { key: "assignedTo", title: "Assigned to"},
     { key: "assignedBy", title: "Assigned by"},
     { key: "returnedDate", title: "Returned Date"}
@@ -53,7 +45,7 @@ const DetailAssetModal = (props: DetailedAsssetProps) => {
             <FormModalGroup title="Specification" value={specification} />
             <FormModalGroup 
                 title="History" 
-                value={ <Table columns={columns} data={history} /> } 
+                value={ <Table columns={columns} isSort={false} data={history} /> } 
             />
         </FormModal>
     )
