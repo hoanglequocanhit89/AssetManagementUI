@@ -66,8 +66,8 @@ const Table = <T extends { id: number }>({
 
     return (
         <div className="w-full grow overflow-y-auto">
-            <table className="w-full border-separate border-spacing-x-[10px] border-spacing-y-[10px]">
-                <thead>
+            <table className="relative w-full border-separate border-spacing-x-[10px] border-spacing-y-[10px]">
+                <thead className='w-full sticky top-0 bg-white'>
                     <tr>
                         {columns.map((column) => (
                             <th
@@ -112,7 +112,7 @@ const Table = <T extends { id: number }>({
                                         key={String(column.key)}
                                         className={[
                                             column.key === 'action' ? 'w-0 whitespace-nowrap text-center' : '',
-                                            'py-2 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate',
+                                            'pb-2 pt-4 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate',
                                             column.title ? 'border-b-2 border-[#e5e7eb]' : '',
                                         ]
                                             .filter(Boolean)
