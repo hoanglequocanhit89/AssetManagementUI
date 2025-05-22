@@ -23,9 +23,9 @@ type FormFields = {
 };
 
 const locationOptions = [
-  { value: 'HCM', label: 'Ho Chi Minh' },
-  { value: 'DN', label: 'Da Nang' },
-  { value: 'HN', label: 'Ha Noi' },
+  { value: 'HCM', label: 'HCM' },
+  { value: 'DN', label: 'DN' },
+  { value: 'HN', label: 'HN' },
 ];
 
 const typeOptions = [
@@ -152,7 +152,7 @@ const CreateUpdateUser: React.FC = () => {
           ...data,
           dob: format(data.dob, 'yyyy-MM-dd'),
           joinedDate: format(data.joinedDate, 'yyyy-MM-dd'),
-          adminId: 1
+          adminId: 1,
         });
         const newUser = response.data;
         toast.success("User created successfully");
