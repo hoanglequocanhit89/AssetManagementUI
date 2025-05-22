@@ -16,29 +16,31 @@ const getColumns = (handlers: {
     onEdit: (row: Asset) => void;
     onDelete: (row: Asset) => void;
 }): Column<Asset>[] => [
-    { key: 'assetCode', title: 'Asset Code' },
-    { key: 'name', title: 'Asset Name' },
-    { key: 'categoryName', title: 'Category' },
-    { key: 'state', title: 'State' },
-    { key: 'action', actions: [
-        { 
-            render: (row) => (
-                <button disabled={row.state === 'ASSIGNED'}>
-                    <i className={`fa-solid fa-pen ${row.state === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
-                </button>
-                ),
-            onClick: handlers.onEdit,
+        { key: 'assetCode', title: 'Asset Code' },
+        { key: 'name', title: 'Asset Name' },
+        { key: 'categoryName', title: 'Category' },
+        { key: 'state', title: 'State' },
+        {
+            key: 'action', actions: [
+                {
+                    render: (row) => (
+                        <button disabled={row.state === 'ASSIGNED'}>
+                            <i className={`fa-solid fa-pen ${row.state === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
+                        </button>
+                    ),
+                    onClick: handlers.onEdit,
+                },
+                {
+                    render: (row) => (
+                        <button disabled={row.state === 'ASSIGNED'}>
+                            <i className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${row.state === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
+                        </button>
+                    ),
+                    onClick: handlers.onDelete,
+                }
+            ]
         },
-        { 
-            render: (row) => (
-                <button disabled={row.state === 'ASSIGNED'}>
-                    <i className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${row.state === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
-                </button>
-                ), 
-            onClick: handlers.onDelete,
-        }
-    ]},
-];
+    ];
 
 const stateArr = [
     {
@@ -75,13 +77,13 @@ interface SortFilterProps {
 }
 
 const ManageAsset = () => {
-    
+
     const location = useLocation();
     const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
     const [viewDeleteModal, setViewDeleteModal] = React.useState<boolean>(false);
     const [stateFilter, setStateFilter] = React.useState<string>('');
     const [categoryFilter, setCategoryFilter] = React.useState<string>('');
-    const [pagingData, setPagingData] = React.useState<PagingProps>({currentPage: 0, totalPage: 0});
+    const [pagingData, setPagingData] = React.useState<PagingProps>({ currentPage: 0, totalPage: 0 });
     const [searchFilter, setSearchFilter] = React.useState<string>('');
     const [categoryList, setCategoryList] = React.useState<CategoryProps[]>([]);
     const [sortFilter, setSortFilter] = React.useState<SortFilterProps>({ sortBy: '', sortDir: '' });
@@ -89,9 +91,11 @@ const ManageAsset = () => {
     const [detailAssetData, setDetailAssetData] = React.useState<AssetDetail>();
     const debouncedKeyword = useDebounce(searchFilter, 500);
     const navigate = useNavigate();
-    
+
     const fetchAssetList = async () => {
         try {
+            const tempAsset = location.state?.tempAsset;
+            console.log(tempAsset);
             const response = await assetApi.getAssetList({
                 locationId: 1,
                 categoryName: categoryFilter,
@@ -105,12 +109,23 @@ const ManageAsset = () => {
                 }
             });
             console.log(response);
-            
-            if(response.data) {
-                setAssetList([...response.data.content]);
+
+            if (response.data) {
+                let assets = response.data.content;
+
+                if (tempAsset) {
+                    assets = assets.filter(a => a.id !== tempAsset.id);
+                    assets.unshift(tempAsset);
+                    console.log(assets);
+                    setAssetList(assets);
+                }
+                else {
+                    setAssetList([...response.data.content]);
+                }
+
                 setPagingData({
-                    ...pagingData, 
-                    currentPage: response.data.page, 
+                    ...pagingData,
+                    currentPage: response.data.page,
                     totalPage: response.data.totalPages
                 });
             }
@@ -123,9 +138,9 @@ const ManageAsset = () => {
         try {
             const response = await assetApi.getCategoryList();
             const cateArr = [...response.data].map(item => (
-                { value: item.name, label: item.name }    
+                { value: item.name, label: item.name }
             ));
-            response && setCategoryList([...cateArr, {value: '', label: 'All'}]);
+            response && setCategoryList([...cateArr, { value: '', label: 'All' }]);
         } catch (error) {
             console.log(error);
         }
@@ -134,19 +149,19 @@ const ManageAsset = () => {
     useEffect(() => {
         fetchAssetList();
     }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir]);
-    
+
     useEffect(() => {
         fetchCategoryList();
     }, []);
 
     const handleOnRowClick = async (id: number) => {
         console.log(id);
-        
+
         // setViewDetailModal(true);
         try {
-            const response = await assetApi.getAssetDetail(id);  
+            const response = await assetApi.getAssetDetail(id);
             console.log(response);
-                      
+
         } catch (error) {
             console.log(error);
         }
@@ -163,7 +178,7 @@ const ManageAsset = () => {
 
     const columns = getColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete 
+        onDelete: handleDelete
     });
 
     const handleSort = (key: string, direction: string) => {
@@ -174,23 +189,23 @@ const ManageAsset = () => {
         <>
             <ContentWrapper title={'Asset List'}>
                 <div className="d-flex gap-[20px] mb-[20px]">
-                    <SelectFilter 
-                        label="State" 
-                        options={stateArr} 
+                    <SelectFilter
+                        label="State"
+                        options={stateArr}
                         onSelect={(value) => setStateFilter(value)}
                         selected={stateFilter}
                     />
-                    <SelectFilter 
-                        label="Category" 
-                        options={categoryList} 
+                    <SelectFilter
+                        label="Category"
+                        options={categoryList}
                         onSelect={(value) => setCategoryFilter(value)}
                         selected={categoryFilter}
                     />
                     <SearchInput onSearch={(data) => setSearchFilter(data)} />
                     <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
                 </div>
-                <Table 
-                    columns={columns} 
+                <Table
+                    columns={columns}
                     data={assetList}
                     onSort={handleSort}
                     onRowClick={handleOnRowClick}
@@ -199,11 +214,11 @@ const ManageAsset = () => {
                     <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => pagingData.currentPage = page} />
                 </div>
             </ContentWrapper>
-            { viewDetailModal && 
-                <DetailAssetModal 
+            {viewDetailModal &&
+                <DetailAssetModal
                     closeModal={() => setViewDetailModal(false)}
                     data={{
-                        assetCode: 'a', 
+                        assetCode: 'a',
                         assetName: 'a',
                         category: 'a',
                         installedDate: 'a',
@@ -224,9 +239,9 @@ const ManageAsset = () => {
             }
             {
                 viewDeleteModal &&
-                <DeleteAssetModal 
+                <DeleteAssetModal
                     closeModal={() => setViewDeleteModal(false)}
-                    isDeletable= {false}
+                    isDeletable={false}
                 />
             }
         </>

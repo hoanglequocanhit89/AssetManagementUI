@@ -1,4 +1,4 @@
-import { Asset, AssetDetail, Category, CreateAssetRequest } from '../types/asset';
+import { Asset, AssetDetail, Category, CreateAssetRequest, EditAssetRequest, EditAssetResponse } from '../types/asset';
 import { BaseResponse, BaseParams, BaseResponseWithoutPagination } from './../types/common';
 import axiosClients from './axiosClients';
 
@@ -33,13 +33,23 @@ const assetApi = {
 
     return axiosClients.get(url);
   },
+
   createAsset(adminId: number, request: CreateAssetRequest): Promise<BaseResponseWithoutPagination<Asset>> {
     return axiosClients.post("assets", request, {
       params: {
         adminId
       }
     });
-  }
+  },
+
+  editAsset(adminId: number, assetId: number, data: EditAssetRequest): Promise<BaseResponseWithoutPagination<EditAssetResponse>> {
+    return axiosClients.put(`assets/${assetId}`, data, {
+      params: {
+        adminId
+      }
+    })
+  },
+  
 }
 
 export default assetApi;
