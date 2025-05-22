@@ -18,7 +18,7 @@ const pathItems = [
         path: 'manage-asset/create',
     },
     {
-        title: 'Eit asset',
+        title: 'Edit asset',
         path: 'manage-asset/edit/',
     }
 ];
