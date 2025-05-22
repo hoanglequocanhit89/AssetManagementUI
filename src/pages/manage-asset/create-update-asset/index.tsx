@@ -153,7 +153,7 @@ const CreateUpdateAsset = () => {
     const nameExists = categories.some(c => c.name.toLowerCase() === newCategoryName.toLowerCase());
 
     if (nameExists) {
-      setCategoryError("Category is already existed. Please enter a different category");
+      toast.error("Category is already existed. Please enter a different category");
       return;
     }
 
@@ -163,6 +163,7 @@ const CreateUpdateAsset = () => {
         prefix: newPrefix
       });
 
+      toast.success("Category created successfully");
       const newCategory = response.data;
       setNewCategoryName('');
       setNewPrefix('');
@@ -170,14 +171,13 @@ const CreateUpdateAsset = () => {
       setShowAddCategoryForm(false);
       setValue("category", newCategory.name);
       setCategoryId(newCategory.id);
-
     }
     catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage = (error.response?.data as { message?: string })?.message || "Server error";
-        setCategoryError(errorMessage);
+        toast.error(errorMessage);
       } else {
-        setCategoryError("An unexpected error occurred");
+        toast.error("An unexpected error occurred");
       }
     }
 
