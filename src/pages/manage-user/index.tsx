@@ -20,7 +20,19 @@ const getColumns = (handlers: {
         { key: 'fullName', title: 'Full Name' },
         { key: 'username', title: 'Username' },
         { key: 'joinedDate', title: 'Joined Date' },
-        { key: 'role', title: 'Type' },
+        {
+            key: 'role', title: 'Type',
+            render: (value) => {
+                const strValue = String(value);
+                return (
+                    <p>
+                        {strValue
+                            ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase()
+                            : ""}
+                    </p>
+                );
+            }
+        },
         {
             key: 'action',
             actions: [
