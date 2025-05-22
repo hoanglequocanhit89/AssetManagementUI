@@ -180,6 +180,7 @@ const ManageAsset = () => {
 
     const handleOnRowClick = async (id: number) => {
         setViewDetailModal(true);
+        window.history.pushState({ modal: true }, "");
         try {
             const response = await assetApi.getAssetDetail(id);  
             setDetailAssetData({...response.data});
@@ -206,6 +207,20 @@ const ManageAsset = () => {
     const handleSort = (key: string, direction: string) => {
         setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction })
     };
+
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (viewDetailModal) {
+                setViewDetailModal(false);
+            }
+            if (viewDeleteModal) {
+                setViewDeleteModal(false);
+            }
+        };
+
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, [viewDetailModal, viewDeleteModal]);
 
     return (
         <>
