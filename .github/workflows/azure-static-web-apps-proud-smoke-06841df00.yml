@@ -47,6 +47,8 @@ jobs:
           ###### End of Repository/Build Configurations ######
     env:
       NODE_VERSION: '20.11.1'
+      CI: false  # TODO  Add this line to prevent treating warnings as errors
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
