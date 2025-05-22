@@ -33,6 +33,7 @@ const CreateUpdateAsset = () => {
     setValue,
     watch,
     trigger,
+    setError,
     formState: { errors, isValid }
   } = useForm<FormFields>({
     mode: 'onChange',
@@ -142,6 +143,12 @@ const CreateUpdateAsset = () => {
       if (axios.isAxiosError(error)) {
         const errorMessage = (error.response?.data as { message?: string })?.message || "Server error";
         toast.error(errorMessage);
+        if (errorMessage === "Asset name already exists in this location. Please choose a different name.") {
+          setError("name", {
+            type: "custom",
+            message: "This field is unique"
+          });
+        }
       } else {
         toast.error("An unexpected error occurred");
       }
@@ -228,10 +235,6 @@ const CreateUpdateAsset = () => {
                     value: 255,
                     message: "You have reached your maximum limit of characters allowed"
                   },
-                  pattern: {
-                    value: /^[a-zA-Z0-9\s\-_,.]*$/,
-                    message: "Not allow special character"
-                  }
                 })}
               />
               {errors.name && <p className="text-red-500">{errors.name.message}</p>}
