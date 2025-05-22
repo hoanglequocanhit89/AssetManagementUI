@@ -89,6 +89,8 @@ const ManageUser = () => {
     const handleClickRow = (id: number) => {
         setShowModal(true)
         setUserId(id)
+        // Push new state to browser history
+        window.history.pushState({ modal: true }, "");
     }
 
     const handleEdit = (row: User) => {
@@ -142,6 +144,20 @@ const ManageUser = () => {
             orderBy
         })
     }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage])
+
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (showModal) {
+                setShowModal(false);
+            }
+            if (showDisableModal) {
+                setShowDisableModal(false);
+            }
+        };
+
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, [showModal, showDisableModal]);
 
     return (
         <>
