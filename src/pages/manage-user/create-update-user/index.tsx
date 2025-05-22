@@ -153,6 +153,7 @@ const CreateUpdateUser: React.FC = () => {
           dob: format(data.dob, 'yyyy-MM-dd'),
           joinedDate: format(data.joinedDate, 'yyyy-MM-dd'),
           adminId: 1,
+          location: data.location
         });
         const newUser = response.data;
         toast.success("User created successfully");
