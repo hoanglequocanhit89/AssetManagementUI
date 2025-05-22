@@ -6,7 +6,7 @@ import SelectFilter from "../../components/ui/select-filter";
 import SearchInput from "../../components/ui/search";
 import Button from "../../components/ui/button";
 import Pagination from "../../components/ui/pagination";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import DeleteAssetModal from "./components/delete-asset";
 import assetApi from "../../api/assetApi";
 import { Asset, AssetDetail } from "../../types/asset";
@@ -77,39 +77,52 @@ interface SortFilterProps {
 }
 
 const ManageAsset = () => {
-
+    
     const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
     const [viewDeleteModal, setViewDeleteModal] = React.useState<boolean>(false);
-    const [stateFilter, setStateFilter] = React.useState<string>('');
-    const [categoryFilter, setCategoryFilter] = React.useState<string>('');
-    const [pagingData, setPagingData] = React.useState<PagingProps>({ currentPage: 0, totalPage: 0 });
-    const [searchFilter, setSearchFilter] = React.useState<string>('');
+    const [editAssetId, setEditAssetId] = React.useState<number>(0);
+    const [isAssetDeletable, setIsAssetDeletable] = React.useState<boolean>(false);
+    const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get('states') || '');
+    const [categoryFilter, setCategoryFilter] = React.useState<string>(searchParams.get('categoryName') || '');
+    const [pagingData, setPagingData] = React.useState<PagingProps>({currentPage: Number(searchParams.get('page')) || 1, totalPage: 0});
+    const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get('keyword') || '');
     const [categoryList, setCategoryList] = React.useState<CategoryProps[]>([]);
-    const [sortFilter, setSortFilter] = React.useState<SortFilterProps>({ sortBy: '', sortDir: '' });
+    const [sortFilter, setSortFilter] = React.useState<SortFilterProps>({ sortBy: searchParams.get('sortBy') || '', sortDir: searchParams.get('sortDir') || '' });
     const [assetList, setAssetList] = React.useState<Asset[]>([]);
-    const [detailAssetData, setDetailAssetData] = React.useState<AssetDetail>();
+    const [detailAssetData, setDetailAssetData] = React.useState<AssetDetail>({
+        id: 0,
+        canDelete: false,
+        assetCode: '',
+        assignments: [],
+        categoryName: '',
+        status: '',
+        category: '',
+        installedDate: '',
+        location: '',
+        name: '',
+        specification: '',
+        state: ''
+    });
     const debouncedKeyword = useDebounce(searchFilter, 500);
     const navigate = useNavigate();
 
     const fetchAssetList = async () => {
         try {
             const tempAsset = location.state?.tempAsset;
-            console.log(tempAsset);
             const response = await assetApi.getAssetList({
                 locationId: 1,
                 categoryName: categoryFilter,
                 keyword: searchFilter,
                 states: stateFilter,
                 params: {
-                    page: 0,
+                    page: pagingData.currentPage - 1,
                     size: 20,
                     sortBy: sortFilter.sortBy,
                     sortDir: sortFilter.sortDir
                 }
             });
-            console.log(response);
-
             if (response.data) {
                 let assets = response.data.content;
 
@@ -125,7 +138,6 @@ const ManageAsset = () => {
 
                 setPagingData({
                     ...pagingData,
-                    currentPage: response.data.page,
                     totalPage: response.data.totalPages
                 });
             }
@@ -148,20 +160,29 @@ const ManageAsset = () => {
 
     useEffect(() => {
         fetchAssetList();
-    }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir]);
+    }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir, pagingData.currentPage]);
 
     useEffect(() => {
         fetchCategoryList();
     }, []);
 
+    useEffect(() => {
+        setSearchParams({
+            states: stateFilter,
+            categoryName: categoryFilter,
+            keyword: searchFilter,
+            page: pagingData.currentPage.toString(),
+            sortBy: sortFilter.sortBy,
+            sortDir: sortFilter.sortDir
+        });
+        fetchAssetList();
+    }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir]);
+
     const handleOnRowClick = async (id: number) => {
-        console.log(id);
-
-        // setViewDetailModal(true);
+        setViewDetailModal(true);
         try {
-            const response = await assetApi.getAssetDetail(id);
-            console.log(response);
-
+            const response = await assetApi.getAssetDetail(id);  
+            setDetailAssetData({...response.data});
         } catch (error) {
             console.log(error);
         }
@@ -171,9 +192,10 @@ const ManageAsset = () => {
         navigate(`edit/${row.id}`);
     };
 
-    const handleDelete = () => {
+    const handleDelete = (row: Asset) => {
+        setEditAssetId(row.id);
+        setIsAssetDeletable(row.canDelete);
         setViewDeleteModal(true);
-        console.log("click delete");
     };
 
     const columns = getColumns({
@@ -183,7 +205,7 @@ const ManageAsset = () => {
 
     const handleSort = (key: string, direction: string) => {
         setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction })
-    }
+    };
 
     return (
         <>
@@ -207,33 +229,20 @@ const ManageAsset = () => {
                 <Table
                     columns={columns}
                     data={assetList}
+                    sortBy={sortFilter.sortBy as keyof Asset}
+                    orderBy={sortFilter.sortDir as keyof Asset}
                     onSort={handleSort}
                     onRowClick={handleOnRowClick}
                 />
                 <div className="self-end mt-[20px]">
-                    <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => pagingData.currentPage = page} />
+                    <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })} />
                 </div>
             </ContentWrapper>
             {viewDetailModal &&
                 <DetailAssetModal
                     closeModal={() => setViewDetailModal(false)}
-                    data={{
-                        assetCode: 'a',
-                        assetName: 'a',
-                        category: 'a',
-                        installedDate: 'a',
-                        state: 'a',
-                        location: 'a',
-                        specification: 'a',
-                        history: [
-                            {
-                                id: 1,
-                                assignedDate: 'a',
-                                assignedTo: 'a',
-                                assignedBy: 'a',
-                                returnedDate: 'a'
-                            }
-                        ]
+                    data={{...detailAssetData,
+                        assignments: detailAssetData?.assignments.map((item, idx) => ({...item, id: idx}))
                     }}
                 />
             }
@@ -241,7 +250,8 @@ const ManageAsset = () => {
                 viewDeleteModal &&
                 <DeleteAssetModal
                     closeModal={() => setViewDeleteModal(false)}
-                    isDeletable={false}
+                    id={editAssetId}
+                    isDeletable= {isAssetDeletable}
                 />
             }
         </>

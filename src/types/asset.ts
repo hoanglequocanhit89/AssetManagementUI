@@ -6,6 +6,7 @@ export interface Asset {
     state: string;
     status: string;
     category: string;
+    canDelete: boolean
 };
 
 export interface Category {
@@ -27,6 +28,8 @@ export interface Category {
 }
 
 export interface AssetDetail extends Asset {
+    category: string,
+    status: string,
     installedDate: string,
     location: string,
     specification: string,

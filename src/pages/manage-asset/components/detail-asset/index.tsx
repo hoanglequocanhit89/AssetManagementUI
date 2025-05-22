@@ -1,22 +1,11 @@
 import FormModal from "../../../../components/ui/form-modal";
 import FormModalGroup from "../../../../components/ui/form-modal-group";
 import Table, { Column } from "../../../../components/ui/table";
-import { History } from "../../../../types/asset";
-
-interface DetailAssetData {
-    assetCode: string,
-    assetName: string,
-    category: string,
-    installedDate: string,
-    state: string,
-    location: string,
-    specification: string,
-    history: History[]
-};
+import { AssetDetail, History } from "../../../../types/asset";
 
 interface DetailedAsssetProps {
     closeModal: () => void
-    data: DetailAssetData
+    data: AssetDetail
 };
 
 const columns: Column<History>[] = [
@@ -28,7 +17,7 @@ const columns: Column<History>[] = [
 
 const DetailAssetModal = (props: DetailedAsssetProps) => {
 
-    const { assetCode, assetName, category, installedDate, state, location, specification, history } = props.data;
+    const { assetCode, name, category, installedDate, status, location, specification, assignments } = props.data;
 
     return (
         <FormModal 
@@ -37,15 +26,15 @@ const DetailAssetModal = (props: DetailedAsssetProps) => {
             closeModal={props.closeModal}
         >
             <FormModalGroup title="Asset Code" value={assetCode} />
-            <FormModalGroup title="Asset Name" value={assetName} />
+            <FormModalGroup title="Asset Name" value={name} />
             <FormModalGroup title="Category" value={category} />
             <FormModalGroup title="Installed Date" value={installedDate} />
-            <FormModalGroup title="State" value={state} />
+            <FormModalGroup title="State" value={status} />
             <FormModalGroup title="Location" value={location} />
             <FormModalGroup title="Specification" value={specification} />
             <FormModalGroup 
                 title="History" 
-                value={ <Table columns={columns} isSort={false} data={history} /> } 
+                value={ <Table columns={columns} isSort={false} data={assignments} /> } 
             />
         </FormModal>
     )
