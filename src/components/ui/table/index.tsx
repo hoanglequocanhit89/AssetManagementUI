@@ -121,9 +121,12 @@ const Table = <T extends { id: number }>({
                                     >
                                         {column.key === 'action' && column.actions ? (
                                             <div className="flex justify-end w-full">
-                                                <div className="flex justify-between gap-6">
+                                                <div className="flex justify-between gap-4"
+                                                    onClick={e => e.stopPropagation()}
+                                                >
                                                     {column.actions.map((action, index) => (
                                                         <div
+                                                            className="mx-2 cursor-pointer"
                                                             key={index}
                                                             onClick={(e: MouseEvent) => {
                                                                 e.stopPropagation();
