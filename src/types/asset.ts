@@ -3,7 +3,9 @@ export interface Asset {
     assetCode: string,
     name: string,
     categoryName: string,
-    state: string
+    state: string;
+    status: string;
+    category: string;
 };
 
 export interface Category {
@@ -31,23 +33,18 @@ export interface AssetDetail extends Asset {
     assignments: History[]
 }
 
-
-// id: number;
-// name: string;
-// assetCode: string;
-// specification: string;
-// installedDate: string;
-// state: "AVAILABLE" | "NOT_AVAILABLE" | "ASSIGNED" | "WAITING" | "RECYCLED";
-// categoryId ?: number;
-// categoryName: string;
-// locationName: string;
-// }
-
-// export interface CreateAssetRequest = Omit<Asset, "id" | "assetCode" | "categoryName" | "locationName">
 export interface CreateAssetRequest {
     name: string;
     specification: string;
     installedDate: string;
     state: "AVAILABLE" | "NOT_AVAILABLE" | "ASSIGNED" | "WAITING" | "RECYCLED";
     categoryId?: number;
+}
+
+export type EditAssetRequest = Omit<CreateAssetRequest, "categoryId">
+
+export interface EditAssetResponse extends CreateAssetRequest {
+    assetCode: string;
+    categoryName: string;
+    locationName: string;
 }

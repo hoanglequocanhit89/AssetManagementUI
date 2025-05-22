@@ -113,7 +113,8 @@ const ManageUser = () => {
             type: selectedType
         }, {
             page: currentPage - 1,
-            size: tempUser ? 19 : 20,
+            // size: tempUser ? 19 : 20,
+            size: 20,
             sortBy: sortFieldForApi,
             sortDir: orderBy
         });
