@@ -1,9 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import assetApi from "../../../../api/assetApi";
 import Button from "../../../../components/ui/button";
-import FormModal from "../../../../components/ui/form-modal"
+import FormModal from "../../../../components/ui/form-modal";
+import { toast } from 'react-toastify';
 
 interface DeleteAssetProps {
+    id: number,
     isDeletable: boolean,
     closeModal: () => void
 }
@@ -11,6 +14,15 @@ interface DeleteAssetProps {
 const DeleteAssetModal = (props: DeleteAssetProps) => {
     
     const [isDeletable, setIsDeletable] = React.useState<boolean>(props.isDeletable);
+    const navigate = useNavigate();
+
+    const handleDeleteAsset = async () => {
+        const response = await assetApi.deleteAsset(props.id);
+        if(response) {
+            toast.success(response.message);
+            props.closeModal();
+        }
+    };
 
     return (
         <FormModal
@@ -23,17 +35,17 @@ const DeleteAssetModal = (props: DeleteAssetProps) => {
             <>
                 <span>Do you want to delete this asset?</span>
                 <div className="mt-[40px] flex gap-[20px]">
-                    <Button text="Delete" color="primary" onClick={() => console.log('delete asset')} />
+                    <Button text="Delete" color="primary" onClick={handleDeleteAsset} />
                     <Button text="Cancel" color="outline" onClick={props.closeModal} />
                 </div>
             </>
             : 
             <>
                 <p className="max-w-[480px]">
-                    Cannot delete the asset because it belongs to one or more historical assignments.
-                    If the asset is not able to be used anymore, please update its state in
+                    Cannot delete the asset because it belongs to one or <br/> more historical assignments.
+                    If the asset is not able to <br/> be used anymore, please update its state in 
                 </p>
-                <Link to={"/edit-asset"} content="Edit Asset page" />
+                <div onClick={() => navigate(`edit/${props.id}`)} className="text-center cursor-pointer"><p className="underline text-blue-400">Edit Asset page</p></div>
             </>
         }
         </ FormModal>

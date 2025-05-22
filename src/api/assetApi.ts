@@ -50,6 +50,10 @@ const assetApi = {
     })
   },
   
+    deleteAsset(assetId: number): Promise<BaseResponseWithoutPagination<string>> {
+        const url = `assets/${assetId}`;
+        return axiosClients.delete(url);
+    },
 }
 
 export default assetApi;

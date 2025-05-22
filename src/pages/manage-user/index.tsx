@@ -141,7 +141,7 @@ const ManageUser = () => {
             sortBy,
             orderBy
         })
-    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage, setSearchParams])
+    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage])
 
     return (
         <>
@@ -154,6 +154,7 @@ const ManageUser = () => {
                             selected={selectedType}
                             onSelect={(value) => {
                                 setSelectedType(value)
+                                setCurrentPage(1)
                             }}
                         />
                     </div>
