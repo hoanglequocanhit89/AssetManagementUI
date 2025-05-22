@@ -1,38 +1,45 @@
-import { Asset, AssetDetail, Category } from '../types/asset';
+import { Asset, AssetDetail, Category, CreateAssetRequest } from '../types/asset';
 import { BaseResponse, BaseParams, BaseResponseWithoutPagination } from './../types/common';
 import axiosClients from './axiosClients';
 
 interface AssetParams {
-    locationId: number,
-    keyword: string,
-    categoryName: string,
-    states: string,
-    params: BaseParams
+  locationId: number,
+  keyword: string,
+  categoryName: string,
+  states: string,
+  params: BaseParams
 }
 
 const assetApi = {
-    getAssetList(props: AssetParams): Promise<BaseResponse<Asset>> {
-        
-        const { locationId, keyword, categoryName, states, params } = props;  
-        
-        const url = `assets?locationId=${locationId}&keyword=${keyword}&categoryName=${categoryName}&states=${states}`;
+  getAssetList(props: AssetParams): Promise<BaseResponse<Asset>> {
 
-        return axiosClients.get(url, { params: params});
-    },
+    const { locationId, keyword, categoryName, states, params } = props;
 
-    getAssetDetail(assetId: number): Promise<BaseResponseWithoutPagination<AssetDetail>> {
+    const url = `assets?locationId=${locationId}&keyword=${keyword}&categoryName=${categoryName}&states=${states}`;
 
-        const url = `assets/${assetId}`;
-        
-        return axiosClients.get(url);
-    },
+    return axiosClients.get(url, { params: params });
+  },
 
-    getCategoryList(): Promise<BaseResponseWithoutPagination<Category[]>> {
-        
-        const url = 'categories'
-        
-        return axiosClients.get(url);
-    }
+  getAssetDetail(assetId: number): Promise<BaseResponseWithoutPagination<AssetDetail>> {
+
+    const url = `assets/${assetId}`;
+
+    return axiosClients.get(url);
+  },
+
+  getCategoryList(): Promise<BaseResponseWithoutPagination<Category[]>> {
+
+    const url = 'categories'
+
+    return axiosClients.get(url);
+  },
+  createAsset(adminId: number, request: CreateAssetRequest): Promise<BaseResponseWithoutPagination<Asset>> {
+    return axiosClients.post("assets", request, {
+      params: {
+        adminId
+      }
+    });
+  }
 }
 
 export default assetApi;

@@ -34,6 +34,7 @@ export interface CreateUserRequest {
 }
 
 export interface CreateUserResponse {
+    id: number;
     staffCode: string;
     username: string;
     joinedDate: Date;
