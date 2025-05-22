@@ -136,14 +136,30 @@ const ManageUser = () => {
     }, [selectedType, sortFieldForApi, orderBy, currentPage, debouncedKeyword])
 
     useEffect(() => {
-        setSearchParams({
-            keyword: debouncedKeyword,
-            type: selectedType,
-            page: currentPage.toString(),
-            sortBy,
-            orderBy
-        })
+
+        const params = new URLSearchParams();
+        if (debouncedKeyword) params.set("keyword", debouncedKeyword);
+        if (selectedType) params.set("type", selectedType);
+        params.set("page", currentPage.toString());
+        params.set("sortBy", sortBy);
+        params.set("orderBy", orderBy);
+
+        const newSearch = params.toString();
+        if (location.search !== `?${newSearch}`) {
+            navigate({
+                pathname: location.pathname,
+                search: newSearch
+            }, { replace: false });
+        }
     }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage])
+
+    useEffect(() => {
+        setSelectedType(searchParams.get("type") || "");
+        setTextSearch(searchParams.get("keyword") || "");
+        setSortBy(searchParams.get("sortBy") || "firstName");
+        setOrderBy(searchParams.get("orderBy") || "asc");
+        setCurrentPage(Number(searchParams.get("page")) || 1);
+    }, [searchParams]);
 
     useEffect(() => {
         const handlePopState = (event: PopStateEvent) => {
