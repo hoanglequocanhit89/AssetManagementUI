@@ -183,7 +183,7 @@ const ManageUser = () => {
                     orderBy={orderBy}
                 />
 
-                <div className="flex justify-end w-full m-auto">
+                <div className="flex justify-end w-full m-auto mt-[20px]">
                     <Pagination
                         currentPage={currentPage}
                         totalPages={userData?.data.totalPages ?? 0}

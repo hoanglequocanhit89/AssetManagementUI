@@ -91,65 +91,55 @@ const Table = <T extends { id: number }>({
                     </tr>
                 </thead>
                 <tbody>
-                    {data.length === 0 ? (
-                        <tr>
-                            <td
-                                colSpan={columns.length}
-                                className="text-center py-4 text-gray-500 text-[1.6rem]"
-                            >
-                                No Data
-                            </td>
-                        </tr>
-                    ) :
-                        (data.map((row, index) => (
-                            <tr
-                                key={row.id ?? index}
-                                className="cursor-pointer"
-                                onClick={() => onRowClick?.(row.id)}
-                            >
-                                {columns.map((column) => (
-                                    <td
-                                        key={String(column.key)}
-                                        className={[
-                                            column.key === 'action' ? 'w-0 whitespace-nowrap text-center' : '',
-                                            'pb-2 pt-4 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate',
-                                            column.title ? 'border-b-2 border-[#e5e7eb]' : '',
-                                        ]
-                                            .filter(Boolean)
-                                            .join(' ')}
-                                        title={column.key !== 'action' ? String(row[column.key as keyof T]) : undefined}
-                                    >
-                                        {column.key === 'action' && column.actions ? (
-                                            <div className="flex justify-end w-full">
-                                                <div className="flex justify-between gap-4"
-                                                    onClick={e => e.stopPropagation()}
-                                                >
-                                                    {column.actions.map((action, index) => (
-                                                        <div
-                                                            className="mx-2 cursor-pointer"
-                                                            key={index}
-                                                            onClick={(e: MouseEvent) => {
-                                                                e.stopPropagation();
-                                                                action.onClick(row);
-                                                            }}
-                                                        >
-                                                            {typeof action.render === 'function'
-                                                                ? action.render(row)
-                                                                : action.render}
-                                                        </div>
-                                                    ))}
-                                                </div>
+                    {(data.map((row, index) => (
+                        <tr
+                            key={row.id ?? index}
+                            className="cursor-pointer"
+                            onClick={() => onRowClick?.(row.id)}
+                        >
+                            {columns.map((column) => (
+                                <td
+                                    key={String(column.key)}
+                                    className={[
+                                        column.key === 'action' ? 'w-0 whitespace-nowrap text-center' : '',
+                                        'pb-2 pt-4 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate',
+                                        column.title ? 'border-b-2 border-[#e5e7eb]' : '',
+                                    ]
+                                        .filter(Boolean)
+                                        .join(' ')}
+                                    title={column.key !== 'action' ? String(row[column.key as keyof T]) : undefined}
+                                >
+                                    {column.key === 'action' && column.actions ? (
+                                        <div className="flex justify-end w-full">
+                                            <div className="flex justify-between gap-4"
+                                                onClick={e => e.stopPropagation()}
+                                            >
+                                                {column.actions.map((action, index) => (
+                                                    <div
+                                                        className="mx-2 cursor-pointer"
+                                                        key={index}
+                                                        onClick={(e: MouseEvent) => {
+                                                            e.stopPropagation();
+                                                            action.onClick(row);
+                                                        }}
+                                                    >
+                                                        {typeof action.render === 'function'
+                                                            ? action.render(row)
+                                                            : action.render}
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ) : column.render ? (
-                                            column.render(row[column.key as keyof T], row)
-                                        ) : (
-                                            String(row[column.key as keyof T])
-                                        )}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))
-                        )}
+                                        </div>
+                                    ) : column.render ? (
+                                        column.render(row[column.key as keyof T], row)
+                                    ) : (
+                                        String(row[column.key as keyof T])
+                                    )}
+                                </td>
+                            ))}
+                        </tr>
+                    ))
+                    )}
                 </tbody>
             </table>
         </div>
