@@ -187,7 +187,7 @@ const ManageAsset = () => {
         params.set("categoryName", categoryFilter);
         params.set("page", pagingData.currentPage.toString());
         params.set("sortBy", sortFilter.sortBy);
-        params.set("orderBy", sortFilter.sortDir);
+        params.set("sortDir", sortFilter.sortDir);
         const newSearch = params.toString();
 
         if (location.search !== `?${newSearch}`) {
@@ -290,7 +290,7 @@ const ManageAsset = () => {
                 <DeleteAssetModal
                     closeModal={() => setViewDeleteModal(false)}
                     id={editAssetId}
-                    isDeletable= {isAssetDeletable}
+                    isDeletable={isAssetDeletable}
                     setAssetList={(id) => setAssetList([...assetList.filter(item => item.id !== id)])}
                 />
             }
