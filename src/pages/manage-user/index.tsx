@@ -56,7 +56,7 @@ const options = [
 
 const ManageUser = () => {
 
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
 
