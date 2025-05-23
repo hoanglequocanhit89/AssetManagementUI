@@ -162,7 +162,8 @@ const CreateUpdateUser: React.FC = () => {
             tempUser: {
               ...data,
               ...newUser,
-              id: newUser.id
+              id: newUser.id,
+              canDisable: true
             }
           }
         });
