@@ -20,7 +20,7 @@ const getColumns = (handlers: {
         { key: 'assetCode', title: 'Asset Code' },
         { key: 'name', title: 'Asset Name' },
         { key: 'categoryName', title: 'Category' },
-        { key: 'state', title: 'State' },
+        { key: 'status', title: 'State' },
         {
             key: 'action', actions: [
                 {
@@ -55,6 +55,14 @@ const stateArr = [
     {
         value: 'ASSIGNED',
         label: 'Assigned'
+    },
+    {
+        value: 'RECYCLED',
+        label: 'Recycled'
+    },
+    {
+        value: 'WAITING',
+        label: 'Waiting'
     },
     {
         value: '',
@@ -134,6 +142,7 @@ const ManageAsset = () => {
                     setAssetList(assets);
                 }
                 else {
+
                     setAssetList([...response.data.content]);
                 }
 
@@ -194,7 +203,7 @@ const ManageAsset = () => {
         navigate(`edit/${row.id}`);
     };
 
-    const handleDelete = (row: Asset) => {
+    const handleDelete = async (row: Asset) => {
         setEditAssetId(row.id);
         setIsAssetDeletable(row.canDelete);
         setViewDeleteModal(true);
@@ -269,7 +278,8 @@ const ManageAsset = () => {
                 <DeleteAssetModal
                     closeModal={() => setViewDeleteModal(false)}
                     id={editAssetId}
-                    isDeletable={isAssetDeletable}
+                    isDeletable= {isAssetDeletable}
+                    setAssetList={(id) => setAssetList([...assetList.filter(item => item.id !== id)])}
                 />
             }
         </>

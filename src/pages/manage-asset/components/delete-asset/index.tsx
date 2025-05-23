@@ -8,7 +8,8 @@ import { toast } from 'react-toastify';
 interface DeleteAssetProps {
     id: number,
     isDeletable: boolean,
-    closeModal: () => void
+    closeModal: () => void,
+    setAssetList: (id: number) => void
 }
 
 const DeleteAssetModal = (props: DeleteAssetProps) => {
@@ -21,6 +22,7 @@ const DeleteAssetModal = (props: DeleteAssetProps) => {
         if(response) {
             toast.success(response.message);
             props.closeModal();
+            props.setAssetList(props.id);
         }
     };
 
