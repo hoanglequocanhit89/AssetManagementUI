@@ -151,8 +151,9 @@ const ManageUser = () => {
                 search: newSearch
             }, { replace: false });
         }
-    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage])
+    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage]);
 
+    
     useEffect(() => {
         setSelectedType(searchParams.get("type") || "");
         setTextSearch(searchParams.get("keyword") || "");
