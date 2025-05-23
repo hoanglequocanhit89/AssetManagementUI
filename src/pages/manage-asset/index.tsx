@@ -25,16 +25,16 @@ const getColumns = (handlers: {
             key: 'action', actions: [
                 {
                     render: (row) => (
-                        <button disabled={row.state === 'ASSIGNED'}>
-                            <i className={`fa-solid fa-pen ${row.state === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
+                        <button disabled={row.status === 'ASSIGNED'}>
+                            <i className={`fa-solid fa-pen ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
                         </button>
                     ),
                     onClick: handlers.onEdit,
                 },
                 {
                     render: (row) => (
-                        <button disabled={row.state === 'ASSIGNED'}>
-                            <i className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${row.state === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
+                        <button disabled={row.status === 'ASSIGNED'}>
+                            <i className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
                         </button>
                     ),
                     onClick: handlers.onDelete,
