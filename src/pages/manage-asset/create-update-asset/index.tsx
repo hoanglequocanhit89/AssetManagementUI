@@ -158,16 +158,26 @@ const CreateUpdateAsset = () => {
   const handleAddCategory = async () => {
     setCategoryError('');
     const nameExists = categories.some(c => c.name.toLowerCase() === newCategoryName.toLowerCase());
+  
+    if (newCategoryName.trim().length === 0) {
+      setCategoryError("Category name is required");
+      return;
+    }
 
-    if (nameExists) {
-      toast.error("Category is already existed. Please enter a different category");
+    if (newPrefix.trim().length === 0) {
+      setCategoryError("Prefix is required")
+      return;
+    }
+
+    if (newPrefix.trim().length > 2) {
+      setCategoryError("Prefix must be at most 2 characters long");
       return;
     }
 
     try {
       const response = await categoryApi.createCategory({
-        name: newCategoryName,
-        prefix: newPrefix
+        name: newCategoryName.trim(),
+        prefix: newPrefix.trim()
       });
 
       toast.success("Category created successfully");

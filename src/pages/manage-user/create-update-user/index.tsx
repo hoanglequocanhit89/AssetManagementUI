@@ -299,7 +299,7 @@ const CreateUpdateUser: React.FC = () => {
                 rules={{
                   required: "This field is required",
                   validate: (value) => {
-                    if (!watchDOB || isBefore(value, watchDOB)) {
+                    if (isBefore(value, watchDOB)) {
                       return "Joined date is not later than Date of Birth. Please select a different date";
                     }
                     const day = new Date(value).getDay(); // 0: Sunday, 6: Saturday
