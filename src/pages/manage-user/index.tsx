@@ -56,7 +56,7 @@ const options = [
 
 const ManageUser = () => {
 
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -89,6 +89,8 @@ const ManageUser = () => {
     const handleClickRow = (id: number) => {
         setShowModal(true)
         setUserId(id)
+        // Push new state to browser history
+        window.history.pushState({ modal: true }, "");
     }
 
     const handleEdit = (row: User) => {
@@ -113,7 +115,8 @@ const ManageUser = () => {
             type: selectedType
         }, {
             page: currentPage - 1,
-            size: tempUser ? 19 : 20,
+            // size: tempUser ? 19 : 20,
+            size: 20,
             sortBy: sortFieldForApi,
             sortDir: orderBy
         });
@@ -133,19 +136,49 @@ const ManageUser = () => {
     }, [selectedType, sortFieldForApi, orderBy, currentPage, debouncedKeyword])
 
     useEffect(() => {
-        setSearchParams({
-            keyword: debouncedKeyword,
-            type: selectedType,
-            page: currentPage.toString(),
-            sortBy,
-            orderBy
-        })
-    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage, setSearchParams])
+
+        const params = new URLSearchParams();
+        if (debouncedKeyword) params.set("keyword", debouncedKeyword);
+        if (selectedType) params.set("type", selectedType);
+        params.set("page", currentPage.toString());
+        params.set("sortBy", sortBy);
+        params.set("orderBy", orderBy);
+
+        const newSearch = params.toString();
+        if (location.search !== `?${newSearch}`) {
+            navigate({
+                pathname: location.pathname,
+                search: newSearch
+            }, { replace: false });
+        }
+    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage]);
+
+    
+    useEffect(() => {
+        setSelectedType(searchParams.get("type") || "");
+        setTextSearch(searchParams.get("keyword") || "");
+        setSortBy(searchParams.get("sortBy") || "firstName");
+        setOrderBy(searchParams.get("orderBy") || "asc");
+        setCurrentPage(Number(searchParams.get("page")) || 1);
+    }, [searchParams]);
+
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (showModal) {
+                setShowModal(false);
+            }
+            if (showDisableModal) {
+                setShowDisableModal(false);
+            }
+        };
+
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, [showModal, showDisableModal]);
 
     return (
         <>
             <ContentWrapper title={'User List'}>
-
                 <div className="flex justify-between items-center w-full mb-[20px]">
                     <div className="min-w-[220px]">
                         <SelectFilter
@@ -154,6 +187,7 @@ const ManageUser = () => {
                             selected={selectedType}
                             onSelect={(value) => {
                                 setSelectedType(value)
+                                setCurrentPage(1)
                             }}
                         />
                     </div>
@@ -182,7 +216,7 @@ const ManageUser = () => {
                     orderBy={orderBy}
                 />
 
-                <div className="flex justify-end w-full m-auto">
+                <div className="flex justify-end w-full m-auto mt-[20px]">
                     <Pagination
                         currentPage={currentPage}
                         totalPages={userData?.data.totalPages ?? 0}

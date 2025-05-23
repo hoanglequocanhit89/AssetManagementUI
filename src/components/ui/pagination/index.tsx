@@ -85,7 +85,7 @@ const Pagination: React.FC<PaginationProps> = ({
         return pages;
     };
 
-    return (
+    return totalPages > 0 ? (
         <div className="flex items-center space-x-1">
             <button
                 onClick={handlePrevious}
@@ -103,7 +103,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 Next
             </button>
         </div>
-    );
+    ) : null;
 };
 
 export default Pagination;

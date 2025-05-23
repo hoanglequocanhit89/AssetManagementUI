@@ -1,251 +1,297 @@
 import ContentWrapper from "../../components/ui/content-wrapper";
 import Table, { Column } from "../../components/ui/table";
-import React from "react";
-import FormModal from "../../components/ui/form-modal";
+import React, { useEffect } from "react";
 import DetailAssetModal from "./components/detail-asset";
 import SelectFilter from "../../components/ui/select-filter";
 import SearchInput from "../../components/ui/search";
 import Button from "../../components/ui/button";
 import Pagination from "../../components/ui/pagination";
-import { useNavigate } from "react-router-dom";
-
-interface Asset {
-    id: number,
-    assetCode: string,
-    assetName: string,
-    category: string,
-    state: string;
-};
-
-const assetList: Asset[] = [
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 2,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Assigned"
-    },
-    {
-        id: 3,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    },
-    {
-        id: 1,
-        assetCode: "LA100001",
-        assetName: "Laptop HP Probook 450 G1",
-        category: "Laptop",
-        state: "Available"
-    }
-];
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import DeleteAssetModal from "./components/delete-asset";
+import assetApi from "../../api/assetApi";
+import { Asset, AssetDetail } from "../../types/asset";
+import { useDebounce } from "../../hooks/useDebounce";
+import SearchSelect from "../../components/ui/search-select";
 
 const getColumns = (handlers: {
     onEdit: (row: Asset) => void;
     onDelete: (row: Asset) => void;
 }): Column<Asset>[] => [
-    { key: 'assetCode', title: 'Asset Code' },
-    { key: 'assetName', title: 'Asset Code' },
-    { key: 'category', title: 'Category' },
-    { key: 'state', title: 'State' },
-    { key: 'action', actions: [
-        { 
-            render: (row) => (
-                <button disabled={row.state === 'Assigned'}>
-                    <i className={`fa-solid fa-pen ${row.state === 'Assigned' ? 'opacity-50 cursor-default' : ''}`}></i>
-                </button>
-                ),
-            onClick: handlers.onEdit,
+        { key: 'assetCode', title: 'Asset Code' },
+        { key: 'name', title: 'Asset Name' },
+        { key: 'categoryName', title: 'Category' },
+        { key: 'status', title: 'State' },
+        {
+            key: 'action', actions: [
+                {
+                    render: (row) => (
+                        <button disabled={row.status === 'ASSIGNED'}>
+                            <i className={`fa-solid fa-pen ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
+                        </button>
+                    ),
+                    onClick: handlers.onEdit,
+                },
+                {
+                    render: (row) => (
+                        <button disabled={row.status === 'ASSIGNED'}>
+                            <i className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
+                        </button>
+                    ),
+                    onClick: handlers.onDelete,
+                }
+            ]
         },
-        { 
-            render: (row) => (
-                <button disabled={row.state === 'Assigned'}>
-                    <i className={`fa-regular fa-circle-xmark ${row.state === 'Assigned' ? 'opacity-50 cursor-default' : ''}`}></i>
-                </button>
-                ), 
-            onClick: handlers.onDelete,
-        }
-    ]},
-];
+    ];
 
 const stateArr = [
     {
-        value: 'available',
+        value: 'AVAILABLE',
         label: 'Available'
     },
     {
-        value: 'not-available',
+        value: 'NOT_AVAILABLE',
         label: 'Not available'
     },
     {
-        value: 'assigned',
+        value: 'ASSIGNED',
         label: 'Assigned'
     },
-];
-
-const categoryArr = [
     {
-        value: 'laptop',
-        label: 'Laptop'
+        value: 'RECYCLED',
+        label: 'Recycled'
     },
     {
-        value: 'monitor',
-        label: 'Monitor'
+        value: 'WAITING',
+        label: 'Waiting'
     },
     {
-        value: 'personal-computer',
-        label: 'Personal Computer'
+        value: '',
+        label: 'All'
     },
 ];
 
-const pagingArr = {
-    currentPage: 1,
-    totalPage: 3
+interface CategoryProps {
+    value: string,
+    label: string
+};
+
+interface PagingProps {
+    currentPage: number,
+    totalPage: number
+};
+
+interface SortFilterProps {
+    sortBy: string,
+    sortDir: string
 }
 
 const ManageAsset = () => {
-    
+
+    const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
     const [viewDeleteModal, setViewDeleteModal] = React.useState<boolean>(false);
-    const [stateFilter, setStateFilter] = React.useState<string>('');
-    const [categoryFilter, setCategoryFilter] = React.useState<string>('');
-    const [currentPage, setCurrentPage] = React.useState<number>(pagingArr.currentPage);
+    const [editAssetId, setEditAssetId] = React.useState<number>(0);
+    const [isAssetDeletable, setIsAssetDeletable] = React.useState<boolean>(false);
+    const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get('states') || '');
+    const [categoryFilter, setCategoryFilter] = React.useState<string>(searchParams.get('categoryName') || '');
+    const [pagingData, setPagingData] = React.useState<PagingProps>({ currentPage: Number(searchParams.get('page')) || 1, totalPage: 0 });
+    const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get('keyword') || '');
+    const [categoryList, setCategoryList] = React.useState<CategoryProps[]>([]);
+    const [sortFilter, setSortFilter] = React.useState<SortFilterProps>({ sortBy: searchParams.get('sortBy') || '', sortDir: searchParams.get('sortDir') || '' });
+    const [assetList, setAssetList] = React.useState<Asset[]>([]);
+    const [detailAssetData, setDetailAssetData] = React.useState<AssetDetail>({
+        id: 0,
+        canDelete: false,
+        assetCode: '',
+        assignments: [],
+        categoryName: '',
+        status: '',
+        category: '',
+        installedDate: '',
+        location: '',
+        name: '',
+        specification: '',
+        state: ''
+    });
+    const debouncedKeyword = useDebounce(searchFilter, 500);
     const navigate = useNavigate();
-    const [searchFilter, setSearchFilter] = React.useState<string>('');
 
-    const handleOnRowClick = (id: number) => {
+    const fetchAssetList = async () => {
+        try {
+            const tempAsset = location.state?.tempAsset;
+            const response = await assetApi.getAssetList({
+                locationId: 1,
+                categoryName: categoryFilter,
+                keyword: searchFilter,
+                states: stateFilter,
+                params: {
+                    page: pagingData.currentPage - 1,
+                    size: 20,
+                    sortBy: sortFilter.sortBy,
+                    sortDir: sortFilter.sortDir
+                }
+            });
+            if (response.data) {
+                let assets = response.data.content;
+
+                if (tempAsset) {
+                    assets = assets.filter(a => a.id !== tempAsset.id);
+                    assets.unshift(tempAsset);
+                    console.log(assets);
+                    setAssetList(assets);
+                }
+                else {
+
+                    setAssetList([...response.data.content]);
+                }
+
+                setPagingData({
+                    ...pagingData,
+                    totalPage: response.data.totalPages
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchCategoryList = async () => {
+        try {
+            const response = await assetApi.getCategoryList();
+            const cateArr = [...response.data].map(item => (
+                { value: item.name, label: item.name }
+            ));
+            response && setCategoryList([...cateArr, { value: '', label: 'All' }]);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCategoryList();
+    }, []);
+
+    useEffect(() => {
+        setStateFilter(searchParams.get('states') || '');
+        setCategoryFilter(searchParams.get('categoryName') || '');
+        setPagingData({ currentPage: Number(searchParams.get('page')) || 1, totalPage: 0 });
+        setSearchFilter(searchParams.get('keyword') || '');
+        setSortFilter({ sortBy: searchParams.get('sortBy') || '', sortDir: searchParams.get('sortDir') || '' });
+    }, [searchParams]);
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (debouncedKeyword) params.set("keyword", debouncedKeyword);
+        params.set("states", stateFilter);
+        params.set("categoryName", categoryFilter);
+        params.set("page", pagingData.currentPage.toString());
+        params.set("sortBy", sortFilter.sortBy);
+        params.set("sortDir", sortFilter.sortDir);
+        const newSearch = params.toString();
+
+        if (location.search !== `?${newSearch}`) {
+            navigate({
+                pathname: location.pathname,
+                search: newSearch
+            }, { replace: false });
+        }
+
+        fetchAssetList();
+    }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir, pagingData.currentPage]);
+
+    const handleOnRowClick = async (id: number) => {
         setViewDetailModal(true);
-        console.log(id);
+        window.history.pushState({ modal: true }, "");
+        try {
+            const response = await assetApi.getAssetDetail(id);
+            setDetailAssetData({ ...response.data });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const handleEdit = (row: Asset) => {
-        navigate(`edit/${row.id}`)
+        navigate(`edit/${row.id}`);
     };
 
-    const handleDelete = () => {
+    const handleDelete = async (row: Asset) => {
+        setEditAssetId(row.id);
+        setIsAssetDeletable(row.canDelete);
         setViewDeleteModal(true);
-        console.log("click delete");
-    }
+    };
 
     const columns = getColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete 
-    })
+        onDelete: handleDelete
+    });
+
+    const handleSort = (key: string, direction: string) => {
+        setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction })
+    };
+
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (viewDetailModal) {
+                setViewDetailModal(false);
+            }
+            if (viewDeleteModal) {
+                setViewDeleteModal(false);
+            }
+        };
+
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, [viewDetailModal, viewDeleteModal]);
 
     return (
         <>
             <ContentWrapper title={'Asset List'}>
                 <div className="d-flex gap-[20px] mb-[20px]">
-                    <SelectFilter 
-                        label="State" 
-                        options={stateArr} 
+                    <SelectFilter
+                        label="State"
+                        options={stateArr}
                         onSelect={(value) => setStateFilter(value)}
                         selected={stateFilter}
                     />
-                    <SelectFilter 
-                        label="Category" 
-                        options={categoryArr} 
+
+                    <SearchSelect
+                        options={categoryList}
                         onSelect={(value) => setCategoryFilter(value)}
                         selected={categoryFilter}
+                        placeholder="All"
                     />
-                    <SearchInput onSearch={(data) => console.log(data)} />
+                    <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
                     <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
                 </div>
-                <Table 
-                    columns={columns} 
+                <Table
+                    columns={columns}
                     data={assetList}
-                    onSort={(key, direction) => console.log(key, direction)}
-                    onRowClick={(id) => handleOnRowClick(id)}
+                    sortBy={sortFilter.sortBy as keyof Asset}
+                    orderBy={sortFilter.sortDir as keyof Asset}
+                    onSort={handleSort}
+                    onRowClick={handleOnRowClick}
                 />
                 <div className="self-end mt-[20px]">
-                    <Pagination currentPage={currentPage} totalPages={pagingArr.totalPage} onPageChange={(page) => setCurrentPage(page)} />
+                    <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })} />
                 </div>
             </ContentWrapper>
-            { viewDetailModal && 
-                <DetailAssetModal 
+            {viewDetailModal &&
+                <DetailAssetModal
                     closeModal={() => setViewDetailModal(false)}
                     data={{
-                        assetCode: 'a', 
-                        assetName: 'a',
-                        category: 'a',
-                        installedDate: 'a',
-                        state: 'a',
-                        location: 'a',
-                        specification: 'a',
-                        history: [
-                            {
-                                id: 1,
-                                date: 'a',
-                                assignedTo: 'a',
-                                assignedBy: 'a',
-                                returnedDate: 'a'
-                            }
-                        ]
+                        ...detailAssetData,
+                        assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
                     }}
+                />
+            }
+            {
+                viewDeleteModal &&
+                <DeleteAssetModal
+                    closeModal={() => setViewDeleteModal(false)}
+                    id={editAssetId}
+                    isDeletable={isAssetDeletable}
+                    setAssetList={(id) => setAssetList([...assetList.filter(item => item.id !== id)])}
                 />
             }
         </>

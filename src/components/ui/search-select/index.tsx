@@ -6,14 +6,14 @@ type Option = {
 };
 
 type SearchSelectProps = {
-    label: string;
+    placeholder: string;
     options: Option[];
     selected?: string;
     onSelect: (value: string) => void;
 };
 
 const SearchSelect: React.FC<SearchSelectProps> = ({
-    label,
+    placeholder,
     options,
     selected,
     onSelect,
@@ -44,10 +44,10 @@ const SearchSelect: React.FC<SearchSelectProps> = ({
             <div className="flex items-stretch border border-gray-500 rounded-md shadow-sm bg-white overflow-hidden">
                 <input
                     type="text"
-                    value={search}
+                    value={isOpen ? search : selectedLabel || ""}
                     onChange={e => setSearch(e.target.value)}
                     onFocus={() => setIsOpen(true)}
-                    placeholder="Search..."
+                    placeholder={placeholder}
                     className="flex-grow min-w-0 px-3 py-2 text-[1.6rem] text-gray-800 focus:outline-none"
                 />
                 <button
@@ -75,7 +75,7 @@ const SearchSelect: React.FC<SearchSelectProps> = ({
                             </div>
                         ))
                     ) : (
-                        <div className="px-4 py-2 text-gray-400 text-[1.6rem]">Không có kết quả</div>
+                        <div className="px-4 py-2 text-gray-400 text-[1.6rem]">No Data</div>
                     )}
                 </div>
             )}
