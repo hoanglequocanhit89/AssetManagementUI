@@ -134,7 +134,10 @@ const CreateUpdateAsset = () => {
         toast.success("Asset created successfully");
         navigate("/manage-asset", {
           state: {
-            tempAsset: response.data
+            tempAsset: {
+              ...response.data,
+              status: response.data.state
+            }
           }
         });
       }
@@ -157,7 +160,6 @@ const CreateUpdateAsset = () => {
 
   const handleAddCategory = async () => {
     setCategoryError('');
-    const nameExists = categories.some(c => c.name.toLowerCase() === newCategoryName.toLowerCase());
 
     if (newCategoryName.trim().length === 0) {
       setCategoryError("Category name is required");
