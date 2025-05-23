@@ -11,6 +11,7 @@ import DeleteAssetModal from "./components/delete-asset";
 import assetApi from "../../api/assetApi";
 import { Asset, AssetDetail } from "../../types/asset";
 import { useDebounce } from "../../hooks/useDebounce";
+import SearchSelect from "../../components/ui/search-select";
 
 const getColumns = (handlers: {
     onEdit: (row: Asset) => void;
@@ -19,7 +20,7 @@ const getColumns = (handlers: {
         { key: 'assetCode', title: 'Asset Code' },
         { key: 'name', title: 'Asset Name' },
         { key: 'categoryName', title: 'Category' },
-        { key: 'state', title: 'State' },
+        { key: 'status', title: 'State' },
         {
             key: 'action', actions: [
                 {
@@ -56,6 +57,14 @@ const stateArr = [
         label: 'Assigned'
     },
     {
+        value: 'RECYCLED',
+        label: 'Recycled'
+    },
+    {
+        value: 'WAITING',
+        label: 'Waiting'
+    },
+    {
         value: '',
         label: 'All'
     },
@@ -77,7 +86,7 @@ interface SortFilterProps {
 }
 
 const ManageAsset = () => {
-    
+
     const location = useLocation();
     const [searchParams, setSearchParams] = useSearchParams();
     const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
@@ -86,7 +95,7 @@ const ManageAsset = () => {
     const [isAssetDeletable, setIsAssetDeletable] = React.useState<boolean>(false);
     const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get('states') || '');
     const [categoryFilter, setCategoryFilter] = React.useState<string>(searchParams.get('categoryName') || '');
-    const [pagingData, setPagingData] = React.useState<PagingProps>({currentPage: Number(searchParams.get('page')) || 1, totalPage: 0});
+    const [pagingData, setPagingData] = React.useState<PagingProps>({ currentPage: Number(searchParams.get('page')) || 1, totalPage: 0 });
     const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get('keyword') || '');
     const [categoryList, setCategoryList] = React.useState<CategoryProps[]>([]);
     const [sortFilter, setSortFilter] = React.useState<SortFilterProps>({ sortBy: searchParams.get('sortBy') || '', sortDir: searchParams.get('sortDir') || '' });
@@ -133,6 +142,7 @@ const ManageAsset = () => {
                     setAssetList(assets);
                 }
                 else {
+
                     setAssetList([...response.data.content]);
                 }
 
@@ -182,8 +192,8 @@ const ManageAsset = () => {
         setViewDetailModal(true);
         window.history.pushState({ modal: true }, "");
         try {
-            const response = await assetApi.getAssetDetail(id);  
-            setDetailAssetData({...response.data});
+            const response = await assetApi.getAssetDetail(id);
+            setDetailAssetData({ ...response.data });
         } catch (error) {
             console.log(error);
         }
@@ -193,7 +203,7 @@ const ManageAsset = () => {
         navigate(`edit/${row.id}`);
     };
 
-    const handleDelete = (row: Asset) => {
+    const handleDelete = async (row: Asset) => {
         setEditAssetId(row.id);
         setIsAssetDeletable(row.canDelete);
         setViewDeleteModal(true);
@@ -232,11 +242,12 @@ const ManageAsset = () => {
                         onSelect={(value) => setStateFilter(value)}
                         selected={stateFilter}
                     />
-                    <SelectFilter
-                        label="Category"
+
+                    <SearchSelect
                         options={categoryList}
                         onSelect={(value) => setCategoryFilter(value)}
                         selected={categoryFilter}
+                        placeholder="All"
                     />
                     <SearchInput onSearch={(data) => setSearchFilter(data)} />
                     <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
@@ -256,8 +267,9 @@ const ManageAsset = () => {
             {viewDetailModal &&
                 <DetailAssetModal
                     closeModal={() => setViewDetailModal(false)}
-                    data={{...detailAssetData,
-                        assignments: detailAssetData?.assignments.map((item, idx) => ({...item, id: idx}))
+                    data={{
+                        ...detailAssetData,
+                        assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
                     }}
                 />
             }
@@ -267,6 +279,7 @@ const ManageAsset = () => {
                     closeModal={() => setViewDeleteModal(false)}
                     id={editAssetId}
                     isDeletable= {isAssetDeletable}
+                    setAssetList={(id) => setAssetList([...assetList.filter(item => item.id !== id)])}
                 />
             }
         </>
