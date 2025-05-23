@@ -5,7 +5,7 @@ import DateFilter from '../../../components/ui/date-filter';
 import Button from '../../../components/ui/button';
 import Select from '../../../components/ui/select';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { differenceInYears, isAfter } from 'date-fns';
+import { differenceInYears, isAfter, isBefore } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import userApi from '../../../api/userApi';
@@ -299,7 +299,7 @@ const CreateUpdateUser: React.FC = () => {
                 rules={{
                   required: "This field is required",
                   validate: (value) => {
-                    if (!watchDOB || !isAfter(value, watchDOB)) {
+                    if (isBefore(value, watchDOB)) {
                       return "Joined date is not later than Date of Birth. Please select a different date";
                     }
                     const day = new Date(value).getDay(); // 0: Sunday, 6: Saturday

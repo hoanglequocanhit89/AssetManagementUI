@@ -159,8 +159,18 @@ const CreateUpdateAsset = () => {
     setCategoryError('');
     const nameExists = categories.some(c => c.name.toLowerCase() === newCategoryName.toLowerCase());
 
-    if (nameExists) {
-      toast.error("Category is already existed. Please enter a different category");
+    if (newCategoryName.trim().length === 0) {
+      setCategoryError("Category name is required");
+      return;
+    }
+
+    if (newPrefix.trim().length === 0) {
+      setCategoryError("Prefix is required");
+      return;
+    }
+
+    if (newPrefix.trim().length > 2) {
+      setCategoryError("Prefix must be at most 2 characters long");
       return;
     }
 
