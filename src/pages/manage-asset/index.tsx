@@ -169,24 +169,36 @@ const ManageAsset = () => {
     };
 
     useEffect(() => {
-        fetchAssetList();
-    }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir, pagingData.currentPage]);
-
-    useEffect(() => {
         fetchCategoryList();
     }, []);
 
     useEffect(() => {
-        setSearchParams({
-            states: stateFilter,
-            categoryName: categoryFilter,
-            keyword: searchFilter,
-            page: pagingData.currentPage.toString(),
-            sortBy: sortFilter.sortBy,
-            sortDir: sortFilter.sortDir
-        });
+        setStateFilter(searchParams.get('states') || '');
+        setCategoryFilter(searchParams.get('categoryName') || '');
+        setPagingData({ currentPage: Number(searchParams.get('page')) || 1, totalPage: 0 });
+        setSearchFilter(searchParams.get('keyword') || '');
+        setSortFilter({ sortBy: searchParams.get('sortBy') || '', sortDir: searchParams.get('sortDir') || '' });
+    }, [searchParams]);
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (debouncedKeyword) params.set("keyword", debouncedKeyword);
+        params.set("states", stateFilter);
+        params.set("categoryName", categoryFilter);
+        params.set("page", pagingData.currentPage.toString());
+        params.set("sortBy", sortFilter.sortBy);
+        params.set("orderBy", sortFilter.sortDir);
+        const newSearch = params.toString();
+
+        if (location.search !== `?${newSearch}`) {
+            navigate({
+                pathname: location.pathname,
+                search: newSearch
+            }, { replace: false });
+        }
+
         fetchAssetList();
-    }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir]);
+    }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir, pagingData.currentPage]);
 
     const handleOnRowClick = async (id: number) => {
         setViewDetailModal(true);
@@ -249,7 +261,7 @@ const ManageAsset = () => {
                         selected={categoryFilter}
                         placeholder="All"
                     />
-                    <SearchInput onSearch={(data) => setSearchFilter(data)} />
+                    <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
                     <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
                 </div>
                 <Table
