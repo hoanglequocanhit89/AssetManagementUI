@@ -19,7 +19,9 @@ interface TableProps<T extends { id: number }> {
     onRowClick?: (id: number) => void;
     isSort?: boolean;
     sortBy?: keyof T;
-    orderBy?: string
+    orderBy?: string;
+    isSelect?: boolean;
+    onSelected?: (row: T) => void;
 }
 
 const Table = <T extends { id: number }>({
@@ -29,7 +31,9 @@ const Table = <T extends { id: number }>({
     onRowClick,
     isSort = true,
     sortBy,
-    orderBy
+    orderBy,
+    isSelect = false,
+    onSelected
 }: TableProps<T>) => {
     const [sortConfig, setSortConfig] = useState<{
         key: keyof T | null;
@@ -38,6 +42,8 @@ const Table = <T extends { id: number }>({
         key: null,
         direction: null,
     });
+
+    const [selectedId, setSelectedId] = useState<number | null>(null);
 
     const handleSort = (key: keyof T) => {
         const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
@@ -69,6 +75,9 @@ const Table = <T extends { id: number }>({
             <table className="relative w-full border-separate border-spacing-x-[10px] border-spacing-y-[10px]">
                 <thead className='w-full sticky top-0 bg-white'>
                     <tr>
+                        {isSelect && (
+                            <th className="w-10"></th>
+                        )}
                         {columns.map((column) => (
                             <th
                                 key={String(column.key)}
@@ -97,6 +106,21 @@ const Table = <T extends { id: number }>({
                             className="cursor-pointer"
                             onClick={() => onRowClick?.(row.id)}
                         >
+                            {isSelect && (
+                                <td className="text-center">
+                                    <input
+                                        type="radio"
+                                        name="table-select"
+                                        checked={selectedId === row.id}
+                                        onChange={() => {
+                                            setSelectedId(row.id);
+                                            onSelected?.(row);
+                                        }}
+                                        onClick={e => e.stopPropagation()}
+                                        className="accent-[#CF2338] w-6 h-6"
+                                    />
+                                </td>
+                            )}
                             {columns.map((column) => (
                                 <td
                                     key={String(column.key)}
