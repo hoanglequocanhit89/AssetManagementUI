@@ -113,7 +113,10 @@ const CreateUpdateAsset = () => {
         toast.success("Asset updated successfully");
         navigate("/manage-asset", {
           state: {
-            tempAsset: response.data
+            tempAsset: {
+              ...response.data,
+              status: response.data.state
+            }
           }
         });
       } else {
