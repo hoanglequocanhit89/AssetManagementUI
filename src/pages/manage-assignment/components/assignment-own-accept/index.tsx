@@ -1,25 +1,23 @@
-import assignmentApi from "../../../../api/assignmentApi";
+import assignmentApi from "../../../../api/ownAssignmentApi";
 import Button from "../../../../components/ui/button";
 import FormModal from "../../../../components/ui/form-modal";
 
-interface DeclineAssignmentProps {
+interface AcceptAssignmentProps {
   showModal: boolean;
   closeModal: () => void;
-  isDisable: boolean;
   assignmentId: number;
   onSuccess: () => void;
 }
 
-const DeclineAssignmentModal = ({
+const AcceptAssignmentModal = ({
   showModal,
   closeModal,
-  isDisable,
   assignmentId,
   onSuccess,
-}: DeclineAssignmentProps) => {
-  const handleDeclineAssignment = async () => {
+}: AcceptAssignmentProps) => {
+  const handleAcceptAssignment = async () => {
     try {
-      await assignmentApi.declineAssignment(assignmentId);
+      await assignmentApi.acceptOwnAssignment(assignmentId);
       closeModal();
       onSuccess?.();
     } catch (error) {
@@ -29,15 +27,11 @@ const DeclineAssignmentModal = ({
   return (
     <div>
       {showModal && (
-        <FormModal
-          title={isDisable ? "Are you sure ?" : "Can not decline assignment"}
-          closeBtn={!isDisable}
-          closeModal={() => closeModal()}
-        >
+        <FormModal title={"Are you sure ?"} closeBtn={true} closeModal={() => closeModal()}>
           <div className="flex flex-col gap-5">
-            <p>Do you want to decline this assignment?</p>
+            <p>Do you want to accept this assignment?</p>
             <div className="flex gap-5">
-              <Button text="Decline" color="primary" onClick={() => handleDeclineAssignment()} />
+              <Button text="Accept" color="primary" onClick={() => handleAcceptAssignment()} />
               <Button text="Cancel" color="outline" onClick={() => closeModal()} />
             </div>
           </div>
@@ -47,4 +41,4 @@ const DeclineAssignmentModal = ({
   );
 };
 
-export default DeclineAssignmentModal;
+export default AcceptAssignmentModal;
