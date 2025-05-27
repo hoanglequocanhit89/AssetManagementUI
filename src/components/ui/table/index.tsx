@@ -8,7 +8,7 @@ interface Action<T> {
 export interface Column<T> {
     key: keyof T | 'action';
     title?: string;
-    render?: (value: T[keyof T], row: T) => React.ReactNode;
+    render?: (value: T[keyof T], row: T, index: number) => React.ReactNode;
     actions?: Action<T>[];
 }
 
@@ -155,7 +155,7 @@ const Table = <T extends { id: number }>({
                                             </div>
                                         </div>
                                     ) : column.render ? (
-                                        column.render(row[column.key as keyof T], row)
+                                        column.render(row[column.key as keyof T], row, index)
                                     ) : (
                                         String(row[column.key as keyof T])
                                     )}
