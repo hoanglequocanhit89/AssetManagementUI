@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { AssignmentDetail } from "../../../../types/assignment";
-import assignmentApi from "../../../../api/assignmentApi";
+import { OwnAssignmentDetail } from "../../../../types/assignment";
+import assignmentApi from "../../../../api/ownAssignmentApi";
 import FormModal from "../../../../components/ui/form-modal";
 import FormModalGroup from "../../../../components/ui/form-modal-group";
 
@@ -11,13 +11,13 @@ interface DetailUserProps {
 }
 
 const DetailUser = ({ showModal, closeModal, assignmentId }: DetailUserProps) => {
-  const [assignmentData, setAssignmentData] = useState<AssignmentDetail>();
+  const [assignmentData, setAssignmentData] = useState<OwnAssignmentDetail>();
 
   useEffect(() => {
     if (!showModal) return;
     const fetchDetailUser = async () => {
       try {
-        const response = await assignmentApi.getAssignmentDetail(assignmentId);
+        const response = await assignmentApi.getOwnAssignmentDetail(assignmentId);
         setAssignmentData(response.data);
       } catch (error) {
         console.log(error);

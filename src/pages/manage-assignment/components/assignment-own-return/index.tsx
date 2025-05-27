@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import assignmentApi from "../../../../api/assignmentApi";
+import assignmentApi from "../../../../api/ownAssignmentApi";
 import Button from "../../../../components/ui/button";
 import FormModal from "../../../../components/ui/form-modal";
 
@@ -19,7 +19,7 @@ const ReturnAssignmentModal = ({
   const navigate = useNavigate();
   const handleReturnAssignment = async () => {
     try {
-      await assignmentApi.returnAssignment(assignmentId);
+      await assignmentApi.returnOwnAssignment(assignmentId);
       closeModal();
       onSuccess?.();
       // Navigate to the assignment list page after returning
