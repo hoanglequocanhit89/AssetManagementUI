@@ -33,3 +33,19 @@ export interface OwnUpdateAssignmentRequest {
   assignedDate: string;
   status: string;
 }
+
+export interface Assignment {
+  id: number,
+  assetCode: string,
+  assetName: string,
+  assignedTo: string,
+  assignedBy: string,
+  assignedDate: string;
+  status: string,
+  canDelete: boolean
+}
+
+export interface AssignmentDetail extends Assignment {
+  specification: string,
+  note: string
+}
