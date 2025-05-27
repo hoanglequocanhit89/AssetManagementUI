@@ -1,11 +1,11 @@
 import { BaseResponseWithoutPagination } from "../types";
-import { Assignment, AssignmentDetail } from "../types/assignment";
+import { OwnAssignment, OwnAssignmentDetail } from "../types/assignment";
 
 const assignmentApi = {
   async getOwnAssignmentList(params?: {
     sortBy: string;
     orderBy: string;
-  }): Promise<BaseResponseWithoutPagination<Assignment[]>> {
+  }): Promise<BaseResponseWithoutPagination<OwnAssignment[]>> {
     // let searchParams = new URLSearchParams();
     // if(params) {
     //   searchParams.set("sortBy", params.sortBy);
@@ -44,9 +44,9 @@ const assignmentApi = {
     });
   },
 
-  async getAssignmentDetail(
+  async getOwnAssignmentDetail(
     assignmentId: number
-  ): Promise<BaseResponseWithoutPagination<AssignmentDetail>> {
+  ): Promise<BaseResponseWithoutPagination<OwnAssignmentDetail>> {
     // const response = await axiosClients.get(`users/assignments/${assignmentId}`);
     // return response.data;
 
@@ -72,7 +72,7 @@ const assignmentApi = {
     });
   },
 
-  async acceptAssignment(assignmentId: number): Promise<void> {
+  async acceptOwnAssignment(assignmentId: number): Promise<void> {
     // const response = await axiosClients.post(`users/assignments/${assignmentId}/accept`);
     // return response.data;
 
@@ -83,7 +83,7 @@ const assignmentApi = {
     });
   },
 
-  async declineAssignment(assignmentId: number): Promise<void> {
+  async declineOwnAssignment(assignmentId: number): Promise<void> {
     // const response = await axiosClients.post(`users/assignments/${assignmentId}/decline`);
     // return response.data;
 
@@ -94,7 +94,7 @@ const assignmentApi = {
     });
   },
 
-  async returnAssignment(assignmentId: number): Promise<void> {
+  async returnOwnAssignment(assignmentId: number): Promise<void> {
     // const response = await axiosClients.post(`users/assignments/${assignmentId}/return`);
     // return response.data;
 

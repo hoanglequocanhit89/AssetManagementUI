@@ -1,4 +1,4 @@
-export interface Assignment {
+export interface OwnAssignment {
   id: number;
   assetCode: string;
   assetName: string;
@@ -7,26 +7,26 @@ export interface Assignment {
   status: string;
 }
 
-export interface AssignmentDetail extends Assignment {
+export interface OwnAssignmentDetail extends OwnAssignment {
   specification: string;
   assignedTo: string;
   assignedBy: string;
   note: string;
 }
 
-export interface AssignmentFilterRequest {
+export interface OwnAssignmentFilterRequest {
   query: string;
   status: string;
 }
 
-export interface CreateAssignmentRequest {
+export interface OwnCreateAssignmentRequest {
   assetId: number;
   assignedTo: string;
   assignedBy: string;
   assignedDate: string;
 }
 
-export interface UpdateAssignmentRequest {
+export interface OwnUpdateAssignmentRequest {
   assetId: number;
   assignedTo: string;
   assignedBy: string;

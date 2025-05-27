@@ -3,18 +3,18 @@ import { useEffect, useState } from "react";
 import { BaseResponseWithoutPagination } from "../../types";
 import Table, { Column } from "../../components/ui/table";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Assignment } from "../../types/assignment";
-import DetailAssignmentModal from "../manage-assignment/components/assignment-detail";
-import assignmentApi from "../../api/assignmentApi";
-import DeclineAssignmentModal from "../manage-assignment/components/assignment-decline";
-import AcceptAssignmentModal from "../manage-assignment/components/assignment-accept";
-import ReturnAssignmentModal from "../manage-assignment/components/assignment-return";
+import { OwnAssignment } from "../../types/assignment";
+import DetailAssignmentModal from "../manage-assignment/components/assignment-own-detail";
+import assignmentApi from "../../api/ownAssignmentApi";
+import DeclineAssignmentModal from "../manage-assignment/components/assignment-own-decline";
+import AcceptAssignmentModal from "../manage-assignment/components/assignment-own-accept";
+import ReturnAssignmentModal from "../manage-assignment/components/assignment-own-return";
 
 const getColumns = (handlers: {
-  onReturn: (row: Assignment) => void;
-  onDecline: (row: Assignment) => void;
-  onAccept: (row: Assignment) => void;
-}): Column<Assignment>[] => [
+  onReturn: (row: OwnAssignment) => void;
+  onDecline: (row: OwnAssignment) => void;
+  onAccept: (row: OwnAssignment) => void;
+}): Column<OwnAssignment>[] => [
   { key: "assetCode", title: "Asset Code" },
   { key: "assetName", title: "Asset Name" },
   { key: "category", title: "Category" },
@@ -98,7 +98,7 @@ const Home = () => {
   const location = useLocation();
 
   const [assignmentData, setAssignmentData] =
-    useState<BaseResponseWithoutPagination<Assignment[]>>();
+    useState<BaseResponseWithoutPagination<OwnAssignment[]>>();
   const [assignmentId, setAssignmentId] = useState<number>(0);
 
   const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "assetCode");
@@ -127,13 +127,13 @@ const Home = () => {
     setShowReturnModal(true);
   };
 
-  const handleDeclineAssignment = (row: Assignment) => {
+  const handleDeclineAssignment = (row: OwnAssignment) => {
     setIsDeclineAssignment(row.status === "DISABLED");
     setAssignmentId(row.id);
     setShowDeclineModal(true);
   };
 
-  const handleAcceptAssignment = (row: Assignment) => {
+  const handleAcceptAssignment = (row: OwnAssignment) => {
     setAssignmentId(row.id);
     setShowAcceptModal(true);
   };
@@ -226,7 +226,7 @@ const Home = () => {
             setOrderBy(direction);
           }}
           onRowClick={(id) => handleClickRow(id)}
-          sortBy={sortBy as keyof Assignment}
+          sortBy={sortBy as keyof OwnAssignment}
           orderBy={orderBy}
         />
       </ContentWrapper>
