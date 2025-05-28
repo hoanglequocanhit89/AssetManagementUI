@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import assignmentApi from "../../../../api/ownAssignmentApi";
 import Button from "../../../../components/ui/button";
 import FormModal from "../../../../components/ui/form-modal";
@@ -22,8 +23,10 @@ const DeclineAssignmentModal = ({
       await assignmentApi.declineOwnAssignment(assignmentId);
       closeModal();
       onSuccess?.();
+      toast.success("Assignment declined successfully!");
     } catch (error) {
       console.log(error);
+      toast.error("Failed to decline assignment.");
     }
   };
   return (

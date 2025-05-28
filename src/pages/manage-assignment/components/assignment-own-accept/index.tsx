@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import assignmentApi from "../../../../api/ownAssignmentApi";
 import Button from "../../../../components/ui/button";
 import FormModal from "../../../../components/ui/form-modal";
@@ -20,8 +21,10 @@ const AcceptAssignmentModal = ({
       await assignmentApi.acceptOwnAssignment(assignmentId);
       closeModal();
       onSuccess?.();
+      toast.success("Assignment accepted successfully!");
     } catch (error) {
       console.log(error);
+      toast.error("Failed to accept assignment.");
     }
   };
   return (
