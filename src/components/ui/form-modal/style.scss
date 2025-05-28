@@ -9,9 +9,11 @@
     border: 2px solid rgba(33, 37, 41, 1);
     border-radius: 12px;
     overflow: hidden;
+    z-index: 999;
 
     &__overlay {
         position: fixed;
+        z-index: 998;
         inset: 0;
         background-color: rgb(204, 204, 204, 0.2);
     }

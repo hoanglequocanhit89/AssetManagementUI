@@ -10,6 +10,9 @@ import DeclineAssignmentModal from "../manage-assignment/components/assignment-o
 import AcceptAssignmentModal from "../manage-assignment/components/assignment-own-accept";
 import ReturnAssignmentModal from "../manage-assignment/components/assignment-own-return";
 import axiosClients from "../../api/axiosClients";
+import ChangePasswordModal from "../auth/change-password";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const getColumns = (handlers: {
   onReturn: (row: OwnAssignment) => void;
@@ -97,6 +100,7 @@ const Home = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const auth = useSelector((state: RootState) => state.auth);
 
   const [assignmentData, setAssignmentData] =
     useState<BaseResponseWithoutPagination<OwnAssignment[]>>();
@@ -113,6 +117,7 @@ const Home = () => {
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
+  const [showChangePasswordModal, setChangePasswordModal] = useState(false);
 
   const [isDeclineAssignment, setIsDeclineAssignment] = useState<boolean>(false);
 
@@ -295,6 +300,14 @@ const Home = () => {
             fetchOwnAssignmentList();
           }}
           closeModal={() => setShowReturnModal(false)}
+        />
+      )}
+
+      {/* change password modal */}
+      {showChangePasswordModal && (
+        <ChangePasswordModal
+          isFirstLogin={showChangePasswordModal}
+          onClose={() => setChangePasswordModal(false)}
         />
       )}
     </>

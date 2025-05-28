@@ -38,7 +38,7 @@ const DropDown = ({username, onChangePassword, onLogout}: DropDownProps) => {
           <button
             onClick={() => {
               setOpen(false);
-              // onChangePassword();
+              onChangePassword && onChangePassword();
             }}
             className="block w-max text-left px-4 py-2 hover:bg-gray-100 px-4"
           >
@@ -47,7 +47,7 @@ const DropDown = ({username, onChangePassword, onLogout}: DropDownProps) => {
           <button
             onClick={() => {
               setOpen(false);
-              // onLogout();
+              onLogout && onLogout(); 
             }}
             className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 px-4"
           >
