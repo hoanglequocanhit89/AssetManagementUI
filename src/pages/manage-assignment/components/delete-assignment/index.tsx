@@ -33,8 +33,10 @@ const DeleteAssignmentModal = (props: DeleteAssignmentProps) => {
             closeModal={props.closeModal}
         >
             <span> Do you want to delete this assignment?</span>
-            <Button text="Delete" color="primary" onClick={handleDeleteAssignment} />
-            <Button text="Cancel" color="outline" onClick={props.closeModal} />
+            <div className="mt-[40px] flex gap-[20px]">
+                <Button text="Delete" color="primary" onClick={handleDeleteAssignment} />
+                <Button text="Cancel" color="outline" onClick={props.closeModal} />
+            </div>
         </FormModal>
     )
 }
