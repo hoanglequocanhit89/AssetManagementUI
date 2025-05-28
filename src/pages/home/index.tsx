@@ -117,7 +117,7 @@ const Home = () => {
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
-  const [showChangePasswordModal, setChangePasswordModal] = useState(false);
+  const [showChangePasswordModal, setChangePasswordModal] = useState(auth.isFirstLogin || false);
 
   const [isDeclineAssignment, setIsDeclineAssignment] = useState<boolean>(false);
 
@@ -160,22 +160,6 @@ const Home = () => {
 
     setAssignmentData(response);
   };
-
-  // Automatically log in when the component mounts
-  // refactor this after login function is implemented
-  useEffect(() => {
-    const login = async () => {
-      try {
-        await axiosClients.post("auth/login", {
-          username: "adminhnut",
-          password: "adminhnut@03011990",
-        });
-      } catch (error) {
-        console.error("Login failed:", error);
-      }
-    };
-    login();
-  }, []);
 
   // Fetch the assignment list when the component mounts or when sortFieldForApi or orderBy changes
   useEffect(() => {
