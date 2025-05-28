@@ -1,6 +1,6 @@
-import { BaseParams, BaseResponse, BaseResponseWithoutPagination } from "../types";
-import { Assignment, AssignmentDetail } from "../types/assignment";
 import axiosClients from "./axiosClients";
+import { BaseResponse, BaseResponseWithoutPagination } from "../types";
+import { Assignment, AssignmentDetail, CreateAssignmentResponse, CreateAssignmentRequest } from "../types/assignment";
 
 interface AssignmentParams {
     status?: string;
@@ -13,12 +13,18 @@ interface AssignmentParams {
 }
 
 const assignmentApi = {
+  createAssignment(
+    request: CreateAssignmentRequest
+  ): Promise<CreateAssignmentResponse> {
+    return axiosClients.post("assignments", request);
+  },
 
-    getAssignmentList(props: AssignmentParams): Promise<BaseResponse<Assignment>> {
+  getAssignmentList(
+    props: AssignmentParams
+  ): Promise<BaseResponse<Assignment>> {
+    const { status, assignedDate, query, page = 0, size = 20, sortBy = "assetCode", sortDir = "asc" } = props;
 
-        const { status, assignedDate, query, page = 0, size = 20, sortBy = "assetCode", sortDir = "asc" } = props;
-
-        const params = {
+    const params = {
             status,
             assignedDate,
             query,
@@ -34,22 +40,23 @@ const assignmentApi = {
 
         const url = `assignments`;
 
-        return axiosClients.get(url, { params: params });
-    },
+    return axiosClients.get(url, { params: params });
+  },
 
-    getAssignmentDetail(assignmentId: number): Promise<BaseResponseWithoutPagination<AssignmentDetail>> {
+  getAssignmentDetail(
+    assignmentId: number
+  ): Promise<BaseResponseWithoutPagination<AssignmentDetail>> {
+    const url = `assignments/${assignmentId}`;
 
-        const url = `assignments/${assignmentId}`;
+    return axiosClients.get(url);
+  },
 
-        return axiosClients.get(url);
-    },
-
-    deleteAssignment(assignmentId: number): Promise<BaseResponseWithoutPagination<string>> {
-        const url = `assignments/${assignmentId}`;
-        return axiosClients.delete(url);
-    }
-}
-
-
+  deleteAssignment(
+    assignmentId: number
+  ): Promise<BaseResponseWithoutPagination<string>> {
+    const url = `assignments/${assignmentId}`;
+    return axiosClients.delete(url);
+  },
+};
 
 export default assignmentApi;

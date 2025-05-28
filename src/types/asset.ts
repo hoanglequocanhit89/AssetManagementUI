@@ -22,11 +22,6 @@ export interface History {
     returnedDate: string
 };
 
-export interface Category {
-    id: number,
-    name: string
-}
-
 export interface AssetDetail extends Asset {
     category: string,
     status: string,
@@ -50,4 +45,17 @@ export interface EditAssetResponse extends CreateAssetRequest {
     assetCode: string;
     categoryName: string;
     locationName: string;
+}
+
+export interface AssetBrief {
+    id: number,
+    assetCode: string,
+    assetName: string,
+    categoryName: string,
+};
+
+export type getAllAssetsParams = {
+  sortBy?: keyof AssetBrief | "name";
+  sortDir?: "asc" | "desc";
+  query?: string | null;
 }

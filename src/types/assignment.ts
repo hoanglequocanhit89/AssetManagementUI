@@ -49,3 +49,20 @@ export interface AssignmentDetail extends Assignment {
   specification: string,
   note: string
 }
+
+export type CreateAssignmentRequest = {
+  userId: number;
+  assetId: number;
+  assignedDate: Date;
+  note: string;
+};
+
+export type CreateAssignmentResponse = {
+  id: number;
+  assetCode: string;
+  assetName: string;
+  assignedTo: string;
+  assginedBy: string;
+  assignedDate: string;
+  state: string;
+};

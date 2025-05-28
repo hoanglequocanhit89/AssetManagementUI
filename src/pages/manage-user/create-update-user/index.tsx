@@ -5,7 +5,7 @@ import DateFilter from '../../../components/ui/date-filter';
 import Button from '../../../components/ui/button';
 import Select from '../../../components/ui/select';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { differenceInYears, isAfter, isBefore } from 'date-fns';
+import { differenceInYears, isBefore } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import userApi from '../../../api/userApi';
@@ -178,13 +178,21 @@ const CreateUpdateUser: React.FC = () => {
 
   return (
     <>
-      <ContentWrapper title={id ? 'Edit User' : 'Create New User'}>
+      <ContentWrapper title={id ? "Edit User" : "Create New User"}>
         {notFoundError ? (
-          <p className='text-center'>User not found -_-</p>
+          <p className="text-center">User not found -_-</p>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-3 gap-y-6 items-start text-[1.6rem] max-w-3xl">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="grid grid-cols-3 gap-y-6 items-start text-[1.6rem] max-w-3xl"
+          >
             {/* First Name */}
-            <label htmlFor="firstName" className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">First Name</label>
+            <label
+              htmlFor="firstName"
+              className="pr-4 after:content-['*'] after:text-red-500 after:ml-2"
+            >
+              First Name
+            </label>
             <div className="col-span-2">
               <InputField
                 id="firstName"
@@ -193,12 +201,12 @@ const CreateUpdateUser: React.FC = () => {
                   required: "This field is required",
                   pattern: {
                     value: /^[A-Za-z\s]+$/,
-                    message: "Only letters and spaces are allowed"
+                    message: "Only letters and spaces are allowed",
                   },
                   maxLength: {
                     value: 128,
-                    message: "Maximum 128 characters allowed"
-                  }
+                    message: "Maximum 128 characters allowed",
+                  },
                 })}
                 value={watch("firstName") || ""}
                 onChange={(e) => {
@@ -210,11 +218,19 @@ const CreateUpdateUser: React.FC = () => {
                 }}
               />
             </div>
-            {errors.firstName && <p className='col-span-3 text-red-500 text-center -mt-6 -ml-6'>{errors.firstName.message}</p>}
-
+            {errors.firstName && (
+              <p className="col-span-3 text-red-500 text-center -mt-6 -ml-6">
+                {errors.firstName.message}
+              </p>
+            )}
 
             {/* Last Name */}
-            <label htmlFor="lastName" className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">Last Name</label>
+            <label
+              htmlFor="lastName"
+              className="pr-4 after:content-['*'] after:text-red-500 after:ml-2"
+            >
+              Last Name
+            </label>
             <div className="col-span-2">
               <InputField
                 id="lastName"
@@ -223,12 +239,12 @@ const CreateUpdateUser: React.FC = () => {
                   required: "This field is required",
                   pattern: {
                     value: /^[A-Za-z\s]+$/,
-                    message: "Only letters and spaces are allowed"
+                    message: "Only letters and spaces are allowed",
                   },
                   maxLength: {
                     value: 128,
-                    message: "Maximum 128 characters allowed"
-                  }
+                    message: "Maximum 128 characters allowed",
+                  },
                 })}
                 value={watch("lastName") || ""}
                 onChange={(e) => {
@@ -242,15 +258,17 @@ const CreateUpdateUser: React.FC = () => {
             </div>
             {errors.lastName && (
               <>
-                <div className='col-span-1'></div>
-                <p className='col-span-2 text-red-500 -mt-6'>{errors.lastName.message}</p>
+                <div className="col-span-1"></div>
+                <p className="col-span-2 text-red-500 -mt-6">
+                  {errors.lastName.message}
+                </p>
               </>
             )}
 
-
-
             {/* Date of Birth */}
-            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">Date of Birth</label>
+            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">
+              Date of Birth
+            </label>
             <div className="col-span-2">
               <Controller
                 control={control}
@@ -258,24 +276,36 @@ const CreateUpdateUser: React.FC = () => {
                 rules={{
                   required: "This field is required",
                   validate: (value) =>
-                    differenceInYears(new Date(), value) >= 18 || "User is under 18. Please select a different date"
+                    differenceInYears(new Date(), value) >= 18 ||
+                    "User is under 18. Please select a different date",
                 }}
                 render={({ field }) => (
-                  <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} isHighlight={!!errors.dob} />
+                  <DateFilter
+                    label={"\u00A0 "}
+                    selectedDate={field.value}
+                    onSelect={field.onChange}
+                    isHighlight={!!errors.dob}
+                  />
                 )}
               />
-              {errors.dob && <p className='text-red-500'>{errors.dob.message}</p>}
+              {errors.dob && (
+                <p className="text-red-500">{errors.dob.message}</p>
+              )}
             </div>
 
             {/* Gender */}
-            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">Gender</label>
+            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">
+              Gender
+            </label>
             <div className="col-span-2 flex gap-6">
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
                   value="FEMALE"
-                  {...register("gender", { required: "This field is required" })}
-                  className='accent-[var(--primary-color)]'
+                  {...register("gender", {
+                    required: "This field is required",
+                  })}
+                  className="accent-[var(--primary-color)]"
                 />
                 Female
               </label>
@@ -283,16 +313,24 @@ const CreateUpdateUser: React.FC = () => {
                 <input
                   type="radio"
                   value="MALE"
-                  {...register("gender", { required: "This field is required" })}
-                  className='accent-[var(--primary-color)]'
+                  {...register("gender", {
+                    required: "This field is required",
+                  })}
+                  className="accent-[var(--primary-color)]"
                 />
                 Male
               </label>
             </div>
-            {errors.gender && <p className='text-red-500 col-span-3 text-center -mt-6 -ml-6'>{errors.gender.message}</p>}
+            {errors.gender && (
+              <p className="text-red-500 col-span-3 text-center -mt-6 -ml-6">
+                {errors.gender.message}
+              </p>
+            )}
 
             {/* Joined Date */}
-            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">Joined Date</label>
+            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">
+              Joined Date
+            </label>
             <div className="col-span-2">
               <Controller
                 control={control}
@@ -308,17 +346,26 @@ const CreateUpdateUser: React.FC = () => {
                       return "Joined date is Saturday or Sunday. Please select a different date";
                     }
                     return true;
-                  }
+                  },
                 }}
                 render={({ field }) => (
-                  <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} isHighlight={!!errors.joinedDate} />
+                  <DateFilter
+                    label={"\u00A0 "}
+                    selectedDate={field.value}
+                    onSelect={field.onChange}
+                    isHighlight={!!errors.joinedDate}
+                  />
                 )}
               />
-              {errors.joinedDate && <p className='text-red-500'>{errors.joinedDate.message}</p>}
+              {errors.joinedDate && (
+                <p className="text-red-500">{errors.joinedDate.message}</p>
+              )}
             </div>
 
             {/* Type */}
-            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">Type</label>
+            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">
+              Type
+            </label>
             <div className="col-span-2">
               <Controller
                 name="type"
@@ -338,14 +385,14 @@ const CreateUpdateUser: React.FC = () => {
             {/* Location (only for admin) */}
             {watchUserType === "ADMIN" && !isEdit && (
               <>
-                <label className='pr-4'>Location</label>
+                <label className="pr-4">Location</label>
                 <div className="col-span-2">
                   <Controller
                     name="location"
                     control={control}
                     render={({ field }) => (
                       <Select
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(e.target.value)}
                         options={locationOptions}
                       />
@@ -357,24 +404,29 @@ const CreateUpdateUser: React.FC = () => {
 
             {/* Actions */}
             <div className="col-start-2 col-span-2 flex justify-end gap-4 mt-6">
-              <Button text='Save' color="primary" disabled={!isValid} />
-              <Button color="outline" text='Cancel' type='button' onClick={handleCancel} />
+              <Button text="Save" color="primary" disabled={!isValid} />
+              <Button
+                color="outline"
+                text="Cancel"
+                type="button"
+                onClick={handleCancel}
+              />
             </div>
           </form>
         )}
       </ContentWrapper>
 
-      {showModal &&
+      {showModal && (
         <CancelModal
           showModal={showModal}
           onSuccess={() => {
             setShowModal(false);
             navigate("/manage-user");
           }}
-          content='Do you want to cancel your action?'
+          content="Do you want to cancel your action?"
           closeModal={() => setShowModal(false)}
         />
-      }
+      )}
     </>
   );
 };

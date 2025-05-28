@@ -53,3 +53,17 @@ export interface UpdateUserRequest {
     joinedDate: string;
     role: "STAFF" | "ADMIN";
 }
+
+export type UserBrief = {
+  id: number;
+  staffCode: string;
+  fullName: string;
+  firstName: string;
+  role: string;
+}
+
+export type getAllUsersParams = {
+  sortBy?: keyof UserBrief;
+  sortDir?: "asc" | "desc";
+  query?: string | null;
+}
