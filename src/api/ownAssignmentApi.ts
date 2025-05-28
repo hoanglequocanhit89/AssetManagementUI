@@ -24,26 +24,8 @@ const assignmentApi = {
     return axiosClients.get(`assignments/${assignmentId}`);
   },
 
-  async acceptOwnAssignment(assignmentId: number): Promise<void> {
-    // const response = await axiosClients.post(`users/assignments/${assignmentId}/accept`);
-    // return response.data;
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 1000);
-    });
-  },
-
-  async declineOwnAssignment(assignmentId: number): Promise<void> {
-    // const response = await axiosClients.post(`users/assignments/${assignmentId}/decline`);
-    // return response.data;
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 1000);
-    });
+  async responseOwnAssignment(assignmentId: number, status: string): Promise<void> {
+    return await axiosClients.patch(`assignments/${assignmentId}?status=${status}`);
   },
 
   async returnOwnAssignment(assignmentId: number): Promise<void> {

@@ -4,13 +4,13 @@ import assignmentApi from "../../../../api/ownAssignmentApi";
 import FormModal from "../../../../components/ui/form-modal";
 import FormModalGroup from "../../../../components/ui/form-modal-group";
 
-interface DetailUserProps {
+interface DetailOwnAssignmentProps {
   showModal: boolean;
   closeModal: () => void;
   assignmentId: number;
 }
 
-const DetailUser = ({ showModal, closeModal, assignmentId }: DetailUserProps) => {
+const DetailUser = ({ showModal, closeModal, assignmentId }: DetailOwnAssignmentProps) => {
   const [assignmentData, setAssignmentData] = useState<OwnAssignmentDetail>();
 
   useEffect(() => {

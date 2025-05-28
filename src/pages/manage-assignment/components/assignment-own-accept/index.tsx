@@ -18,13 +18,14 @@ const AcceptAssignmentModal = ({
 }: AcceptAssignmentProps) => {
   const handleAcceptAssignment = async () => {
     try {
-      await assignmentApi.acceptOwnAssignment(assignmentId);
-      closeModal();
+      await assignmentApi.responseOwnAssignment(assignmentId, "ACCEPTED");
       onSuccess?.();
       toast.success("Assignment accepted successfully!");
     } catch (error) {
       console.log(error);
       toast.error("Failed to accept assignment.");
+    } finally {
+      closeModal();
     }
   };
   return (
