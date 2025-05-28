@@ -14,87 +14,97 @@ import StaffDashboard from "../pages/staff";
 import { Protected } from "./protected";
 import CreateUpdateUser from "../pages/manage-user/create-update-user";
 import CreateUpdateAsset from "../pages/manage-asset/create-update-asset";
+import CreateUpdateAssignment from "../pages/manage-assignment/create-update-assignment";
+
 
 const router = createBrowserRouter([
-    {
-        element: <DefaultLayout />,
-        path: '/',
-        errorElement: '',//Show when loading error,
+  {
+    element: <DefaultLayout />,
+    path: "/",
+    errorElement: "", //Show when loading error,
+    children: [
+      {
+        index: true,
+        path: "home",
+        element: <Home />,
+      },
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "sign-up",
+        element: <SignUp />,
+      },
+      {
+        path: "manage-user",
+        element: <ManageUser />,
+      },
+      {
+        path: "manage-user/create",
+        element: <CreateUpdateUser />,
+      },
+      {
+        path: "manage-user/edit/:id",
+        element: <CreateUpdateUser />,
+      },
+      {
+        path: "manage-asset",
+        element: <ManageAsset />,
+      },
+      {
+        path: "manage-asset/create",
+        element: <CreateUpdateAsset />,
+      },
+      {
+        path: "manage-asset/edit/:id",
+        element: <CreateUpdateAsset />,
+      },
+      {
+        path: "manage-assignment",
+        element: <ManageAssignment />,
+      },
+      {
+        path: "manage-assignment/create",
+        element: <CreateUpdateAssignment />,
+      },
+      {
+        path: "manage-asset/create",
+        element: <CreateUpdateAsset />,
+      },
+      {
+        path: "request-return",
+        element: <RequestForReturn />,
+      },
+      {
+        path: "report",
+        element: <Report />,
+      },
+      {
+        element: <Protected requiredRole="admin" />,
         children: [
-            {
-                index: true,
-                path: 'home',
-                element: <Home />
-            },
-            {
-                path: 'login',
-                element: <Login />
-            },
-            {
-                path: 'sign-up',
-                element: <SignUp />
-            },
-            {
-                path: 'manage-user',
-                element: <ManageUser />
-            },
-            {
-                path: 'manage-user/create',
-                element: <CreateUpdateUser />
-            },
-            {
-                path: 'manage-user/edit/:id',
-                element: <CreateUpdateUser />
-            },
-            {
-                path: 'manage-asset',
-                element: <ManageAsset />
-            },
-            {
-                path: 'manage-asset/create',
-                element: <CreateUpdateAsset />
-            },
-            {
-                path: 'manage-asset/edit/:id',
-                element: <CreateUpdateAsset />
-            },
-            {
-                path: 'manage-assignment',
-                element: <ManageAssignment />
-            },
-            {
-                path: 'request-return',
-                element: <RequestForReturn />
-            },
-            {
-                path: 'report',
-                element: <Report />
-            },
-            {
-                element: <Protected requiredRole="admin" />,
-                children: [
-                    {
-                        path: '/admin',
-                        element: <AdminDashboard />
-                    }
-                ]
-            },
-            {
-                element: <Protected requiredRole="staff" />,
-                children: [
-                    {
-                        path: 'staff',
-                        element: <StaffDashboard />
-                    }
-                ]
-            },
-            {
-                path: '*',
-                element: <PageNotFound />
-            }
-        ]
-    }
-])
+          {
+            path: "/admin",
+            element: <AdminDashboard />,
+          },
+        ],
+      },
+      {
+        element: <Protected requiredRole="staff" />,
+        children: [
+          {
+            path: "staff",
+            element: <StaffDashboard />,
+          },
+        ],
+      },
+      {
+        path: "*",
+        element: <PageNotFound />,
+      },
+    ],
+  },
+]);
 
 const Index = () => {
     return (

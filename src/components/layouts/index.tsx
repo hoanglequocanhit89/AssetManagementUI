@@ -5,22 +5,26 @@ import { useEffect, useState } from "react";
 
 
 const pathItems = [
-    {
-        title: 'Create new user',
-        path: '/manage-user/create',
-    },
-    {
-        title: 'Edit User',
-        path: '/manage-user/edit/',
-    },
-    {
-        title: 'Create new asset',
-        path: 'manage-asset/create',
-    },
-    {
-        title: 'Edit asset',
-        path: 'manage-asset/edit/',
-    }
+  {
+    title: "Create new user",
+    path: "/manage-user/create",
+  },
+  {
+    title: "Edit User",
+    path: "/manage-user/edit/",
+  },
+  {
+    title: "Create new asset",
+    path: "manage-asset/create",
+  },
+  {
+    title: "Edit asset",
+    path: "manage-asset/edit/",
+  },
+  {
+    title: "Create new assignment",
+    path: "manage-assignment/create",
+  },
 ];
 
 const DefaultLayout = () => {

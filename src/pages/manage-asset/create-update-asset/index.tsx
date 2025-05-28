@@ -231,16 +231,21 @@ const CreateUpdateAsset = () => {
 
   return (
     <>
-      <ContentWrapper title={isEdit ? 'Edit Asset' : 'Create New Asset'}>
+      <ContentWrapper title={isEdit ? "Edit Asset" : "Create New Asset"}>
         {notFoundError ? (
-          <p className='text-center'>Asset not found -_-</p>
+          <p className="text-center">Asset not found -_-</p>
         ) : (
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-3 gap-y-6 items-center text-[1.6rem] max-w-3xl"
           >
             {/* Name */}
-            <label htmlFor="name" className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">Name</label>
+            <label
+              htmlFor="name"
+              className="pr-4 after:content-['*'] after:text-red-500 after:ml-2"
+            >
+              Name
+            </label>
             <div className="col-span-2">
               <InputField
                 id="name"
@@ -248,32 +253,48 @@ const CreateUpdateAsset = () => {
                   required: "This field is required",
                   maxLength: {
                     value: 255,
-                    message: "You have reached your maximum limit of characters allowed"
+                    message:
+                      "You have reached your maximum limit of characters allowed",
                   },
                 })}
               />
-              {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-red-500">{errors.name.message}</p>
+              )}
             </div>
 
             {/* Category */}
-            <label htmlFor="category" className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">Category</label>
+            <label
+              htmlFor="category"
+              className="pr-4 after:content-['*'] after:text-red-500 after:ml-2"
+            >
+              Category
+            </label>
             <div className="col-span-2 relative" ref={dropdownRef}>
               <input
                 type="hidden"
-                {...register("category", { required: "This field is required" })}
+                {...register("category", {
+                  required: "This field is required",
+                })}
               />
               <div
-                className={`w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer ${isEdit ? "bg-gray-300" : ""}`}
+                className={`w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer ${
+                  isEdit ? "bg-gray-300" : ""
+                }`}
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                <span>{selectedCategory || ""}</span>
-                <i className={`fa-solid fa-caret-${isDropdownOpen && !isEdit ? 'up' : 'down'}`}></i>
+                <span>{selectedCategory || "\u00A0 "}</span>
+                <i
+                  className={`fa-solid fa-caret-${
+                    isDropdownOpen && !isEdit ? "up" : "down"
+                  }`}
+                ></i>
               </div>
               {isDropdownOpen && !isEdit && (
                 <div className="absolute z-10 w-full mt-1 border border-gray-300 rounded-md bg-white shadow-lg">
                   {/* Scrollable list */}
                   <div className="max-h-60 overflow-y-auto">
-                    {categories.map(c => (
+                    {categories.map((c) => (
                       <div
                         key={c.id}
                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -302,65 +323,93 @@ const CreateUpdateAsset = () => {
                           <InputField
                             placeholder="Category name"
                             value={newCategoryName}
-                            onChange={e => setNewCategoryName(e.target.value)}
-                            onClick={e => e.stopPropagation()}
+                            onChange={(e) => setNewCategoryName(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
                           />
                           <InputField
                             placeholder="Prefix"
                             value={newPrefix}
-                            onChange={e => setNewPrefix(e.target.value)}
-                            onClick={e => e.stopPropagation()}
+                            onChange={(e) => setNewPrefix(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
                           />
-                          <button type="button" onClick={(e) => { e.stopPropagation(); handleAddCategory(); }}>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddCategory();
+                            }}
+                          >
                             <i className="fa-solid fa-check text-green-500"></i>
                           </button>
-                          <button type="button" onClick={(e) => {
-                            e.stopPropagation();
-                            setShowAddCategoryForm(false);
-                            setNewCategoryName('');
-                            setNewPrefix('');
-                            setCategoryError('');
-                          }}>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowAddCategoryForm(false);
+                              setNewCategoryName("");
+                              setNewPrefix("");
+                              setCategoryError("");
+                            }}
+                          >
                             <i className="fa-solid fa-xmark"></i>
                           </button>
                         </div>
-                        {categoryError && <p className="text-red-500">{categoryError}</p>}
+                        {categoryError && (
+                          <p className="text-red-500">{categoryError}</p>
+                        )}
                       </div>
                     )}
                   </div>
                 </div>
               )}
-
             </div>
 
-
             {/* Specification */}
-            <label htmlFor="specification" className="pr-4 after:content-['*'] after:text-red-500 after:ml-2 self-start">Specification</label>
+            <label
+              htmlFor="specification"
+              className="pr-4 after:content-['*'] after:text-red-500 after:ml-2 self-start"
+            >
+              Specification
+            </label>
             <div className="col-span-2">
               <textarea
                 id="specification"
-                {...register("specification", { required: "This field is required" })}
+                {...register("specification", {
+                  required: "This field is required",
+                })}
                 className="w-full border border-gray-500 rounded-md px-4 py-2 resize-none h-[100px] text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.specification && <p className="text-red-500">{errors.specification.message}</p>}
+              {errors.specification && (
+                <p className="text-red-500">{errors.specification.message}</p>
+              )}
             </div>
 
             {/* Installed Date */}
-            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">Installed Date</label>
+            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2">
+              Installed Date
+            </label>
             <div className="col-span-2">
               <Controller
                 control={control}
                 name="installedDate"
                 rules={{ required: "This field is required" }}
                 render={({ field }) => (
-                  <DateFilter label="" selectedDate={field.value} onSelect={field.onChange} />
+                  <DateFilter
+                    label={"\u00A0 "}
+                    selectedDate={field.value}
+                    onSelect={field.onChange}
+                  />
                 )}
               />
-              {errors.installedDate && <p className="text-red-500">{errors.installedDate.message}</p>}
+              {errors.installedDate && (
+                <p className="text-red-500">{errors.installedDate.message}</p>
+              )}
             </div>
 
             {/* State */}
-            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2 self-start">State</label>
+            <label className="pr-4 after:content-['*'] after:text-red-500 after:ml-2 self-start">
+              State
+            </label>
             <div className="col-span-2 flex flex-col">
               <label className="flex items-center gap-2">
                 <input
@@ -386,7 +435,9 @@ const CreateUpdateAsset = () => {
                     <input
                       type="radio"
                       value="WAITING"
-                      {...register("state", { required: "This field is required" })}
+                      {...register("state", {
+                        required: "This field is required",
+                      })}
                       className="accent-[var(--primary-color)]"
                     />
                     Waiting for recycling
@@ -395,38 +446,47 @@ const CreateUpdateAsset = () => {
                     <input
                       type="radio"
                       value="RECYCLED"
-                      {...register("state", { required: "This field is required" })}
+                      {...register("state", {
+                        required: "This field is required",
+                      })}
                       className="accent-[var(--primary-color)]"
                     />
                     Recycled
                   </label>
                 </>
               )}
-              {errors.state && <p className="text-red-500">{errors.state.message}</p>}
+              {errors.state && (
+                <p className="text-red-500">{errors.state.message}</p>
+              )}
             </div>
 
             {/* Actions */}
             <div className="col-start-2 col-span-2 flex justify-end gap-4 mt-6">
               <Button text="Save" color="primary" disabled={!isValid} />
-              <Button color="outline" text="Cancel" type='button' onClick={handleCancel} />
+              <Button
+                color="outline"
+                text="Cancel"
+                type="button"
+                onClick={handleCancel}
+              />
             </div>
           </form>
         )}
       </ContentWrapper>
 
-      {showModal &&
+      {showModal && (
         <CancelModal
           showModal={showModal}
           onSuccess={() => {
             setShowModal(false);
             navigate("/manage-asset");
           }}
-          content='Do you want to cancel your action?'
+          content="Do you want to cancel your action?"
           closeModal={() => setShowModal(false)}
         />
-      }
+      )}
     </>
-  )
+  );
 }
 
 export default CreateUpdateAsset
