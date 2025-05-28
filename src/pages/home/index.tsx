@@ -9,6 +9,7 @@ import assignmentApi from "../../api/ownAssignmentApi";
 import DeclineAssignmentModal from "../manage-assignment/components/assignment-own-decline";
 import AcceptAssignmentModal from "../manage-assignment/components/assignment-own-accept";
 import ReturnAssignmentModal from "../manage-assignment/components/assignment-own-return";
+import axiosClients from "../../api/axiosClients";
 
 const getColumns = (handlers: {
   onReturn: (row: OwnAssignment) => void;
@@ -150,9 +151,26 @@ const Home = () => {
       sortBy: sortFieldForApi,
       orderBy: orderBy,
     });
+    console.log("Assignment List Response:", response);
 
     setAssignmentData(response);
   };
+
+  // Automatically log in when the component mounts
+  // refactor this after login function is implemented
+  useEffect(() => {
+    const login = async () => {
+      try {
+        await axiosClients.post("auth/login", {
+          username: "adminhnut",
+          password: "adminhnut@03011990",
+        });
+      } catch (error) {
+        console.error("Login failed:", error);
+      }
+    };
+    login();
+  }, []);
 
   // Fetch the assignment list when the component mounts or when sortFieldForApi or orderBy changes
   useEffect(() => {
