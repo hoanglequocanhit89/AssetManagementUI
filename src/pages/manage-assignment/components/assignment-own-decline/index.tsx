@@ -20,13 +20,15 @@ const DeclineAssignmentModal = ({
 }: DeclineAssignmentProps) => {
   const handleDeclineAssignment = async () => {
     try {
-      await assignmentApi.declineOwnAssignment(assignmentId);
+      await assignmentApi.responseOwnAssignment(assignmentId, "DECLINED");
       closeModal();
       onSuccess?.();
       toast.success("Assignment declined successfully!");
     } catch (error) {
       console.log(error);
       toast.error("Failed to decline assignment.");
+    } finally {
+      closeModal();
     }
   };
   return (

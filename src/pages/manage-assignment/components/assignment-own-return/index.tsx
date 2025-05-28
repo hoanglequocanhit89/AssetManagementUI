@@ -26,6 +26,8 @@ const ReturnAssignmentModal = ({
       navigate("request-return");
     } catch (error) {
       console.log(error);
+    } finally {
+      closeModal();
     }
   };
   return (
