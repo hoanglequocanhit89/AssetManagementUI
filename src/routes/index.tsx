@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import DefaultLayout from "../components/layouts";
+import DefaultLayout from "../components/layouts/DefaultLayout";
 import PageNotFound from "../pages/404";
 import AdminDashboard from "../pages/admin";
 import Login from "../pages/auth/login";
@@ -11,105 +11,92 @@ import ManageUser from "../pages/manage-user";
 import Report from "../pages/report";
 import RequestForReturn from "../pages/request-return";
 import StaffDashboard from "../pages/staff";
-import { Protected } from "./protected";
+import Protected from "./protected";
 import CreateUpdateUser from "../pages/manage-user/create-update-user";
 import CreateUpdateAsset from "../pages/manage-asset/create-update-asset";
-import CreateUpdateAssignment from "../pages/manage-assignment/create-update-assignment";
-
+import HeaderOnlyLayout from "../components/layouts/HeaderOnlyLayout";
 
 const router = createBrowserRouter([
   {
-    element: <DefaultLayout />,
+    element: <HeaderOnlyLayout />,
     path: "/",
-    errorElement: "", //Show when loading error,
+    errorElement: "",
     children: [
       {
         index: true,
-        path: "home",
-        element: <Home />,
+        element: <Login />,
       },
       {
         path: "login",
         element: <Login />,
       },
+    ],
+  },
+  {
+    element: <DefaultLayout />,
+    path: "/",
+    errorElement: "",
+    children: [
       {
-        path: "sign-up",
-        element: <SignUp />,
-      },
-      {
-        path: "manage-user",
-        element: <ManageUser />,
-      },
-      {
-        path: "manage-user/create",
-        element: <CreateUpdateUser />,
-      },
-      {
-        path: "manage-user/edit/:id",
-        element: <CreateUpdateUser />,
-      },
-      {
-        path: "manage-asset",
-        element: <ManageAsset />,
-      },
-      {
-        path: "manage-asset/create",
-        element: <CreateUpdateAsset />,
-      },
-      {
-        path: "manage-asset/edit/:id",
-        element: <CreateUpdateAsset />,
-      },
-      {
-        path: "manage-assignment",
-        element: <ManageAssignment />,
-      },
-      {
-        path: "manage-assignment/create",
-        element: <CreateUpdateAssignment />,
-      },
-      {
-        path: "manage-asset/create",
-        element: <CreateUpdateAsset />,
-      },
-      {
-        path: "request-return",
-        element: <RequestForReturn />,
-      },
-      {
-        path: "report",
-        element: <Report />,
-      },
-      {
-        element: <Protected requiredRole="admin" />,
+        element: <Protected />,
         children: [
           {
-            path: "/admin",
-            element: <AdminDashboard />,
+            path: "home",
+            element: <Home />,
           },
         ],
       },
       {
-        element: <Protected requiredRole="staff" />,
+        element: <Protected requiredRole="ADMIN" />,
         children: [
           {
-            path: "staff",
-            element: <StaffDashboard />,
+            path: "manage-user",
+            element: <ManageUser />,
+          },
+          {
+            path: "manage-user/create",
+            element: <CreateUpdateUser />,
+          },
+          {
+            path: "manage-user/edit/:id",
+            element: <CreateUpdateUser />,
+          },
+          {
+            path: "manage-asset",
+            element: <ManageAsset />,
+          },
+          {
+            path: "manage-asset/create",
+            element: <CreateUpdateAsset />,
+          },
+          {
+            path: "manage-asset/edit/:id",
+            element: <CreateUpdateAsset />,
+          },
+          {
+            path: "manage-assignment",
+            element: <ManageAssignment />,
+          },
+          {
+            path: "request-return",
+            element: <RequestForReturn />,
+          },
+          {
+            path: "report",
+            element: <Report />,
           },
         ],
-      },
-      {
-        path: "*",
-        element: <PageNotFound />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <PageNotFound />,
   },
 ]);
 
 const Index = () => {
-    return (
-        <RouterProvider router={router} />
-    )
+  return <RouterProvider router={router} />;
 };
 
 export default Index;

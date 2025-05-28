@@ -1,6 +1,8 @@
 import nashtechLogo from "../../../assets/images/nashtech-logo.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./style.scss";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 const navItems = [
     {
@@ -29,12 +31,21 @@ const navItems = [
     }
 ];
 
+const staffItems = [
+    {
+        title: 'Home',
+        tag: 'home',
+    }
+]
+
 interface SidebarProps {
     setTitle: (x: string) => void
 }
 
 
 const Sidebar = (props: SidebarProps) => {
+
+    const auth = useSelector((state: RootState) => state.auth);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -50,7 +61,7 @@ const Sidebar = (props: SidebarProps) => {
                 <article className="sidebar-nav">
                     <ul className="sidebar-nav__list">
                         {
-                            navItems?.map((item, idx) => (
+                            (auth.role === 'ADMIN' ? navItems : staffItems).map((item, idx) => (
                                 <li key={idx}
                                     onClick={() => {
                                         setTitle(item.title);

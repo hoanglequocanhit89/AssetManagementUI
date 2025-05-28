@@ -1,5 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
+axios.defaults.withCredentials = true;
+
 const axiosClients: AxiosInstance = axios.create({
     baseURL: process.env.REACT_APP_BASE_API_URL,
     headers: {
