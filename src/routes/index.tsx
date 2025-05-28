@@ -1,20 +1,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import DefaultLayout from "../components/layouts/DefaultLayout";
 import PageNotFound from "../pages/404";
-import AdminDashboard from "../pages/admin";
 import Login from "../pages/auth/login";
-import SignUp from "../pages/auth/sign-up";
 import Home from "../pages/home";
 import ManageAsset from "../pages/manage-asset";
 import ManageAssignment from "../pages/manage-assignment";
 import ManageUser from "../pages/manage-user";
 import Report from "../pages/report";
 import RequestForReturn from "../pages/request-return";
-import StaffDashboard from "../pages/staff";
 import Protected from "./protected";
 import CreateUpdateUser from "../pages/manage-user/create-update-user";
 import CreateUpdateAsset from "../pages/manage-asset/create-update-asset";
 import HeaderOnlyLayout from "../components/layouts/HeaderOnlyLayout";
+import CreateUpdateAssignment from "../pages/manage-assignment/create-update-assignment";
 
 const router = createBrowserRouter([
   {
@@ -76,6 +74,10 @@ const router = createBrowserRouter([
           {
             path: "manage-assignment",
             element: <ManageAssignment />,
+          },
+          {
+            path: "manage-assignment/create",
+            element: <CreateUpdateAssignment />,
           },
           {
             path: "request-return",

@@ -46,11 +46,7 @@ const useDataFetching = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchUsers = useCallback(
-    async (
-      query?: string | null,
-      sortBy?: keyof UserBrief,
-      sortDir?: "asc" | "desc"
-    ) => {
+    async (query?: string | null, sortBy?: keyof UserBrief, sortDir?: "asc" | "desc") => {
       try {
         const response = await userApi.getAllUsers({
           query,
@@ -66,11 +62,7 @@ const useDataFetching = () => {
   );
 
   const fetchAssets = useCallback(
-    async (
-      query?: string | null,
-      sortBy?: keyof AssetBrief,
-      sortDir?: "asc" | "desc"
-    ) => {
+    async (query?: string | null, sortBy?: keyof AssetBrief, sortDir?: "asc" | "desc") => {
       try {
         const response = await assetApi.getAllAssets({
           query,
@@ -131,8 +123,7 @@ const CreateUpdateAssignment = () => {
   );
 
   // Data fetching
-  const { allUsers, allAssets, fetchUsers, fetchAssets, fetchAll } =
-    useDataFetching();
+  const { allUsers, allAssets, fetchUsers, fetchAssets, fetchAll } = useDataFetching();
 
   // Route params
   const { id } = useParams();
@@ -179,11 +170,7 @@ const CreateUpdateAssignment = () => {
   // Fetch users when user modal state change
   useEffect(() => {
     if (modals.showSelectUser) {
-      fetchUsers(
-        userModalState.query,
-        userModalState.sortBy,
-        userModalState.sortDir
-      );
+      fetchUsers(userModalState.query, userModalState.sortBy, userModalState.sortDir);
     }
   }, [
     modals.showSelectUser,
@@ -196,11 +183,7 @@ const CreateUpdateAssignment = () => {
   // Fetch assets when asset modal state change
   useEffect(() => {
     if (modals.showSelectAsset) {
-      fetchAssets(
-        assetModalState.query,
-        assetModalState.sortBy,
-        assetModalState.sortDir
-      );
+      fetchAssets(assetModalState.query, assetModalState.sortBy, assetModalState.sortDir);
     }
   }, [
     modals.showSelectAsset,
@@ -211,12 +194,9 @@ const CreateUpdateAssignment = () => {
   ]);
 
   // Event handlers
-  const updateModal = useCallback(
-    (modalName: keyof typeof modals, value: boolean) => {
-      setModals((prev) => ({ ...prev, [modalName]: value }));
-    },
-    []
-  );
+  const updateModal = useCallback((modalName: keyof typeof modals, value: boolean) => {
+    setModals((prev) => ({ ...prev, [modalName]: value }));
+  }, []);
 
   const onSubmit = async (data: CreateAssignmentRequest) => {
     try {
@@ -252,10 +232,7 @@ const CreateUpdateAssignment = () => {
     const formValues = getValues();
 
     const hasAnyInput =
-      formValues.userId ||
-      formValues.assetId ||
-      formValues.assignedDate ||
-      formValues.note?.trim();
+      formValues.userId || formValues.assetId || formValues.assignedDate || formValues.note?.trim();
 
     if (hasAnyInput) {
       updateModal("showCancel", true);
@@ -271,9 +248,7 @@ const CreateUpdateAssignment = () => {
 
   return (
     <>
-      <ContentWrapper
-        title={isEdit ? "Edit Assignment" : "Create New Assignment"}
-      >
+      <ContentWrapper title={isEdit ? "Edit Assignment" : "Create New Assignment"}>
         {notFoundError ? (
           <p className="text-center">Assignment not found -_-</p>
         ) : (
@@ -308,15 +283,11 @@ const CreateUpdateAssignment = () => {
               >
                 <span>{selectedItems.user?.fullName || "\u00A0"}</span>
                 <i
-                  className={`fa-solid ${
-                    isEdit ? "fa-caret-down" : "fa-magnifying-glass"
-                  }`}
+                  className={`fa-solid ${isEdit ? "fa-caret-down" : "fa-magnifying-glass"}`}
                   aria-hidden="true"
                 />
               </div>
-              {errors.userId && (
-                <p className="text-red-500">{errors.userId.message}</p>
-              )}
+              {errors.userId && <p className="text-red-500">{errors.userId.message}</p>}
             </div>
 
             {/* Asset Selection */}
@@ -348,15 +319,11 @@ const CreateUpdateAssignment = () => {
                   {selectedItems.asset?.assetName || "\u00A0"}
                 </span>
                 <i
-                  className={`h-full fa-solid ${
-                    isEdit ? "fa-caret-down" : "fa-magnifying-glass"
-                  }`}
+                  className={`h-full fa-solid ${isEdit ? "fa-caret-down" : "fa-magnifying-glass"}`}
                   aria-hidden="true"
                 />
               </div>
-              {errors.assetId && (
-                <p className="text-red-500">{errors.assetId.message}</p>
-              )}
+              {errors.assetId && <p className="text-red-500">{errors.assetId.message}</p>}
             </div>
 
             {/* Assigned Date */}
@@ -377,16 +344,10 @@ const CreateUpdateAssignment = () => {
                   },
                 }}
                 render={({ field }) => (
-                  <DateFilter
-                    label={" "}
-                    selectedDate={field.value}
-                    onSelect={field.onChange}
-                  />
+                  <DateFilter label={" "} selectedDate={field.value} onSelect={field.onChange} />
                 )}
               />
-              {errors.assignedDate && (
-                <p className="text-red-500">{errors.assignedDate.message}</p>
-              )}
+              {errors.assignedDate && <p className="text-red-500">{errors.assignedDate.message}</p>}
             </div>
 
             {/* Note */}
@@ -404,12 +365,7 @@ const CreateUpdateAssignment = () => {
             {/* Actions */}
             <div className="col-start-2 col-span-2 flex justify-end gap-4 mt-6">
               <Button text="Save" color="primary" disabled={!isValid} />
-              <Button
-                color="outline"
-                text="Cancel"
-                type="button"
-                onClick={handleCancel}
-              />
+              <Button color="outline" text="Cancel" type="button" onClick={handleCancel} />
             </div>
           </form>
         )}
@@ -432,8 +388,7 @@ const CreateUpdateAssignment = () => {
           onSearchInput={(query) => updateUserModalState({ query })}
           onSubmit={handleSubmitSelectUser}
           isDisableSubmit={
-            JSON.stringify(selectedItems.user) ===
-            JSON.stringify(userModalState.pickedItem)
+            JSON.stringify(selectedItems.user) === JSON.stringify(userModalState.pickedItem)
           }
         >
           <Table
@@ -441,9 +396,7 @@ const CreateUpdateAssignment = () => {
             isSelect
             onSelected={(row) => updateUserModalState({ pickedItem: row })}
             isSort
-            onSort={(key, direction) =>
-              updateUserModalState({ sortBy: key, sortDir: direction })
-            }
+            onSort={(key, direction) => updateUserModalState({ sortBy: key, sortDir: direction })}
             data={allUsers}
             sortBy={userModalState.sortBy}
             orderBy={userModalState.sortDir}
@@ -459,8 +412,7 @@ const CreateUpdateAssignment = () => {
           onSearchInput={(query) => updateAssetModalState({ query })}
           onSubmit={handleSubmitSelectAsset}
           isDisableSubmit={
-            JSON.stringify(selectedItems.asset) ===
-            JSON.stringify(assetModalState.pickedItem)
+            JSON.stringify(selectedItems.asset) === JSON.stringify(assetModalState.pickedItem)
           }
         >
           <Table
@@ -468,9 +420,7 @@ const CreateUpdateAssignment = () => {
             isSelect
             onSelected={(row) => updateAssetModalState({ pickedItem: row })}
             isSort
-            onSort={(key, direction) =>
-              updateAssetModalState({ sortBy: key, sortDir: direction })
-            }
+            onSort={(key, direction) => updateAssetModalState({ sortBy: key, sortDir: direction })}
             data={allAssets}
             sortBy={assetModalState.sortBy}
             orderBy={assetModalState.sortDir}
@@ -483,4 +433,3 @@ const CreateUpdateAssignment = () => {
 };
 
 export default CreateUpdateAssignment;
-
