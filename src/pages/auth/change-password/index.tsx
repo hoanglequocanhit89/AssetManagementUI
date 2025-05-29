@@ -29,6 +29,7 @@ const ChangePasswordModal = (props: ChangePasswordModalProps) => {
       await authApi.changeFirstPasswordAction(changePasswordData)
         .then(response => {
           toast.success(response.message);
+          dispatch(changePassword());
           props.onClose();
         })
         .catch(err => {
