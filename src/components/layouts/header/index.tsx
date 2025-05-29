@@ -9,6 +9,7 @@ import { useState } from "react";
 import { ChangePasswordProps } from "../../../types";
 import ChangePasswordModal from "../../../pages/auth/change-password";
 import { RootState } from "../../../store";
+import { toast } from "react-toastify";
 
 interface HeaderProps {
     isLogin?: boolean,
@@ -24,9 +25,14 @@ const Header = ({ isLogin = true, title, subTitle }: HeaderProps) => {
     const auth = useSelector((state: RootState) => state.auth);
 
     const handleLogout = async () => {
-        const response = await authApi.logoutAction();
-        response && dispatch(logout());
-        navigate('/login');        
+        await authApi.logoutAction()
+        .then(response => {
+            dispatch(logout());
+            navigate('/login');        
+        })
+        .catch(err => {
+            toast.error(err.response?.data?.message);
+        });
     };
 
     return (
