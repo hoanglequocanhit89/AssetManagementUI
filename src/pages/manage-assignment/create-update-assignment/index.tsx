@@ -7,7 +7,7 @@ import { useForm, Controller } from "react-hook-form";
 import CancelModal from "../../../components/ui/cancel-modal";
 import FormModalWithSearch from "../../../components/ui/form-modal-with-search";
 import Table, { Column } from "../../../components/ui/table";
-import { CreateAssignmentRequest } from "../../../types/assignment";
+import { CreateUpdateAssignmentRequest } from "../../../types/assignment";
 import { UserBrief } from "../../../types";
 import { AssetBrief } from "../../../types/asset";
 import userApi from "../../../api/userApi";
@@ -131,7 +131,7 @@ const CreateUpdateAssignment = () => {
   );
 
   // Data fetching
-  const { allUsers, allAssets, fetchUsers, fetchAssets, fetchAll } =
+  const { allUsers, allAssets, fetchUsers, fetchAssets, fetchAll, loading } =
     useDataFetching();
 
   // Route params
@@ -148,7 +148,7 @@ const CreateUpdateAssignment = () => {
     trigger,
     getValues,
     formState: { errors, isValid },
-  } = useForm<CreateAssignmentRequest>({
+  } = useForm<CreateUpdateAssignmentRequest>({
     mode: "onChange",
   });
 
@@ -171,10 +171,39 @@ const CreateUpdateAssignment = () => {
     []
   );
 
-  // Effects
+  const getAssignmentToUpdate = useMemo(
+    () => async () => {
+      try {
+        const response = await assignmentApi.getAssignmentToUpdate(Number(id));
+        const exitingAssignment = response.data;
+        setValue("userId", exitingAssignment.user.id);
+        setValue("assetId", exitingAssignment.asset.id);
+        setValue("assignedDate", exitingAssignment.assignedDate);
+        setValue("note", exitingAssignment.note);
+
+        setSelectedItems({
+          user: exitingAssignment.user,
+          asset: exitingAssignment.asset,
+        });
+      } catch (error) {
+        toast.error("Failed to get assignment to update.");
+        setNotFoundError(true);
+      }
+    },
+    [id, setValue]
+  );
+
+  // Fetch all users and assets when the component mounts
   useEffect(() => {
     fetchAll();
   }, [fetchAll]);
+
+  // Fetch assignment to update
+  useEffect(() => {
+    if (isEdit && !loading) {
+      getAssignmentToUpdate();
+    }
+  }, [isEdit, getAssignmentToUpdate, loading]);
 
   // Fetch users when user modal state change
   useEffect(() => {
@@ -218,12 +247,21 @@ const CreateUpdateAssignment = () => {
     []
   );
 
-  const onSubmit = async (data: CreateAssignmentRequest) => {
+  const onSubmit = async (data: CreateUpdateAssignmentRequest) => {
     try {
-      console.log(data);
-      await assignmentApi.createAssignment(data);
-      toast.success("Assignment created successfully");
-      navigate("/manage-assignment");
+      let response;
+      if (isEdit) {
+        response = await assignmentApi.editAssignment(Number(id), data);
+        toast.success("Assignment updated successfully");
+      } else {
+        response = await assignmentApi.createAssignment(data);
+        toast.success("Assignment created successfully");
+      }
+      navigate("/manage-assignment", {
+        state: {
+          tempAsset: response.data,
+        },
+      });
     } catch (error) {
       console.error("Error submitting assignment:", error);
     }
@@ -294,17 +332,12 @@ const CreateUpdateAssignment = () => {
                 {...register("userId", { required: "This field is required" })}
               />
               <div
-                className={`w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer ${
-                  isEdit ? "bg-gray-300" : ""
-                }`}
+                className={
+                  "w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer "
+                }
                 onClick={() => updateModal("showSelectUser", true)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    updateModal("showSelectUser", true);
-                  }
-                }}
               >
                 <span>{selectedItems.user?.fullName || "\u00A0"}</span>
                 <i
@@ -332,17 +365,10 @@ const CreateUpdateAssignment = () => {
                 {...register("assetId", { required: "This field is required" })}
               />
               <div
-                className={`w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer ${
-                  isEdit ? "bg-gray-300" : ""
-                }`}
+                className={`w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer`}
                 onClick={() => updateModal("showSelectAsset", true)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    updateModal("showSelectAsset", true);
-                  }
-                }}
               >
                 <span className="truncate flex-1 w-full">
                   {selectedItems.asset?.assetName || "\u00A0"}
@@ -397,7 +423,7 @@ const CreateUpdateAssignment = () => {
               <textarea
                 id="note"
                 {...register("note")}
-                className="w-full border border-gray-500 rounded-md px-4 py-2 resize-none h-[80px] text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-500 rounded-md px-4 py-2 resize-none h-[80px] focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -483,4 +509,3 @@ const CreateUpdateAssignment = () => {
 };
 
 export default CreateUpdateAssignment;
-
