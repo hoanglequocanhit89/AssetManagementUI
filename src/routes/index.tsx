@@ -80,6 +80,10 @@ const router = createBrowserRouter([
             element: <CreateUpdateAssignment />,
           },
           {
+            path: "manage-assignment/edit/:id",
+            element: <CreateUpdateAssignment />,
+          },
+          {
             path: "request-return",
             element: <RequestForReturn />,
           },

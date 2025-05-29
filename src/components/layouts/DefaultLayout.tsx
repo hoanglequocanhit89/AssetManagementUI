@@ -25,6 +25,10 @@ const pathItems = [
     title: "Create new assignment",
     path: "manage-assignment/create",
   },
+  {
+    title: "Edit assignment",
+    path: "manage-assignment/edit",
+  },
 ];
 
 const DefaultLayout = () => {
