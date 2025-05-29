@@ -1,14 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import Login from "../../pages/auth/login";
 import { UserRole } from "../../types";
 
 interface AuthState {
     role: UserRole,
+    username: string | null,
     isFirstLogin: boolean | null,
 }
 
 const initialState: AuthState = {
     role: null,
+    username: null,
     isFirstLogin: null
 }
 
@@ -18,6 +19,7 @@ const authSlice = createSlice({
     reducers: {
         login: (state, action: PayloadAction<AuthState>) => {
             state.role = action.payload.role;
+            state.username = action.payload.username;
             state.isFirstLogin = action.payload.isFirstLogin;
         },
         changePassword: (state) => {
@@ -25,11 +27,12 @@ const authSlice = createSlice({
         },
         logout: (state) => {
             state.role = null;
+            state.username = null;
             state.isFirstLogin = null
         }
     }
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, changePassword } = authSlice.actions;
 
 export default authSlice.reducer;

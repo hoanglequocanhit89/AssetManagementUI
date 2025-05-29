@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import authApi from "../../../api/authApi";
 import Button from "../../../components/ui/button";
 import FormInputGroup from "../../../components/ui/form-input-group";
 import FormModal from "../../../components/ui/form-modal";
+import { RootState } from "../../../store";
+import { changePassword, logout } from "../../../store/slices/authSlice";
 import { ChangePasswordProps } from "../../../types";
 
 interface ChangePasswordModalProps {
@@ -11,14 +15,36 @@ interface ChangePasswordModalProps {
 }
 
 const ChangePasswordModal = (props: ChangePasswordModalProps) => {
+
+  const auth = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+
   const [changePasswordData, setChangePasswordData] = useState<ChangePasswordProps>({
     oldPassword: "",
     newPassword: "",
   });
 
   const handleChangePasswordAction = async () => {
-    const response = await authApi.changePasswordAction(changePasswordData);
-    console.log(response);
+    let response;
+    if(props.isFirstLogin) {
+      await authApi.changeFirstPasswordAction(changePasswordData)
+        .then(response => {
+          toast.success(response.message);
+          props.onClose();
+        })
+        .catch(err => {
+          toast.error(err.response?.data.message)
+        });
+    } else {
+      await authApi.changePasswordAction(changePasswordData)
+        .then(response => {
+          toast.success(response.message);
+          response && dispatch(logout());
+        })
+        .catch(err => {
+          toast.error(err.response?.data.message);
+        });
+    }
   };
 
   return (
@@ -60,10 +86,18 @@ const ChangePasswordModal = (props: ChangePasswordModalProps) => {
             color="primary"
             text="Save"
             disabled={
-              changePasswordData.oldPassword === "" || changePasswordData.newPassword === ""
+              changePasswordData.oldPassword === "" && changePasswordData.newPassword === ""
             }
             onClick={handleChangePasswordAction}
           />
+          {
+            !props.isFirstLogin && 
+            <Button
+              color="outline"
+              text="Cancel"
+              onClick={props.onClose}
+            />
+          }
         </div>
       </div>
     </FormModal>

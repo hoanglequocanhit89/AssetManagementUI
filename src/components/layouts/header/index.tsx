@@ -2,12 +2,13 @@ import "./style.scss";
 import nashtechLogo from "../../../assets/images/nashtech-logo.png";
 import DropDown from "./components/dropdown";
 import authApi from "../../../api/authApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ChangePasswordProps } from "../../../types";
 import ChangePasswordModal from "../../../pages/auth/change-password";
+import { RootState } from "../../../store";
 
 interface HeaderProps {
     isLogin?: boolean,
@@ -19,19 +20,14 @@ const Header = ({ isLogin = true, title, subTitle }: HeaderProps) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [changePasswordData, setChangePasswordData] = useState<ChangePasswordProps>({newPassword: '', oldPassword: ''});
     const [changePasswordModal, setChangePasswordModal] = useState<boolean>(false);
+    const auth = useSelector((state: RootState) => state.auth);
 
     const handleLogout = async () => {
         const response = await authApi.logoutAction();
         response && dispatch(logout());
         navigate('/login');        
     };
-
-    const handleChangePassword = async () => {
-        const response = await authApi.changePasswordAction(changePasswordData);
-        console.log(response);
-    }
 
     return (
         <>
@@ -47,7 +43,7 @@ const Header = ({ isLogin = true, title, subTitle }: HeaderProps) => {
                             {title}
                             {subTitle && <> &gt; {subTitle}</>}
                         </h1>)}
-                        {isLogin && <DropDown onChangePassword={() => setChangePasswordModal(true)} username="test" onLogout={handleLogout}/>}
+                        {isLogin && <DropDown onChangePassword={() => setChangePasswordModal(true)} username={auth.username || ''} onLogout={handleLogout}/>}
                     </div>
                 </div>
             </header>

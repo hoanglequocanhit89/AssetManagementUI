@@ -15,15 +15,13 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const handleLogin = async () => {
-    console.log("Login data:", loginData);
-
     const response = await authApi.loginAction(loginData);
     if (!response.data) {
       toast.error(response.message);
     } else {
       toast.success(response.message);
-      navigate("/home");
       response.data && dispatch(login(response.data));
+      navigate("/home");
     }
   };
 
