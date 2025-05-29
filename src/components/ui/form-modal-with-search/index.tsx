@@ -33,7 +33,7 @@ const FormModalWithSearch = (props: FormModalWithSearchProps) => {
               <SearchInput onSearch={(data) => setSearchInput(data)} value={searchInput} />
             </div>
           </div>
-          <div className="form-modal__search--content w-[30vw] max-h-[80vh] overflow-y-scroll">
+          <div className="form-modal__search--content">
             {children}
           </div>
           <div className="form-modal__action">

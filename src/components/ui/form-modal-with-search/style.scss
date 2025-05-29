@@ -9,11 +9,9 @@
         background-color: #fff;
         min-width: 480px;
         border: 1px solid rgba(112, 112, 112, 1);
-        overflow: visible; /* Changed from hidden */
         padding: 20px;
         z-index: 9999; /* Very high z-index to escape layout contexts */
         isolation: isolate; /* Create new stacking context */
-        pointer-events: auto; /* Ensure interactions work */
     }
 
     &__overlay {
@@ -21,7 +19,6 @@
             inset: 0;
             background-color: rgba(204, 204, 204, 0.5);
             z-index: 9998; /* High z-index */
-            pointer-events: auto;
     }
 
     &__row {
@@ -29,7 +26,6 @@
         align-items: center;
         justify-content: space-between;
         gap: 20px;
-        pointer-events: auto;
     }
 
     &__action {
