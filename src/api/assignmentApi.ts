@@ -1,44 +1,58 @@
 import axiosClients from "./axiosClients";
 import { BaseResponse, BaseResponseWithoutPagination } from "../types";
-import { Assignment, AssignmentDetail, CreateAssignmentResponse, CreateAssignmentRequest } from "../types/assignment";
+import {
+  Assignment,
+  AssignmentDetail,
+  CreateUpdateAssignmentResponse,
+  CreateUpdateAssignmentRequest,
+  AssignmentToUpdate,
+} from "../types/assignment";
 
 interface AssignmentParams {
-    status?: string;
-    assignedDate?: string;
-    query?: string;
-    page?: number;
-    size?: number;
-    sortBy?: string;
-    sortDir?: string;
+  status?: string;
+  assignedDate?: string;
+  query?: string;
+  page?: number;
+  size?: number;
+  sortBy?: string;
+  sortDir?: string;
 }
 
 const assignmentApi = {
   createAssignment(
-    request: CreateAssignmentRequest
-  ): Promise<CreateAssignmentResponse> {
+    request: CreateUpdateAssignmentRequest
+  ): Promise<BaseResponseWithoutPagination<CreateUpdateAssignmentResponse>> {
     return axiosClients.post("assignments", request);
   },
 
   getAssignmentList(
     props: AssignmentParams
   ): Promise<BaseResponse<Assignment>> {
-    const { status, assignedDate, query, page = 0, size = 20, sortBy = "assetCode", sortDir = "asc" } = props;
+    const {
+      status,
+      assignedDate,
+      query,
+      page = 0,
+      size = 20,
+      sortBy = "assetCode",
+      sortDir = "asc",
+    } = props;
 
     const params = {
-            status,
-            assignedDate,
-            query,
-            page,
-            size,
-            sortBy,
-            sortDir
-        };
+      status,
+      assignedDate,
+      query,
+      page,
+      size,
+      sortBy,
+      sortDir,
+    };
 
-        (Object.keys(params) as (keyof typeof params)[]).forEach(
-            (key) => params[key] === undefined && delete params[key]
-        );
+    (Object.keys(params) as (keyof typeof params)[]).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
-        const url = `assignments`;
+    const url = `assignments`;
 
     return axiosClients.get(url, { params: params });
   },
@@ -56,6 +70,21 @@ const assignmentApi = {
   ): Promise<BaseResponseWithoutPagination<string>> {
     const url = `assignments/${assignmentId}`;
     return axiosClients.delete(url);
+  },
+
+  getAssignmentToUpdate(
+    assignmentId: number
+  ): Promise<BaseResponseWithoutPagination<AssignmentToUpdate>> {
+    const url = `assignments/${assignmentId}/update`;
+    return axiosClients.get(url);
+  },
+
+  editAssignment(
+    assignmentId: number,
+    payload: CreateUpdateAssignmentRequest
+  ): Promise<BaseResponseWithoutPagination<CreateUpdateAssignmentResponse>> {
+    const url = `assignments/${assignmentId}`;
+    return axiosClients.put(url, payload);
   },
 };
 
