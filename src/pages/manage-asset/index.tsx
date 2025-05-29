@@ -138,11 +138,9 @@ const ManageAsset = () => {
                 if (tempAsset) {
                     assets = assets.filter(a => a.id !== tempAsset.id);
                     assets.unshift(tempAsset);
-                    console.log(assets);
                     setAssetList(assets);
                 }
                 else {
-
                     setAssetList([...response.data.content]);
                 }
 

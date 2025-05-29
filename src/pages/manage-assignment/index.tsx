@@ -149,6 +149,7 @@ const ManageAssignment = () => {
     };
 
     try {
+      const tempAsset = location.state?.tempAsset;
       const response = await assignmentApi.getAssignmentList({
         status: stateFilter || undefined,
         assignedDate: assignedDateFilter ? formatDateToLocalString(assignedDateFilter) : undefined,
@@ -159,7 +160,15 @@ const ManageAssignment = () => {
         sortDir: sortFilter.sortDir || "asc",
       });
       if (response.data) {
-        setAssignementList(response.data.content);
+        if (tempAsset) {
+          response.data.content = response.data.content.filter(
+            (a) => a.id !== tempAsset.id
+          )
+          response.data.content.unshift(tempAsset);
+          setAssignementList(response.data.content);
+        } else {
+          setAssignementList(response.data.content);
+        }
         setPagingData((prev) => ({
           ...prev,
           totalPage: response.data.totalPages,

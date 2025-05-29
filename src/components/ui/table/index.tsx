@@ -1,5 +1,6 @@
 import React, { useState, MouseEvent } from "react";
 import CustomRadio from "../CustomRadio";
+import { SpinnerLoading } from "../SpinnerLoading";
 
 interface Action<T> {
   render: ((row: T) => React.ReactNode) | React.ReactNode;
@@ -16,6 +17,7 @@ export interface Column<T> {
 interface TableProps<T extends { id: number }> {
   columns: Column<T>[];
   data: T[];
+  isDataLoading?: boolean;
   onSort?: (key: keyof T, direction: "asc" | "desc") => void;
   onRowClick?: (id: number) => void;
   isSort?: boolean;
@@ -37,6 +39,7 @@ const Table = <T extends { id: number }>({
   isSelect = false,
   onSelected,
   selectedObject,
+  isDataLoading = false,
 }: TableProps<T>) => {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof T | null;
@@ -113,75 +116,93 @@ const Table = <T extends { id: number }>({
           </tr>
         </thead>
         <tbody>
-          {data.map((row, index) => (
-            <tr
-              key={row.id ?? index}
-              className="cursor-pointer"
-              onClick={() => onRowClick?.(row.id)}
-            >
-              {isSelect && (
-                <td className="text-center">
-                  <div className="flex justify-center">
-                    <CustomRadio
-                      checked={selectedRow?.id === row.id}
-                      onChange={() => {
-                        setSelectedRow(row);
-                        onSelected?.(row);
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </div>
-                </td>
-              )}
-              {columns.map((column) => (
-                <td
-                  key={String(column.key)}
-                  className={[
-                    column.key === "action"
-                      ? "w-0 whitespace-nowrap text-center"
-                      : "",
-                    "pb-2 pt-4 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate",
-                    column.title ? "border-b-2 border-[#e5e7eb]" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  title={
-                    column.key !== "action"
-                      ? String(row[column.key as keyof T])
-                      : undefined
-                  }
-                >
-                  {column.key === "action" && column.actions ? (
-                    <div className="flex justify-end w-full">
-                      <div
-                        className="flex justify-between gap-4"
+          {data.length > 0 ? (
+            data.map((row, index) => (
+              <tr
+                key={row.id ?? index}
+                className="cursor-pointer"
+                onClick={() => onRowClick?.(row.id)}
+              >
+                {isSelect && (
+                  <td className="text-center">
+                    <div className="flex justify-center">
+                      <CustomRadio
+                        checked={selectedRow?.id === row.id}
+                        onChange={() => {
+                          setSelectedRow(row);
+                          onSelected?.(row);
+                        }}
                         onClick={(e) => e.stopPropagation()}
-                      >
-                        {column.actions.map((action, index) => (
-                          <div
-                            className="mx-2 cursor-pointer"
-                            key={index}
-                            onClick={(e: MouseEvent) => {
-                              e.stopPropagation();
-                              action.onClick(row);
-                            }}
-                          >
-                            {typeof action.render === "function"
-                              ? action.render(row)
-                              : action.render}
-                          </div>
-                        ))}
-                      </div>
+                      />
                     </div>
-                  ) : column.render ? (
-                    column.render(row[column.key as keyof T], row, index)
-                  ) : (
-                    String(row[column.key as keyof T])
-                  )}
-                </td>
-              ))}
+                  </td>
+                )}
+                {columns.map((column) => (
+                  <td
+                    key={String(column.key)}
+                    className={[
+                      column.key === "action"
+                        ? "w-0 whitespace-nowrap text-center"
+                        : "",
+                      "pb-2 pt-4 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate",
+                      column.title ? "border-b-2 border-[#e5e7eb]" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    title={
+                      column.key !== "action"
+                        ? String(row[column.key as keyof T])
+                        : undefined
+                    }
+                  >
+                    {column.key === "action" && column.actions ? (
+                      <div className="flex justify-end w-full">
+                        <div
+                          className="flex justify-between gap-4"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {column.actions.map((action, index) => (
+                            <div
+                              className="mx-2 cursor-pointer"
+                              key={index}
+                              onClick={(e: MouseEvent) => {
+                                e.stopPropagation();
+                                action.onClick(row);
+                              }}
+                            >
+                              {typeof action.render === "function"
+                                ? action.render(row)
+                                : action.render}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : column.render ? (
+                      column.render(row[column.key as keyof T], row, index)
+                    ) : (
+                      String(row[column.key as keyof T])
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={isSelect ? columns.length + 1 : columns.length}>
+                <div className="flex justify-center text-lg sm:text-[1.4rem] md:text-[1.5rem] mt-4 lg:text-[1.6rem] font-bold text-gray-900">
+                  {
+                    isDataLoading ? (
+                      <SpinnerLoading />
+                    ): (
+                      <span>
+                        No results found
+                      </span>
+                    )
+                  }
+                </div>
+              </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>
