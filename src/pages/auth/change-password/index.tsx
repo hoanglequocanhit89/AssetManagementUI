@@ -25,7 +25,6 @@ const ChangePasswordModal = (props: ChangePasswordModalProps) => {
   });
 
   const handleChangePasswordAction = async () => {
-    let response;
     if(props.isFirstLogin) {
       await authApi.changeFirstPasswordAction(changePasswordData)
         .then(response => {

@@ -15,14 +15,15 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const handleLogin = async () => {
-    const response = await authApi.loginAction(loginData);
-    if (!response.data) {
-      toast.error(response.message);
-    } else {
+    await authApi.loginAction(loginData)
+    .then(response => {
       toast.success(response.message);
-      response.data && dispatch(login(response.data));
+      dispatch(login(response.data));
       navigate("/home");
-    }
+    })
+    .catch(err => {
+      toast.error(err.response?.data.message);
+    });
   };
 
   return (
