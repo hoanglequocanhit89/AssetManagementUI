@@ -1,27 +1,38 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserRole } from "../../types";
 
 interface AuthState {
-    token: string,
+    role: UserRole,
+    username: string | null,
+    isFirstLogin: boolean | null,
 }
 
 const initialState: AuthState = {
-    token: '',
+    role: null,
+    username: null,
+    isFirstLogin: null
 }
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        login: (data) => {
-            // Call api login and get token as response from server
-            initialState.token = '' //Token
+        login: (state, action: PayloadAction<AuthState>) => {
+            state.role = action.payload.role;
+            state.username = action.payload.username;
+            state.isFirstLogin = action.payload.isFirstLogin;
         },
-        logout: () => {
-            initialState.token = '';
+        changePassword: (state) => {
+            state.isFirstLogin = false;
+        },
+        logout: (state) => {
+            state.role = null;
+            state.username = null;
+            state.isFirstLogin = null
         }
     }
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, changePassword } = authSlice.actions;
 
 export default authSlice.reducer;
