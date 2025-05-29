@@ -51,13 +51,12 @@ const getColumns = (props: {
         },
         {
           render: (row) => {
-            const isDisabled = row.status === "DECLINED" || row.status === "ACCEPTED";
+            const isDisabled = row.status === "ACCEPTED";
             return (
               <button disabled={isDisabled}>
                 <i
-                  className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                  className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                 ></i>
               </button>
             );
@@ -66,11 +65,11 @@ const getColumns = (props: {
         },
         {
           render: (row) => (
-            <button disabled>
-              <i className="fa-solid fa-rotate-left opacity-50 cursor-not-allowed"></i>
+            <button>
+              <i className="fa-solid fa-rotate-left"></i>
             </button>
           ),
-          onClick: handlers.onDelete,
+          onClick: () => { }
         },
       ],
     },
