@@ -15,6 +15,8 @@ import assetApi from "../../../api/assetApi";
 import { isBefore, startOfDay } from "date-fns";
 import assignmentApi from "../../../api/assignmentApi";
 import { toast } from "react-toastify";
+import axios from "axios";
+import { compareObject } from "../../../utils/compareObject";
 
 interface FormModalState<T> {
   pickedItem: T;
@@ -46,7 +48,11 @@ const useDataFetching = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchUsers = useCallback(
-    async (query?: string | null, sortBy?: keyof UserBrief, sortDir?: "asc" | "desc") => {
+    async (
+      query?: string | null,
+      sortBy?: keyof UserBrief,
+      sortDir?: "asc" | "desc"
+    ) => {
       try {
         const response = await userApi.getAllUsers({
           query,
@@ -62,7 +68,11 @@ const useDataFetching = () => {
   );
 
   const fetchAssets = useCallback(
-    async (query?: string | null, sortBy?: keyof AssetBrief, sortDir?: "asc" | "desc") => {
+    async (
+      query?: string | null,
+      sortBy?: keyof AssetBrief,
+      sortDir?: "asc" | "desc"
+    ) => {
       try {
         const response = await assetApi.getAllAssets({
           query,
@@ -104,6 +114,10 @@ const CreateUpdateAssignment = () => {
     showSelectUser: false,
     showSelectAsset: false,
   });
+  const [defaultAssignment, setDefaultAssignment] =
+    useState<CreateUpdateAssignmentRequest>({
+      assignedDate: new Date(),
+    } as CreateUpdateAssignmentRequest);
 
   const [selectedItems, setSelectedItems] = useState({
     user: {} as UserBrief,
@@ -123,7 +137,8 @@ const CreateUpdateAssignment = () => {
   );
 
   // Data fetching
-  const { allUsers, allAssets, fetchUsers, fetchAssets, fetchAll, loading } = useDataFetching();
+  const { allUsers, allAssets, fetchUsers, fetchAssets, fetchAll, loading } =
+    useDataFetching();
 
   // Route params
   const { id } = useParams();
@@ -141,6 +156,7 @@ const CreateUpdateAssignment = () => {
     formState: { errors, isValid },
   } = useForm<CreateUpdateAssignmentRequest>({
     mode: "onChange",
+    defaultValues: defaultAssignment,
   });
 
   // Memoized columns to avoid re-render unnecessarily
@@ -169,8 +185,14 @@ const CreateUpdateAssignment = () => {
         const exitingAssignment = response.data;
         setValue("userId", exitingAssignment.user.id);
         setValue("assetId", exitingAssignment.asset.id);
-        setValue("assignedDate", exitingAssignment.assignedDate);
+        setValue("assignedDate", new Date(exitingAssignment.assignedDate));
         setValue("note", exitingAssignment.note);
+        setDefaultAssignment({
+          userId: exitingAssignment.user.id,
+          assetId: exitingAssignment.asset.id,
+          assignedDate: new Date(exitingAssignment.assignedDate),
+          note: exitingAssignment.note,
+        })
 
         setSelectedItems({
           user: exitingAssignment.user,
@@ -199,7 +221,11 @@ const CreateUpdateAssignment = () => {
   // Fetch users when user modal state change
   useEffect(() => {
     if (modals.showSelectUser) {
-      fetchUsers(userModalState.query, userModalState.sortBy, userModalState.sortDir);
+      fetchUsers(
+        userModalState.query,
+        userModalState.sortBy,
+        userModalState.sortDir
+      );
     }
   }, [
     modals.showSelectUser,
@@ -212,7 +238,11 @@ const CreateUpdateAssignment = () => {
   // Fetch assets when asset modal state change
   useEffect(() => {
     if (modals.showSelectAsset) {
-      fetchAssets(assetModalState.query, assetModalState.sortBy, assetModalState.sortDir);
+      fetchAssets(
+        assetModalState.query,
+        assetModalState.sortBy,
+        assetModalState.sortDir
+      );
     }
   }, [
     modals.showSelectAsset,
@@ -223,9 +253,12 @@ const CreateUpdateAssignment = () => {
   ]);
 
   // Event handlers
-  const updateModal = useCallback((modalName: keyof typeof modals, value: boolean) => {
-    setModals((prev) => ({ ...prev, [modalName]: value }));
-  }, []);
+  const updateModal = useCallback(
+    (modalName: keyof typeof modals, value: boolean) => {
+      setModals((prev) => ({ ...prev, [modalName]: value }));
+    },
+    []
+  );
 
   const onSubmit = async (data: CreateUpdateAssignmentRequest) => {
     try {
@@ -243,7 +276,14 @@ const CreateUpdateAssignment = () => {
         },
       });
     } catch (error) {
-      console.error("Error submitting assignment:", error);
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          (error.response?.data as { message?: string })?.message ||
+          "Server error";
+        toast.error(errorMessage);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 
@@ -266,18 +306,26 @@ const CreateUpdateAssignment = () => {
     trigger("assignedDate");
   }, [assetModalState.pickedItem, setValue, updateModal, trigger]);
 
-  const handleCancel = useCallback(() => {
+  const isFormChanged = useCallback(() => {
     const formValues = getValues();
+    const defaultFormValues = {
+      userId: defaultAssignment.userId || '',
+      assetId: defaultAssignment.assetId || '',
+      assignedDate: defaultAssignment.assignedDate || '',
+      note: defaultAssignment.note || '',
+    } 
+    return !compareObject(formValues, defaultFormValues);
+  }, [getValues, defaultAssignment]);
 
-    const hasAnyInput =
-      formValues.userId || formValues.assetId || formValues.assignedDate || formValues.note?.trim();
+  const handleCancel = useCallback(() => {
 
-    if (hasAnyInput) {
+    // Check to show cancel modal if the form values are changed
+    if (isFormChanged()) {
       updateModal("showCancel", true);
     } else {
       navigate("/manage-assignment");
     }
-  }, [updateModal, navigate, getValues]);
+  }, [isFormChanged, navigate, updateModal]);
 
   const handleCancelConfirm = useCallback(() => {
     updateModal("showCancel", false);
@@ -286,7 +334,9 @@ const CreateUpdateAssignment = () => {
 
   return (
     <>
-      <ContentWrapper title={isEdit ? "Edit Assignment" : "Create New Assignment"}>
+      <ContentWrapper
+        title={isEdit ? "Edit Assignment" : "Create New Assignment"}
+      >
         {notFoundError ? (
           <p className="text-center">Assignment not found -_-</p>
         ) : (
@@ -316,11 +366,15 @@ const CreateUpdateAssignment = () => {
               >
                 <span>{selectedItems.user?.fullName || "\u00A0"}</span>
                 <i
-                  className={`fa-solid ${isEdit ? "fa-caret-down" : "fa-magnifying-glass"}`}
+                  className={`fa-solid ${
+                    isEdit ? "fa-caret-down" : "fa-magnifying-glass"
+                  }`}
                   aria-hidden="true"
                 />
               </div>
-              {errors.userId && <p className="text-red-500">{errors.userId.message}</p>}
+              {errors.userId && (
+                <p className="text-red-500">{errors.userId.message}</p>
+              )}
             </div>
 
             {/* Asset Selection */}
@@ -345,11 +399,15 @@ const CreateUpdateAssignment = () => {
                   {selectedItems.asset?.assetName || "\u00A0"}
                 </span>
                 <i
-                  className={`h-full fa-solid ${isEdit ? "fa-caret-down" : "fa-magnifying-glass"}`}
+                  className={`h-full fa-solid ${
+                    isEdit ? "fa-caret-down" : "fa-magnifying-glass"
+                  }`}
                   aria-hidden="true"
                 />
               </div>
-              {errors.assetId && <p className="text-red-500">{errors.assetId.message}</p>}
+              {errors.assetId && (
+                <p className="text-red-500">{errors.assetId.message}</p>
+              )}
             </div>
 
             {/* Assigned Date */}
@@ -364,16 +422,22 @@ const CreateUpdateAssignment = () => {
                 rules={{
                   validate: (value) => {
                     if (isBefore(value, startOfDay(new Date()))) {
-                      return "Date must be today or in the future";
+                      return "Assigned date cannot be in the past. Please select a different date";
                     }
                     return true;
                   },
                 }}
                 render={({ field }) => (
-                  <DateFilter label={" "} selectedDate={field.value} onSelect={field.onChange} />
+                  <DateFilter
+                    label={" "}
+                    selectedDate={field.value}
+                    onSelect={field.onChange}
+                  />
                 )}
               />
-              {errors.assignedDate && <p className="text-red-500">{errors.assignedDate.message}</p>}
+              {errors.assignedDate && (
+                <p className="text-red-500">{errors.assignedDate.message}</p>
+              )}
             </div>
 
             {/* Note */}
@@ -383,15 +447,28 @@ const CreateUpdateAssignment = () => {
             <div className="col-span-2">
               <textarea
                 id="note"
-                {...register("note")}
+                {...register("note", {
+                  maxLength: {
+                    value: 255,
+                    message: "Note must limit to 255 characters",
+                  },
+                })}
                 className="w-full border border-gray-500 rounded-md px-4 py-2 resize-none h-[80px] focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              {errors.note && (
+                <p className="text-red-500">{errors.note.message}</p>
+              )}
             </div>
 
             {/* Actions */}
             <div className="col-start-2 col-span-2 flex justify-end gap-4 mt-6">
-              <Button text="Save" color="primary" disabled={!isValid} />
-              <Button color="outline" text="Cancel" type="button" onClick={handleCancel} />
+              <Button text="Save" color="primary" disabled={!isValid || !isFormChanged()} />
+              <Button
+                color="outline"
+                text="Cancel"
+                type="button"
+                onClick={handleCancel}
+              />
             </div>
           </form>
         )}
@@ -414,7 +491,8 @@ const CreateUpdateAssignment = () => {
           onSearchInput={(query) => updateUserModalState({ query })}
           onSubmit={handleSubmitSelectUser}
           isDisableSubmit={
-            JSON.stringify(selectedItems.user) === JSON.stringify(userModalState.pickedItem)
+            JSON.stringify(selectedItems.user) ===
+            JSON.stringify(userModalState.pickedItem)
           }
         >
           <Table
@@ -422,11 +500,14 @@ const CreateUpdateAssignment = () => {
             isSelect
             onSelected={(row) => updateUserModalState({ pickedItem: row })}
             isSort
-            onSort={(key, direction) => updateUserModalState({ sortBy: key, sortDir: direction })}
+            onSort={(key, direction) =>
+              updateUserModalState({ sortBy: key, sortDir: direction })
+            }
             data={allUsers}
             sortBy={userModalState.sortBy}
             orderBy={userModalState.sortDir}
             selectedObject={selectedItems.user}
+            isDataLoading={loading}
           />
         </FormModalWithSearch>
       )}
@@ -438,7 +519,8 @@ const CreateUpdateAssignment = () => {
           onSearchInput={(query) => updateAssetModalState({ query })}
           onSubmit={handleSubmitSelectAsset}
           isDisableSubmit={
-            JSON.stringify(selectedItems.asset) === JSON.stringify(assetModalState.pickedItem)
+            JSON.stringify(selectedItems.asset) ===
+            JSON.stringify(assetModalState.pickedItem)
           }
         >
           <Table
@@ -446,11 +528,14 @@ const CreateUpdateAssignment = () => {
             isSelect
             onSelected={(row) => updateAssetModalState({ pickedItem: row })}
             isSort
-            onSort={(key, direction) => updateAssetModalState({ sortBy: key, sortDir: direction })}
+            onSort={(key, direction) =>
+              updateAssetModalState({ sortBy: key, sortDir: direction })
+            }
             data={allAssets}
             sortBy={assetModalState.sortBy}
             orderBy={assetModalState.sortDir}
             selectedObject={selectedItems.asset}
+            isDataLoading={loading}
           />
         </FormModalWithSearch>
       )}
