@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import "./style.scss";
 
 interface FormModalProps {
     title: string,
@@ -8,11 +9,11 @@ interface FormModalProps {
 const FormModalGroup = ({ title, value }: FormModalProps) => {
 
     return (
-        <div className="flex items-start gap-[20px] py-[8px]">
-            <span className="w-[30%] text-[#000000]">{title}:</span>
+        <div className="form-modal__group">
+            <span className="form-modal__group--title">{title}:</span>
             {
                 typeof(value) === 'string' ? 
-                ( <span className="grow text-[#000000]">{value}</span> )
+                ( <span className="form-modal__group--text">{value}</span> )
                  : 
                 ( value )
             }

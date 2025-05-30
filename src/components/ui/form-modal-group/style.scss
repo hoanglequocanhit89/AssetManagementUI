@@ -1,0 +1,25 @@
+.form-modal {
+
+    &__group {
+        width: 100%;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: flex-start;
+        padding: 8px 0;
+        gap: 30px;
+
+        &--title {
+            grid-column: span 1;
+            width: 120px;
+            color: #000000;
+            word-wrap: break-word;
+        }
+
+        &--text {
+            grid-column: span auto;
+            max-width: 460px;
+            word-break: normal;
+            color: #000000;
+        }
+    }
+}

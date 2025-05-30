@@ -80,7 +80,7 @@ const Table = <T extends { id: number }>({
   };
 
   return (
-    <div className="w-full grow overflow-y-auto">
+    <div className="min-w-[430px] w-full grow overflow-y-auto">
       <table className="relative w-full border-separate border-spacing-x-[10px] border-spacing-y-[10px]">
         <thead className="w-full sticky top-0 bg-white">
           <tr>
