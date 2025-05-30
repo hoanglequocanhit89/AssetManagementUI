@@ -9,7 +9,6 @@ import assignmentApi from "../../api/ownAssignmentApi";
 import DeclineAssignmentModal from "../manage-assignment/components/assignment-own-decline";
 import AcceptAssignmentModal from "../manage-assignment/components/assignment-own-accept";
 import ReturnAssignmentModal from "../manage-assignment/components/assignment-own-return";
-import axiosClients from "../../api/axiosClients";
 import ChangePasswordModal from "../auth/change-password";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
@@ -31,6 +30,9 @@ const getColumns = (handlers: {
       let strValue = String(value);
       if (strValue === "WAITING") {
         strValue = "Waiting for Acceptance";
+      }
+      if (strValue === "ACCEPTED") {
+        strValue = "Accepted";
       }
       return (
         <span>

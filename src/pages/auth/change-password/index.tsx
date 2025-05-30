@@ -5,7 +5,6 @@ import authApi from "../../../api/authApi";
 import Button from "../../../components/ui/button";
 import FormInputGroup from "../../../components/ui/form-input-group";
 import FormModal from "../../../components/ui/form-modal";
-import { RootState } from "../../../store";
 import { changePassword, logout } from "../../../store/slices/authSlice";
 import { ChangePasswordProps } from "../../../types";
 
@@ -15,8 +14,6 @@ interface ChangePasswordModalProps {
 }
 
 const ChangePasswordModal = (props: ChangePasswordModalProps) => {
-
-  const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
 
   const [changePasswordData, setChangePasswordData] = useState<ChangePasswordProps>({
@@ -29,6 +26,7 @@ const ChangePasswordModal = (props: ChangePasswordModalProps) => {
       await authApi.changeFirstPasswordAction(changePasswordData)
         .then(response => {
           toast.success(response.message);
+          dispatch(changePassword());
           props.onClose();
         })
         .catch(err => {
@@ -85,7 +83,10 @@ const ChangePasswordModal = (props: ChangePasswordModalProps) => {
             color="primary"
             text="Save"
             disabled={
-              changePasswordData.oldPassword === "" && changePasswordData.newPassword === ""
+              props.isFirstLogin ?
+              changePasswordData.newPassword === ""
+              :
+              changePasswordData.oldPassword === "" || changePasswordData.newPassword === ""
             }
             onClick={handleChangePasswordAction}
           />

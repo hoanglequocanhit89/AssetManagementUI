@@ -229,7 +229,7 @@ const ManageAsset = () => {
     };
 
     useEffect(() => {
-        const handlePopState = (event: PopStateEvent) => {
+        const handlePopState = () => {
             if (viewDetailModal) {
                 setViewDetailModal(false);
             }
