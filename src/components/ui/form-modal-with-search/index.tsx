@@ -33,9 +33,7 @@ const FormModalWithSearch = (props: FormModalWithSearchProps) => {
               <SearchInput onSearch={(data) => setSearchInput(data)} value={searchInput} />
             </div>
           </div>
-          <div className="form-modal__search--content">
-            {children}
-          </div>
+          {children}
           <div className="form-modal__action">
             <Button
               color="primary"
