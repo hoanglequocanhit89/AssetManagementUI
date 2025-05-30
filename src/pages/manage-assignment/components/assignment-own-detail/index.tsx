@@ -33,8 +33,16 @@ const DetailUser = ({ showModal, closeModal, assignmentId }: DetailOwnAssignment
     { title: "Assigned To", value: assignmentData?.assignedTo },
     { title: "Assigned By", value: assignmentData?.assignedBy },
     { title: "Assigned Date", value: assignmentData?.assignedDate },
-    { title: "State", value: assignmentData?.status },
-    { title: "Note", value: assignmentData?.note || "No note provided" },
+    {
+      title: "State",
+      value:
+        assignmentData?.status === "WAITING"
+          ? "Waiting for acceptance"
+          : assignmentData?.status === "ACCEPTED"
+          ? "Accepted"
+          : "",
+    },
+    { title: "Note", value: assignmentData?.note },
   ];
 
   if (!showModal) return null;
