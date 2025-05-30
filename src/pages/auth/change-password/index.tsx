@@ -14,7 +14,6 @@ interface ChangePasswordModalProps {
 }
 
 const ChangePasswordModal = (props: ChangePasswordModalProps) => {
-
   const dispatch = useDispatch();
 
   const [changePasswordData, setChangePasswordData] = useState<ChangePasswordProps>({

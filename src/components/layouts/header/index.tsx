@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import FormModal from "../../ui/form-modal";
 import Button from "../../ui/button";
 
+
 interface HeaderProps {
     isLogin?: boolean,
     title: string
@@ -39,7 +40,6 @@ const Header = ({ isLogin = true, title, subTitle }: HeaderProps) => {
         window.addEventListener("popstate", handlePopState);
         return () => window.removeEventListener("popstate", handlePopState);
     }, [changePasswordModal, confirmModal]);
-
     const handleLogout = async () => {
         await authApi.logoutAction()
         .then(response => {
