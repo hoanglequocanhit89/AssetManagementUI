@@ -1,6 +1,7 @@
 import FormModal from "../../../../components/ui/form-modal"
 import FormModalGroup from "../../../../components/ui/form-modal-group"
 import { AssignmentDetail } from "../../../../types/assignment"
+import { getStatusLabel } from "../../../../utils/status-label"
 
 interface DetailedAssignmentProps {
     closeModal: () => void
@@ -23,7 +24,7 @@ const DetailAssignmentModal = (props: DetailedAssignmentProps) => {
             <FormModalGroup title="Assigned To" value={assignedTo}/>
             <FormModalGroup title="Assigned By" value={assignedBy}/>
             <FormModalGroup title="Assigned Date" value={assignedDate}/>
-            <FormModalGroup title="State" value={status}/>
+            <FormModalGroup title="State" value={getStatusLabel(status)}/>
             <FormModalGroup title="Note" value={note}/>
         </FormModal>
     )
