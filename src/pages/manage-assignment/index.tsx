@@ -12,6 +12,7 @@ import { Assignment, AssignmentDetail } from "../../types/assignment";
 import DetailAssignmentModal from "./components/detail-assignment";
 import DeleteAssignmentModal from "./components/delete-assignment";
 import { useDebounce } from "../../hooks/useDebounce";
+import { getStatusLabel } from "../../utils/status-label";
 
 const getColumns = (props: {
   handlers: {
@@ -32,7 +33,13 @@ const getColumns = (props: {
     { key: "assignedTo", title: "Assigned to" },
     { key: "assignedBy", title: "Assigned By" },
     { key: "assignedDate", title: "Assigned Date" },
-    { key: "status", title: "State" },
+    {
+      key: "status",
+      title: "State",
+      render: (value) => {
+        return <span>{getStatusLabel(String(value))}</span>
+      }
+    },
     {
       key: "action",
       actions: [
