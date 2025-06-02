@@ -90,7 +90,7 @@ const stateArr = [
   },
   {
     value: "WAITING",
-    label: "Waiting",
+    label: "Waiting for acceptance",
   },
   {
     value: "DECLINED",
@@ -98,7 +98,7 @@ const stateArr = [
   },
   {
     value: "",
-    label: "State",
+    label: "All",
   },
 ];
 
