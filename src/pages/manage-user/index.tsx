@@ -11,6 +11,7 @@ import Pagination from "../../components/ui/pagination";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import userApi from "../../api/userApi";
 import { useDebounce } from "../../hooks/useDebounce";
+import BigLoading from "../../components/ui/loading-big/LoadingBig";
 
 const getColumns = (handlers: {
     onEdit: (row: User) => void;
@@ -37,11 +38,11 @@ const getColumns = (handlers: {
             key: 'action',
             actions: [
                 {
-                    render: (row) => <i className={`fa-solid fa-pen`}></i>,
+                    render: (row) => <i className={`fa-solid fa-pen`} title="Edit" ></i>,
                     onClick: handlers.onEdit,
                 },
                 {
-                    render: (row) => <i className="fa-regular fa-circle-xmark text-[#CF2338]"></i>,
+                    render: (row) => <i className="fa-regular fa-circle-xmark text-[#CF2338]" title="Disable" ></i>,
                     onClick: handlers.onDelete,
                 },
             ]
@@ -59,7 +60,7 @@ const ManageUser = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
-
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [userData, setUserData] = useState<BaseResponse<User>>();
     const [userId, setUserId] = useState<number>(0);
 
@@ -127,8 +128,8 @@ const ManageUser = () => {
             users = users.filter(u => u.id !== tempUser.id);
             users.unshift(tempUser);
         }
-
         setUserData({ ...response, data: { ...response.data, content: users } });
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -160,6 +161,8 @@ const ManageUser = () => {
         setSortBy(searchParams.get("sortBy") || "firstName");
         setOrderBy(searchParams.get("orderBy") || "asc");
         setCurrentPage(Number(searchParams.get("page")) || 1);
+        userData?.data.content.splice(0);
+        setIsLoading(true);
     }, [searchParams]);
 
     useEffect(() => {
@@ -214,6 +217,7 @@ const ManageUser = () => {
                     onRowClick={(id) => handleClickRow(id)}
                     sortBy={sortBy as keyof User}
                     orderBy={orderBy}
+                    isDataLoading={isLoading}
                 />
 
                 <div className="flex justify-end w-full m-auto mt-[20px]">
@@ -247,7 +251,6 @@ const ManageUser = () => {
                     closeModal={() => setShowDisableModal(false)}
                 />
             }
-
         </>
     )
 };
