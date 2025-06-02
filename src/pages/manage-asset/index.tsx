@@ -246,7 +246,6 @@ const ManageAsset = () => {
     const handleSort = (key: string, direction: string) => {
         setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction })
     };
-
     return (
         <>
             <ContentWrapper title={'Asset List'}>
