@@ -1,0 +1,95 @@
+{
+    "routes": [
+      {
+        "route": "/login",
+        "allowedRoles": ["anonymous", "authenticated"]
+      },
+      {
+        "route": "/home",
+        "allowedRoles": ["authenticated"]
+      },
+      {
+        "route": "/manage-user",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/manage-user/create",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/manage-user/edit/*",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/manage-asset",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/manage-asset/create",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/manage-asset/edit/*",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/manage-assignment",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/manage-assignment/create",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/manage-assignment/edit/*",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/request-return",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/report",
+        "allowedRoles": ["authenticated", "ADMIN"]
+      },
+      {
+        "route": "/api/*",
+        "allowedRoles": ["authenticated"]
+      },
+      {
+        "route": "/*",
+        "rewrite": "/index.html"
+      }
+    ],
+    "navigationFallback": {
+      "rewrite": "/index.html",
+      "exclude": ["/api/*", "/assets/*", "/images/*", "/css/*", "/js/*"]
+    },
+    "responseOverrides": {
+      "401": {
+        "redirect": "/login",
+        "statusCode": 302
+      },
+      "403": {
+        "redirect": "/login",
+        "statusCode": 302
+      },
+      "404": {
+        "rewrite": "/404.html",
+        "statusCode": 404
+      }
+    },
+    "platform": {
+      "apiRuntime": "node:18"
+    },
+    "mimeTypes": {
+      ".json": "application/json",
+      ".js": "application/javascript",
+      ".css": "text/css",
+      ".png": "image/png",
+      ".jpg": "image/jpeg",
+      ".jpeg": "image/jpeg",
+      ".gif": "image/gif",
+      ".svg": "image/svg+xml"
+    }
+  }

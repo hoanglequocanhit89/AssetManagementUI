@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import userApi from '../../../api/userApi';
 import { format } from 'date-fns';
 import CancelModal from '../../../components/ui/cancel-modal';
+import BigLoading from '../../../components/ui/loading-big/LoadingBig';
 
 type FormFields = {
   firstName: string;
@@ -35,11 +36,12 @@ const typeOptions = [
 
 const CreateUpdateUser: React.FC = () => {
   const { id } = useParams();
+  const isEdit = !!id;
+  const [isLoading, setIsLoading] = useState<boolean>(isEdit);
   const [staffCode, setStaffCode] = useState("");
   const [username, setUsername] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [notFoundError, setNotFoundError] = useState(false);
-  const isEdit = !!id;
   const navigate = useNavigate();
   const {
     register,
@@ -80,9 +82,11 @@ const CreateUpdateUser: React.FC = () => {
             setUsername(user.username);
             trigger();
           }
+          setIsLoading(false);
         }
       }
       catch (error) {
+        setIsLoading(false);
         console.error(error);
         setNotFoundError(true);
       }
@@ -123,7 +127,7 @@ const CreateUpdateUser: React.FC = () => {
     }
 
     if (hasError) return;
-
+    setIsLoading(true);
     try {
       if (isEdit) {
         await userApi.updateUser(Number(id), {
@@ -132,6 +136,7 @@ const CreateUpdateUser: React.FC = () => {
           joinedDate: format(data.joinedDate, 'yyyy-MM-dd'),
           role: data.type
         });
+        setIsLoading(false);
         toast.success("Updated successfully");
         navigate("/manage-user", {
           state: {
@@ -156,6 +161,7 @@ const CreateUpdateUser: React.FC = () => {
           location: data.location
         });
         const newUser = response.data;
+        setIsLoading(false);
         toast.success("User created successfully");
         navigate("/manage-user", {
           state: {
@@ -171,6 +177,7 @@ const CreateUpdateUser: React.FC = () => {
     }
     catch (error) {
       console.log(error);
+      setIsLoading(false);
       toast.error(`Failed to ${isEdit ? "edit" : "create"} user`);
     }
 
@@ -427,6 +434,7 @@ const CreateUpdateUser: React.FC = () => {
           closeModal={() => setShowModal(false)}
         />
       )}
+      { isLoading && <BigLoading /> }
     </>
   );
 };

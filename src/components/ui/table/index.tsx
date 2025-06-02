@@ -1,6 +1,6 @@
 import React, { useState, MouseEvent } from "react";
-import CustomRadio from "../CustomRadio";
-import { SpinnerLoading } from "../SpinnerLoading";
+import CustomRadio from "../custom-radio/CustomRadio";
+import { SpinnerLoadingSmall } from "../loading-small/SpinnerLoading";
 
 interface Action<T> {
   render: ((row: T) => React.ReactNode) | React.ReactNode;
@@ -192,7 +192,7 @@ const Table = <T extends { id: number }>({
                 <div className="flex justify-center text-lg sm:text-[1.4rem] md:text-[1.5rem] mt-4 lg:text-[1.6rem] font-bold text-gray-900">
                   {
                     isDataLoading ? (
-                      <SpinnerLoading />
+                      <SpinnerLoadingSmall />
                     ): (
                       <span>
                         No results found
