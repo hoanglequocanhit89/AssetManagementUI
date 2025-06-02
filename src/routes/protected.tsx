@@ -9,9 +9,9 @@ interface ProtectedProps {
 
 const rolePermissions = {
     ADMIN: ["/home", 
-            "/manage-user", "/manage-user/create", "/manage-user/edit/:id",
-            "/manage-asset", "/manage-asset/create", "/manage-asset/edit/:id",
-            "/manage-assignment", 
+            "/manage-user", "/manage-user/create", "/manage-user/edit/",
+            "/manage-asset", "/manage-asset/create", "/manage-asset/edit/",
+            "/manage-assignment", "/manage-assignment/create", 
             "/request-return", 
             "/report"],
     STAFF: ["/home"]
@@ -20,19 +20,26 @@ const rolePermissions = {
 const Protected = ({ requiredRole }: ProtectedProps) => {
 
     const auth = useSelector((state: RootState) => state.auth);
+    const currentPath = window.location.pathname;
 
     if(!auth.role) {
         return <Navigate to="/login" replace />
     }
 
-    const allowedRoutes = rolePermissions[auth.role];
-    const currentPath = window.location.pathname;
-
     if(requiredRole && auth.role !== requiredRole) {
         return <Navigate to="/login" />
     }
 
-    if(!allowedRoutes.includes(currentPath)) {
+    const allowedRoutes = rolePermissions[auth.role];
+
+    const isAllowed = allowedRoutes.some((route) => {
+        if (route.endsWith("/")) {
+            return currentPath.startsWith(route);
+        }
+        return currentPath === route;
+    });
+
+    if(!isAllowed) {
         return <Navigate to="/login" />
     }
     
