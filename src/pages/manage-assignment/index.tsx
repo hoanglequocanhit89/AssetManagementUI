@@ -5,7 +5,7 @@ import DateFilter from "../../components/ui/date-filter";
 import SearchInput from "../../components/ui/search";
 import SelectFilter from "../../components/ui/select-filter";
 import Table, { Column } from "../../components/ui/table";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import assignmentApi from "../../api/assignmentApi";
 import Pagination from "../../components/ui/pagination";
 import { Assignment, AssignmentDetail } from "../../types/assignment";
@@ -50,6 +50,7 @@ const getColumns = (props: {
               <button disabled={isDisabled}>
                 <i
                   className={`fa-solid fa-pen ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                  title="Edit"
                 ></i>
               </button>
             );
@@ -64,6 +65,7 @@ const getColumns = (props: {
                 <i
                   className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
                     }`}
+                  title="Delete"
                 ></i>
               </button>
             );
@@ -73,7 +75,7 @@ const getColumns = (props: {
         {
           render: (row) => (
             <button>
-              <i className="fa-solid fa-rotate-left"></i>
+              <i className="fa-solid fa-rotate-left" title="Return"></i>
             </button>
           ),
           onClick: () => { }
@@ -114,6 +116,7 @@ interface PagingProps {
 
 const ManageAssignment = () => {
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [editAssignmentId, setEditAssignmentId] = React.useState<number>(0);
   const [isAssignementDeletetable, setIsAssetDeletetable] = React.useState<boolean>(false);
   const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
@@ -180,6 +183,7 @@ const ManageAssignment = () => {
           ...prev,
           totalPage: response.data.totalPages,
         }));
+        setIsLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -194,6 +198,8 @@ const ManageAssignment = () => {
       sortBy: searchParams.get("sortBy") || "assetCode",
       sortDir: searchParams.get("sortDir") || "asc",
     });
+    assignmentList.length = 0;
+    setIsLoading(true);
   }, [searchParams]);
 
   useEffect(() => {
@@ -225,11 +231,7 @@ const ManageAssignment = () => {
         { replace: false }
       );
     }
-
     fetchAssignmentList();
-
-    console.log(pagingData.currentPage);
-    console.log("data", assignmentList);
   }, [
     stateFilter,
     debouncedKeyword,
