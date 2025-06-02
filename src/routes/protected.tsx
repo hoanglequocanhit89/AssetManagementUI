@@ -29,11 +29,11 @@ const Protected = ({ requiredRole }: ProtectedProps) => {
     const currentPath = window.location.pathname;
 
     if(requiredRole && auth.role !== requiredRole) {
-        return <Navigate to="/404" />
+        return <Navigate to="/login" />
     }
 
     if(!allowedRoutes.includes(currentPath)) {
-        return <Navigate to="/404" />
+        return <Navigate to="/login" />
     }
     
     return <Outlet />;
