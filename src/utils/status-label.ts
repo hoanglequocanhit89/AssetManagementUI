@@ -10,3 +10,14 @@ export const getStatusLabel = (status: string): string => {
             return status;
     }
 };
+
+export const getStatusRequestReturningLabel = (status: string): string => {
+    switch (status) {
+        case "WAITING":
+            return "Waiting for returning";
+        case "COMPLETED":
+            return "Completed";
+        default:
+            return status;
+    }
+}
