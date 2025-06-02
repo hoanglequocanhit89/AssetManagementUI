@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import ContentWrapper from "../../../components/ui/content-wrapper";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import DateFilter from "../../../components/ui/date-filter";
 import Button from "../../../components/ui/button";
 import { useForm, Controller } from "react-hook-form";
@@ -114,6 +114,23 @@ const CreateUpdateAssignment = () => {
     showSelectUser: false,
     showSelectAsset: false,
   });
+  // Push state of modal to URL to back to form when hit back button
+  const [searchParams, setSearchParams] = useSearchParams();
+  const modalParam = searchParams.get("modal");
+  useEffect(() => {
+    setModals((prev) => ({
+      ...prev,
+      showSelectUser: modalParam === "user",
+      showSelectAsset: modalParam === "asset",
+    }));
+  }, [modalParam]);
+  // Remove modal param from URL
+  const removeModalParam = useCallback(() => {
+    const params = new URLSearchParams(searchParams);
+    params.delete("modal");
+    setSearchParams(params);
+  },[]);
+
   const [defaultAssignment, setDefaultAssignment] =
     useState<CreateUpdateAssignmentRequest>({
       assignedDate: new Date(),
@@ -212,7 +229,7 @@ const CreateUpdateAssignment = () => {
         setNotFoundError(true);
       }
     },
-    [id],
+    [id]
   );
 
   // Fetch all users and assets when the component mounts
@@ -300,6 +317,7 @@ const CreateUpdateAssignment = () => {
     setSelectedItems((prev) => ({ ...prev, user: userModalState.pickedItem }));
     setValue("userId", userModalState.pickedItem?.id || 0);
     updateModal("showSelectUser", false);
+    removeModalParam();
     // Trigger validation for assignDate because assignDate cannot auto trigger
     trigger("assignedDate");
   }, [userModalState.pickedItem, setValue, updateModal, trigger]);
@@ -311,6 +329,7 @@ const CreateUpdateAssignment = () => {
     }));
     setValue("assetId", assetModalState.pickedItem?.id || 0);
     updateModal("showSelectAsset", false);
+    removeModalParam();
     // Trigger validation for assignDate because assignDate cannot auto trigger
     trigger("assignedDate");
   }, [assetModalState.pickedItem, setValue, updateModal, trigger]);
@@ -368,7 +387,10 @@ const CreateUpdateAssignment = () => {
                 className={
                   "w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer "
                 }
-                onClick={() => updateModal("showSelectUser", true)}
+                onClick={() => {
+                  updateModal("showSelectUser", true);
+                  setSearchParams({ modal: "user" });
+                }}
                 role="button"
                 tabIndex={0}
               >
@@ -399,7 +421,10 @@ const CreateUpdateAssignment = () => {
               />
               <div
                 className={`w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer`}
-                onClick={() => updateModal("showSelectAsset", true)}
+                onClick={() => {
+                  updateModal("showSelectAsset", true);
+                  setSearchParams({ modal: "asset" });
+                }}
                 role="button"
                 tabIndex={0}
               >
@@ -499,7 +524,10 @@ const CreateUpdateAssignment = () => {
       {modals.showSelectUser && (
         <FormModalWithSearch
           title="Select User"
-          closeModal={() => updateModal("showSelectUser", false)}
+          closeModal={() => {
+            updateModal("showSelectUser", false);
+            removeModalParam();
+          }}
           onSearchInput={(query) => setUserModalState({ query })}
           onSubmit={handleSubmitSelectUser}
           isDisableSubmit={
@@ -526,7 +554,10 @@ const CreateUpdateAssignment = () => {
       {modals.showSelectAsset && (
         <FormModalWithSearch
           title="Select Asset"
-          closeModal={() => updateModal("showSelectAsset", false)}
+          closeModal={() => {
+            updateModal("showSelectAsset", false);
+            removeModalParam();
+          }}
           onSearchInput={(query) => setAssetModalState({ query })}
           onSubmit={handleSubmitSelectAsset}
           isDisableSubmit={
