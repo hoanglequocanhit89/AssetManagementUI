@@ -65,6 +65,5 @@
       "403": {
         "redirect": "/login",
         "statusCode": 302
-      }
     }
   }
