@@ -1,6 +1,6 @@
 import ContentWrapper from "../../components/ui/content-wrapper";
 import Table, { Column } from "../../components/ui/table";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DetailAssetModal from "./components/detail-asset";
 import SelectFilter from "../../components/ui/select-filter";
 import SearchInput from "../../components/ui/search";
@@ -26,7 +26,10 @@ const getColumns = (handlers: {
                 {
                     render: (row) => (
                         <button disabled={row.status === 'ASSIGNED'}>
-                            <i className={`fa-solid fa-pen ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
+                            <i 
+                                className={`fa-solid fa-pen ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}
+                                title="Edit"
+                            ></i>
                         </button>
                     ),
                     onClick: handlers.onEdit,
@@ -34,7 +37,11 @@ const getColumns = (handlers: {
                 {
                     render: (row) => (
                         <button disabled={row.status === 'ASSIGNED'}>
-                            <i className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}></i>
+                            <i 
+                                className={`fa-regular fa-circle-xmark text-[var(--primary-color)] 
+                                    ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}
+                                    title="Delete"
+                                ></i>
                         </button>
                     ),
                     onClick: handlers.onDelete,
@@ -88,19 +95,20 @@ interface SortFilterProps {
 const ManageAsset = () => {
 
     const location = useLocation();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [searchParams, setSearchParams] = useSearchParams();
-    const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
-    const [viewDeleteModal, setViewDeleteModal] = React.useState<boolean>(false);
-    const [editAssetId, setEditAssetId] = React.useState<number>(0);
-    const [isAssetDeletable, setIsAssetDeletable] = React.useState<boolean>(false);
-    const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get('states') || '');
-    const [categoryFilter, setCategoryFilter] = React.useState<string>(searchParams.get('categoryName') || '');
-    const [pagingData, setPagingData] = React.useState<PagingProps>({ currentPage: Number(searchParams.get('page')) || 1, totalPage: 0 });
-    const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get('keyword') || '');
-    const [categoryList, setCategoryList] = React.useState<CategoryProps[]>([]);
-    const [sortFilter, setSortFilter] = React.useState<SortFilterProps>({ sortBy: searchParams.get('sortBy') || '', sortDir: searchParams.get('sortDir') || '' });
-    const [assetList, setAssetList] = React.useState<Asset[]>([]);
-    const [detailAssetData, setDetailAssetData] = React.useState<AssetDetail>({
+    const [viewDetailModal, setViewDetailModal] = useState<boolean>(false);
+    const [viewDeleteModal, setViewDeleteModal] = useState<boolean>(false);
+    const [editAssetId, setEditAssetId] = useState<number>(0);
+    const [isAssetDeletable, setIsAssetDeletable] = useState<boolean>(false);
+    const [stateFilter, setStateFilter] = useState<string>(searchParams.get('states') || '');
+    const [categoryFilter, setCategoryFilter] = useState<string>(searchParams.get('categoryName') || '');
+    const [pagingData, setPagingData] = useState<PagingProps>({ currentPage: Number(searchParams.get('page')) || 1, totalPage: 0 });
+    const [searchFilter, setSearchFilter] = useState<string>(searchParams.get('keyword') || '');
+    const [categoryList, setCategoryList] = useState<CategoryProps[]>([]);
+    const [sortFilter, setSortFilter] = useState<SortFilterProps>({ sortBy: searchParams.get('sortBy') || '', sortDir: searchParams.get('sortDir') || '' });
+    const [assetList, setAssetList] = useState<Asset[]>([]);
+    const [detailAssetData, setDetailAssetData] = useState<AssetDetail>({
         id: 0,
         canDelete: false,
         assetCode: '',
@@ -148,6 +156,7 @@ const ManageAsset = () => {
                     ...pagingData,
                     totalPage: response.data.totalPages
                 });
+                setIsLoading(false);
             }
         } catch (error) {
             console.log(error);
@@ -167,10 +176,6 @@ const ManageAsset = () => {
     };
 
     useEffect(() => {
-        fetchCategoryList();
-    }, []);
-
-    useEffect(() => {
         setStateFilter(searchParams.get('states') || '');
         setCategoryFilter(searchParams.get('categoryName') || '');
         setPagingData({ currentPage: Number(searchParams.get('page')) || 1, totalPage: 0 });
@@ -179,6 +184,8 @@ const ManageAsset = () => {
     }, [searchParams]);
 
     useEffect(() => {
+        assetList.length = 0;
+        setIsLoading(true);
         const params = new URLSearchParams();
         if (debouncedKeyword) params.set("keyword", debouncedKeyword);
         params.set("states", stateFilter);
@@ -194,9 +201,21 @@ const ManageAsset = () => {
                 search: newSearch
             }, { replace: false });
         }
-
         fetchAssetList();
     }, [stateFilter, categoryFilter, debouncedKeyword, sortFilter.sortBy, sortFilter.sortDir, pagingData.currentPage]);
+
+    useEffect(() => {
+        const handlePopState = () => {
+            if (viewDetailModal) {
+                setViewDetailModal(false);
+            }
+            if (viewDeleteModal) {
+                setViewDeleteModal(false);
+            }
+        };
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, [viewDetailModal, viewDeleteModal]);
 
     const handleOnRowClick = async (id: number) => {
         setViewDetailModal(true);
@@ -227,21 +246,6 @@ const ManageAsset = () => {
     const handleSort = (key: string, direction: string) => {
         setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction })
     };
-
-    useEffect(() => {
-        const handlePopState = () => {
-            if (viewDetailModal) {
-                setViewDetailModal(false);
-            }
-            if (viewDeleteModal) {
-                setViewDeleteModal(false);
-            }
-        };
-
-        window.addEventListener("popstate", handlePopState);
-        return () => window.removeEventListener("popstate", handlePopState);
-    }, [viewDetailModal, viewDeleteModal]);
-
     return (
         <>
             <ContentWrapper title={'Asset List'}>
@@ -269,6 +273,7 @@ const ManageAsset = () => {
                     orderBy={sortFilter.sortDir as keyof Asset}
                     onSort={handleSort}
                     onRowClick={handleOnRowClick}
+                    isDataLoading={isLoading}
                 />
                 <div className="self-end mt-[20px]">
                     <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })} />

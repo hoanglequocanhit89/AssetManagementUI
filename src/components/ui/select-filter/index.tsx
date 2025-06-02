@@ -36,14 +36,14 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
     return (
         <div className="relative w-full" ref={ref}>
             <div className="flex items-stretch border border-gray-500 rounded-md shadow-sm bg-white overflow-hidden">
-                <div className="flex-grow pl-4 pr-2 mr-8 py-2 text-[1.6rem] text-gray-800 text-left flex items-center">
+                <div className="flex-grow pl-4 pr-2 mr-8 py-2 text-[1.6rem] text-gray-800 text-left flex items-center truncate overflow-hidden whitespace-nowrap">
                     {selectedLabel || label}
                 </div>
                 <button
                     onClick={() => setIsOpen((prev) => !prev)}
                     className="flex items-center justify-center px-3 border-l border-gray-500 hover:bg-gray-100 text-gray-600 hover:text-black focus:outline-none"
                 >
-                    <i className="fa-solid fa-filter"></i>
+                    <i className="fa-solid fa-filter" title="Filter"></i>
                 </button>
             </div>
 

@@ -46,7 +46,7 @@ const DateFilter: React.FC<DateFilterProps> = ({
                     onClick={() => setIsOpen((prev) => !prev)}
                     className="flex items-center justify-center px-3 py-2 border-l border-gray-500 hover:bg-gray-100 text-gray-600 hover:text-black focus:outline-none"
                 >
-                    <i className="fa-solid fa-calendar"></i>
+                    <i className="fa-solid fa-calendar" title="Calendar"></i>
                 </button>
             </div>
 
