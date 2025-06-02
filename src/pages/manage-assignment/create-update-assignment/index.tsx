@@ -127,11 +127,11 @@ const CreateUpdateAssignment = () => {
   const [notFoundError, setNotFoundError] = useState(false);
 
   // Modal states using custom hook
-  const [userModalState, updateUserModalState] = useModalState<UserBrief>(
+  const [userModalState, setUserModalState] = useModalState<UserBrief>(
     "firstName",
     {} as UserBrief
   );
-  const [assetModalState, updateAssetModalState] = useModalState<AssetBrief>(
+  const [assetModalState, setAssetModalState] = useModalState<AssetBrief>(
     "assetCode",
     {} as AssetBrief
   );
@@ -192,7 +192,16 @@ const CreateUpdateAssignment = () => {
           assetId: exitingAssignment.asset.id,
           assignedDate: new Date(exitingAssignment.assignedDate),
           note: exitingAssignment.note,
-        })
+        });
+
+        setAssetModalState({
+          ...assetModalState,
+          pickedItem: exitingAssignment.asset,
+        });
+        setUserModalState({
+          ...userModalState,
+          pickedItem: exitingAssignment.user,
+        });
 
         setSelectedItems({
           user: exitingAssignment.user,
@@ -203,7 +212,7 @@ const CreateUpdateAssignment = () => {
         setNotFoundError(true);
       }
     },
-    [id, setValue]
+    [id],
   );
 
   // Fetch all users and assets when the component mounts
@@ -309,16 +318,15 @@ const CreateUpdateAssignment = () => {
   const isFormChanged = useCallback(() => {
     const formValues = getValues();
     const defaultFormValues = {
-      userId: defaultAssignment.userId || '',
-      assetId: defaultAssignment.assetId || '',
-      assignedDate: defaultAssignment.assignedDate || '',
-      note: defaultAssignment.note || '',
-    } 
+      userId: defaultAssignment.userId || "",
+      assetId: defaultAssignment.assetId || "",
+      assignedDate: defaultAssignment.assignedDate || "",
+      note: defaultAssignment.note || "",
+    };
     return !compareObject(formValues, defaultFormValues);
   }, [getValues, defaultAssignment]);
 
   const handleCancel = useCallback(() => {
-
     // Check to show cancel modal if the form values are changed
     if (isFormChanged()) {
       updateModal("showCancel", true);
@@ -462,7 +470,11 @@ const CreateUpdateAssignment = () => {
 
             {/* Actions */}
             <div className="col-start-2 col-span-2 flex justify-end gap-4 mt-6">
-              <Button text="Save" color="primary" disabled={!isValid || !isFormChanged()} />
+              <Button
+                text="Save"
+                color="primary"
+                disabled={!isValid || !isFormChanged()}
+              />
               <Button
                 color="outline"
                 text="Cancel"
@@ -488,20 +500,19 @@ const CreateUpdateAssignment = () => {
         <FormModalWithSearch
           title="Select User"
           closeModal={() => updateModal("showSelectUser", false)}
-          onSearchInput={(query) => updateUserModalState({ query })}
+          onSearchInput={(query) => setUserModalState({ query })}
           onSubmit={handleSubmitSelectUser}
           isDisableSubmit={
-            JSON.stringify(selectedItems.user) ===
-            JSON.stringify(userModalState.pickedItem)
+            selectedItems.user.id === userModalState.pickedItem.id
           }
         >
           <Table
             columns={userColumns}
             isSelect
-            onSelected={(row) => updateUserModalState({ pickedItem: row })}
+            onSelected={(row) => setUserModalState({ pickedItem: row })}
             isSort
             onSort={(key, direction) =>
-              updateUserModalState({ sortBy: key, sortDir: direction })
+              setUserModalState({ sortBy: key, sortDir: direction })
             }
             data={allUsers}
             sortBy={userModalState.sortBy}
@@ -516,20 +527,19 @@ const CreateUpdateAssignment = () => {
         <FormModalWithSearch
           title="Select Asset"
           closeModal={() => updateModal("showSelectAsset", false)}
-          onSearchInput={(query) => updateAssetModalState({ query })}
+          onSearchInput={(query) => setAssetModalState({ query })}
           onSubmit={handleSubmitSelectAsset}
           isDisableSubmit={
-            JSON.stringify(selectedItems.asset) ===
-            JSON.stringify(assetModalState.pickedItem)
+            selectedItems.asset.id === assetModalState.pickedItem.id
           }
         >
           <Table
             columns={assetColumns}
             isSelect
-            onSelected={(row) => updateAssetModalState({ pickedItem: row })}
+            onSelected={(row) => setAssetModalState({ pickedItem: row })}
             isSort
             onSort={(key, direction) =>
-              updateAssetModalState({ sortBy: key, sortDir: direction })
+              setAssetModalState({ sortBy: key, sortDir: direction })
             }
             data={allAssets}
             sortBy={assetModalState.sortBy}
