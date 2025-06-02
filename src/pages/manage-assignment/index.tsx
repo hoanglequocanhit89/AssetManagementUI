@@ -227,9 +227,6 @@ const ManageAssignment = () => {
     }
 
     fetchAssignmentList();
-
-    console.log(pagingData.currentPage);
-    console.log("data", assignmentList);
   }, [
     stateFilter,
     debouncedKeyword,
