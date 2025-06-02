@@ -53,6 +53,7 @@ const getColumns = (handlers: {
               className={`fa-solid fa-check text-red-600 text-3xl font-extrabold ${
                 row.status === "ACCEPTED" ? "disabled text-red-600/30 cursor-not-allowed" : ""
               }`}
+              title="Accept"
             ></i>
           );
         },
@@ -70,6 +71,7 @@ const getColumns = (handlers: {
               className={`fa-solid fa-xmark text-black text-3xl font-extrabold ${
                 row.status === "ACCEPTED" ? "disabled text-black/30 cursor-not-allowed" : ""
               }`}
+              title="Reject"
             ></i>
           </button>
         ),
@@ -86,6 +88,7 @@ const getColumns = (handlers: {
             className={`fa-solid fa-arrow-rotate-left text-blue-600 text-3xl font-extrabold ${
               row.status === "WAITING" ? "disabled text-blue-600/30 cursor-not-allowed" : ""
             }`}
+            title="Return"
           ></i>
         ),
         onClick: (row) => {
@@ -103,7 +106,7 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const auth = useSelector((state: RootState) => state.auth);
-
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [assignmentData, setAssignmentData] =
     useState<BaseResponseWithoutPagination<OwnAssignment[]>>();
   const [assignmentId, setAssignmentId] = useState<number>(0);
@@ -158,9 +161,8 @@ const Home = () => {
       sortBy: sortFieldForApi,
       orderBy: orderBy,
     });
-    console.log("Assignment List Response:", response);
-
     setAssignmentData(response);
+    setIsLoading(false);
   };
 
   // Fetch the assignment list when the component mounts or when sortFieldForApi or orderBy changes
@@ -190,6 +192,8 @@ const Home = () => {
   useEffect(() => {
     setSortBy(searchParams.get("sortBy") || "assetCode");
     setOrderBy(searchParams.get("orderBy") || "asc");
+    assignmentData?.data.splice(0); // Clear list for showing loading spinner
+    setIsLoading(true);
   }, [searchParams]);
 
   // Handle browser back button to close modals
@@ -237,6 +241,7 @@ const Home = () => {
           onRowClick={(id) => handleClickRow(id)}
           sortBy={sortBy as keyof OwnAssignment}
           orderBy={orderBy}
+          isDataLoading={isLoading}
         />
       </ContentWrapper>
 
