@@ -1,4 +1,4 @@
-export function SpinnerLoading({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+export function SpinnerLoadingSmall({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   const sizeClasses = {
     sm: "w-4 h-4 border-2",
     md: "w-8 h-8 border-2",

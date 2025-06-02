@@ -12,6 +12,7 @@ import { format } from 'date-fns'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import CancelModal from '../../../components/ui/cancel-modal'
+import BigLoading from '../../../components/ui/loading-big/LoadingBig'
 
 type FormFields = {
   name: string;
@@ -23,8 +24,9 @@ type FormFields = {
 
 const CreateUpdateAsset = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const isEdit = !!id;
+  const [isLoading, setIsLoading] = useState<boolean>(isEdit);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -55,40 +57,40 @@ const CreateUpdateAsset = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const selectedCategory = watch("category");
 
-  useEffect(() => {
-    const fetchCategoryList = async () => {
-      try {
-        const response = await categoryApi.getCategoryList();
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Failed to fetch category list", error);
-      }
-    };
-
-    const fetchAssetDetail = async () => {
-      try {
-        const response = await assetApi.getAssetDetail(Number(id));
-        const detail = response.data;
-        setValue("name", detail.name);
-        setValue("specification", detail.specification);
-        setValue("category", detail.category);
-        setValue("installedDate", new Date(detail.installedDate));
-        setValue("state", detail.status as "AVAILABLE" | "NOT_AVAILABLE" | "ASSIGNED" | "WAITING" | "RECYCLED");
-        trigger();
-      }
-      catch (error) {
-        console.error(error);
-        setNotFoundError(true);
-      }
+  const fetchCategoryList = async () => {
+    try {
+      const response = await categoryApi.getCategoryList();
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Failed to fetch category list", error);
     }
+  };
 
+  const fetchAssetDetail = async () => {
+    try {
+      const response = await assetApi.getAssetDetail(Number(id));
+      const detail = response.data;
+      setValue("name", detail.name);
+      setValue("specification", detail.specification);
+      setValue("category", detail.category);
+      setValue("installedDate", new Date(detail.installedDate));
+      setValue("state", detail.status as "AVAILABLE" | "NOT_AVAILABLE" | "ASSIGNED" | "WAITING" | "RECYCLED");
+      trigger();
+    }
+    catch (error) {
+      console.error(error);
+      setNotFoundError(true);
+    }
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
     if (!isEdit) {
       fetchCategoryList();
     }
     else {
       fetchAssetDetail();
     }
-
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
@@ -485,6 +487,9 @@ const CreateUpdateAsset = () => {
           closeModal={() => setShowModal(false)}
         />
       )}
+      {
+        isLoading && <BigLoading />
+      }
     </>
   );
 }

@@ -54,7 +54,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
                 onClick={() => onSearch(value.trim())}
                 className="flex items-center justify-center w-12 min-w-[40px] border-l border-gray-500 hover:bg-gray-100 text-gray-600 hover:text-black focus:outline-none"
             >
-                <i className="fa-solid fa-magnifying-glass"></i>
+                <i className="fa-solid fa-magnifying-glass" title="Search"></i>
             </button>
         </div>
     );

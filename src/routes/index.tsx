@@ -19,7 +19,7 @@ const router = createBrowserRouter([
   {
     element: <HeaderOnlyLayout />,
     path: "/",
-    errorElement: "",
+    errorElement: <Login />,
     children: [
       {
         index: true,
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
     path: "/",
-    errorElement: "",
+    errorElement: <Login />,
     children: [
       {
         element: <Protected />,
