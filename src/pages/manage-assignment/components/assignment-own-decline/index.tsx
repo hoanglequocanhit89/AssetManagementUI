@@ -34,11 +34,7 @@ const DeclineAssignmentModal = ({
   return (
     <div>
       {showModal && (
-        <FormModal
-          title={isDisable ? "Are you sure ?" : "Can not decline assignment"}
-          closeBtn={!isDisable}
-          closeModal={() => closeModal()}
-        >
+        <FormModal title={"Are you sure"} closeBtn={!isDisable} closeModal={() => closeModal()}>
           <div className="flex flex-col gap-5">
             <p>Do you want to decline this assignment?</p>
             <div className="flex gap-5">
