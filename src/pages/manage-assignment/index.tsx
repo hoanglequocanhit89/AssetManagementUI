@@ -25,10 +25,12 @@ const getColumns = (props: {
   return [
     {
       key: "id",
+      fixed: 'left',
       title: "No.",
+      width: 50,
       render: (_value, _row, index: number) => (pagingData.currentPage - 1) * 20 + index + 1,
     },
-    { key: "assetCode", title: "Asset Code" },
+    { key: "assetCode", title: "Asset Code", fixed: "left", width: 60 },
     { key: "assetName", title: "Asset Name" },
     { key: "assignedTo", title: "Assigned to" },
     { key: "assignedBy", title: "Assigned By" },
@@ -42,6 +44,7 @@ const getColumns = (props: {
     },
     {
       key: "action",
+      fixed: "right",
       actions: [
         {
           render: (row) => {
