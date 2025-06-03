@@ -66,14 +66,12 @@ const Table = <T extends { id: number }>({
     return (
       <div className="flex flex-col items-center text-sm sm:text-base leading-none">
         <i
-          className={`fa-solid fa-caret-up ${
-            isActive && orderBy === "asc" ? "text-[#CF2338]" : "text-gray-400"
-          }`}
+          className={`fa-solid fa-caret-up ${isActive && orderBy === "asc" ? "text-[#CF2338]" : "text-gray-400"
+            }`}
         />
         <i
-          className={`fa-solid fa-caret-down ${
-            isActive && orderBy === "desc" ? "text-[#CF2338]" : "text-gray-400"
-          }`}
+          className={`fa-solid fa-caret-down ${isActive && orderBy === "desc" ? "text-[#CF2338]" : "text-gray-400"
+            }`}
         />
       </div>
     );
@@ -193,7 +191,7 @@ const Table = <T extends { id: number }>({
                   {
                     isDataLoading ? (
                       <SpinnerLoadingSmall />
-                    ): (
+                    ) : (
                       <span>
                         No results found
                       </span>
