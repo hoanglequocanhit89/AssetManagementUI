@@ -182,7 +182,7 @@ const ManageUser = () => {
     return (
         <>
             <ContentWrapper title={'User List'}>
-                <div className="flex justify-between items-center w-full mb-[20px]">
+                <div className="flex justify-between items-center w-full mb-[20px] z-20">
                     <div className="min-w-[220px]">
                         <SelectFilter
                             label="Type"
