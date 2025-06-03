@@ -313,6 +313,7 @@ const ManageAssignment = () => {
           orderBy={sortFilter.sortDir as keyof Assignment}
           onSort={handleSort}
           onRowClick={handleOnRowClick}
+          isDataLoading={isLoading}
         />
         <div className="self-end mt-[20px]">
           <Pagination
