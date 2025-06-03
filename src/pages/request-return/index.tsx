@@ -40,10 +40,12 @@ const getColumns = (props: {
     return [
         {
             key: "id",
+            fixed: "left",
+            width: 50,
             title: "No.",
             render: (_valued, _row, index: number) => (pagingData.currentPage - 1) * 20 + index + 1,
         },
-        { key: "assetCode", title: "Asset Code" },
+        { key: "assetCode", title: "Asset Code", fixed: "left", width: 50 },
         { key: "assetName", title: "Asset Name" },
         { key: "requestedBy", title: "Requested By" },
         { key: "assignedDate", title: "Assigned Date" },
@@ -58,6 +60,7 @@ const getColumns = (props: {
         },
         {
             key: "action",
+            fixed: "right",
             actions: [
                 {
                     render: (row) => {
@@ -237,7 +240,7 @@ const RequestForReturn = () => {
     return (
         <>
             <ContentWrapper title={'Request List'}>
-                <div className="d-flex gap-[20px] mb-[20px]">
+                <div className="d-flex gap-[20px] mb-[20px] z-20">
                     <SelectFilter
                         label="State"
                         options={stateArr}

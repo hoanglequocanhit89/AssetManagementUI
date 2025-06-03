@@ -293,7 +293,7 @@ const ManageAssignment = () => {
   return (
     <>
       <ContentWrapper title={"Assignment List"}>
-        <div className="d-flex gap-[20px] mb-[20px]">
+        <div className="d-flex gap-[20px] mb-[20px] z-20">
           <SelectFilter
             label="State"
             options={stateArr}
@@ -304,7 +304,7 @@ const ManageAssignment = () => {
             label="Assigned Date"
             selectedDate={assignedDateFilter}
             onSelect={(date) => setAssignedDateFilter(date)}
-            isHighlight={!!assignedDateFilter}
+            isHighlight={false}
           />
           <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
           <Button text="Create new assignment" color="primary" onClick={() => navigate("create")} />

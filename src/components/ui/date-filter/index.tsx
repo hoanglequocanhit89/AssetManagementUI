@@ -37,9 +37,20 @@ const DateFilter: React.FC<DateFilterProps> = ({
             ref={ref}
         >
             <div className={`flex items-stretch border  rounded-md shadow-sm bg-white overflow-hidden ${isHighlight ? 'border-red-500' : 'border-gray-500'}`}>
-                <div className="flex-grow px-3 py-2 text-[1.6rem] text-gray-800 text-left">
+                <div className="flex-grow px-3 py-2 text-[1.6rem] text-gray-800 text-left whitespace-nowrap">
                     {selectedDate ? selectedDate.toLocaleDateString() : label}
                 </div>
+
+                {selectedDate && (
+                    <button
+                        type="button"
+                        onClick={() => onSelect(undefined as any)}
+                        className="flex items-center justify-center px-4 py-2 hover:bg-gray-100 text-gray-400 hover:text-black focus:outline-none"
+                        title="Clear date"
+                    >
+                        <i className="fa-solid fa-xmark"></i>
+                    </button>
+                )}
 
                 <button
                     type="button"
@@ -53,6 +64,7 @@ const DateFilter: React.FC<DateFilterProps> = ({
             {isOpen && (
                 <div className="absolute right-0 mt-1 z-10">
                     <DatePicker
+                        isClearable
                         selected={selectedDate}
                         onChange={(date) => {
                             if (date) {
