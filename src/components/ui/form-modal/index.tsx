@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import "./style.scss";
+import { useEscapeKey } from "../../../hooks/useEscapeKey";
 
 interface formModalProps {
   title: string;
@@ -11,6 +12,8 @@ interface formModalProps {
 
 const FormModal = (props: formModalProps) => {
   const { title, closeBtn, children, overlay = true, closeModal } = props;
+
+  useEscapeKey(closeModal as () => void);
 
   const handleCloseClick = () => {
     if (!closeBtn) return;

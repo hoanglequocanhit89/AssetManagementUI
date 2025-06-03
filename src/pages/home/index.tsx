@@ -36,7 +36,9 @@ const getColumns = (handlers: {
       }
       return (
         <span>
-          {strValue ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase() : ""}
+          {strValue
+            ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase()
+            : ""}
         </span>
       );
     },
@@ -51,7 +53,9 @@ const getColumns = (handlers: {
           return (
             <i
               className={`fa-solid fa-check text-red-600 text-3xl font-extrabold ${
-                row.status === "ACCEPTED" ? "disabled text-red-600/30 cursor-not-allowed" : ""
+                row.status === "ACCEPTED"
+                  ? "disabled text-red-600/30 cursor-not-allowed"
+                  : ""
               }`}
               title="Accept"
             ></i>
@@ -69,7 +73,9 @@ const getColumns = (handlers: {
           <button>
             <i
               className={`fa-solid fa-xmark text-black text-3xl font-extrabold ${
-                row.status === "ACCEPTED" ? "disabled text-black/30 cursor-not-allowed" : ""
+                row.status === "ACCEPTED"
+                  ? "disabled text-black/30 cursor-not-allowed"
+                  : ""
               }`}
               title="Reject"
             ></i>
@@ -86,7 +92,9 @@ const getColumns = (handlers: {
         render: (row) => (
           <i
             className={`fa-solid fa-arrow-rotate-left text-blue-600 text-3xl font-extrabold ${
-              row.status === "WAITING" ? "disabled text-blue-600/30 cursor-not-allowed" : ""
+              row.status === "WAITING"
+                ? "disabled text-blue-600/30 cursor-not-allowed"
+                : ""
             }`}
             title="Return"
           ></i>
@@ -111,9 +119,13 @@ const Home = () => {
     useState<BaseResponseWithoutPagination<OwnAssignment[]>>();
   const [assignmentId, setAssignmentId] = useState<number>(0);
 
-  const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "assetCode");
+  const [sortBy, setSortBy] = useState<string>(
+    searchParams.get("sortBy") || "assetCode"
+  );
   const [sortFieldForApi, setSortFieldForApi] = useState<string>("assetCode");
-  const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
+  const [orderBy, setOrderBy] = useState<string>(
+    searchParams.get("orderBy") || "asc"
+  );
 
   // detail assignment info modal state
   const [showModal, setShowModal] = useState(false);
@@ -122,9 +134,12 @@ const Home = () => {
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
-  const [showChangePasswordModal, setChangePasswordModal] = useState(auth.isFirstLogin || false);
+  const [showChangePasswordModal, setChangePasswordModal] = useState(
+    auth.isFirstLogin || false
+  );
 
-  const [isDeclineAssignment, setIsDeclineAssignment] = useState<boolean>(false);
+  const [isDeclineAssignment, setIsDeclineAssignment] =
+    useState<boolean>(false);
 
   const handleClickRow = (id: number) => {
     setShowModal(true);

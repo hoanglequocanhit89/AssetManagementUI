@@ -13,6 +13,7 @@ import DetailAssignmentModal from "./components/detail-assignment";
 import DeleteAssignmentModal from "./components/delete-assignment";
 import { useDebounce } from "../../hooks/useDebounce";
 import { getStatusLabel } from "../../utils/status-label";
+import BigLoading from "../../components/ui/loading-big/LoadingBig";
 
 const getColumns = (props: {
   handlers: {
@@ -149,6 +150,7 @@ const ManageAssignment = () => {
     note: "",
     canDelete: false,
   });
+  const [isDetailAssignmentLoading, setIsDetailAssignmentLoading] = useState(false);
 
   const debouncedKeyword = useDebounce(searchFilter, 500);
   const navigate = useNavigate();
@@ -270,10 +272,13 @@ const ManageAssignment = () => {
     setViewDetailModal(true);
     window.history.pushState({ modal: true }, "");
     try {
+      setIsDetailAssignmentLoading(true);
       const response = await assignmentApi.getAssignmentDetail(id);
       setDetailAssignmentData({ ...response.data });
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsDetailAssignmentLoading(false);
     }
   };
 
@@ -326,7 +331,10 @@ const ManageAssignment = () => {
           />
         </div>
       </ContentWrapper>
-      {viewDetailModal && (
+      {
+      isDetailAssignmentLoading ? <BigLoading /> :
+      viewDetailModal &&
+       (
         <DetailAssignmentModal
           closeModal={() => setViewDetailModal(false)}
           data={{
