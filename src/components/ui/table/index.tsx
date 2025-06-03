@@ -12,6 +12,8 @@ export interface Column<T> {
   title?: string;
   render?: (value: T[keyof T], row: T, index: number) => React.ReactNode;
   actions?: Action<T>[];
+  fixed?: "right" | "left";
+  width?: number;
 }
 
 interface TableProps<T extends { id: number }> {
@@ -60,7 +62,6 @@ const Table = <T extends { id: number }>({
   };
 
   const getSortIcon = (key: keyof T) => {
-    // const isActive = sortConfig.key === key;
     const isActive = sortBy === key;
 
     return (
@@ -77,37 +78,76 @@ const Table = <T extends { id: number }>({
     );
   };
 
+  const calculateOffsets = () => {
+    let leftOffset = isSelect ? 40 : 0;
+    let rightOffset = 0;
+    const offsets: { [key: string]: { left?: number; right?: number } } = {};
+
+    columns.forEach((column) => {
+      const colWidth = column.width || 80;
+      if (column.fixed === "left") {
+        offsets[column.key as string] = { left: leftOffset };
+        leftOffset += colWidth;
+      } else if (column.fixed === "right") {
+        offsets[column.key as string] = { right: rightOffset };
+        rightOffset += colWidth;
+      }
+    });
+
+    return offsets;
+  };
+
+  const offsets = calculateOffsets();
+
   return (
-    <div className="min-w-[430px] w-full grow overflow-y-auto">
-      <table className="relative w-full border-separate border-spacing-x-[10px] border-spacing-y-[10px]">
-        <thead className="w-full sticky top-0 bg-white">
+    <div className="min-w-[430px] w-full grow overflow-x-auto">
+      <table className="relative w-full border-collapse">
+        <thead className="w-full sticky top-0 bg-white z-10">
           <tr>
-            {isSelect && <th className="w-10"></th>}
+            {isSelect && <th className={`w-10 ${columns.some((col) => col.fixed === "left")
+              ? "sticky left-0 bg-white shadow-right"
+              : ""
+              }`}></th>}
             {columns.map((column) => (
               <th
                 key={String(column.key)}
                 className={[
-                  "py-2 text-left text-lg sm:text-[1.4rem] md:text-[1.5rem] lg:text-[1.6rem] font-bold text-gray-900",
+                  "px-2 py-3 text-left text-lg sm:text-[1.4rem] md:text-[1.5rem] lg:text-[1.6rem] font-bold text-gray-900",
                   column.key === "action"
                     ? "w-0 whitespace-nowrap text-center"
                     : "",
                   column.key !== "action" ? "cursor-pointer" : "",
-                  column.title ? "border-b-2 border-[#d1d5db]" : "",
+                  column.fixed ? `sticky bg-white` : "",
                 ]
                   .filter(Boolean)
                   .join(" ")}
+                style={{
+                  ...(column.fixed === "left" && {
+                    left: offsets[column.key as string]?.left,
+                  }),
+                  ...(column.fixed === "right" && {
+                    right: offsets[column.key as string]?.right,
+                  }),
+                  ...(column.width && { width: column.width, minWidth: column.width }),
+                }}
                 onClick={
                   column.key !== "action"
                     ? () => handleSort(column.key as keyof T)
                     : undefined
                 }
               >
-                <div className="flex items-center gap-2 whitespace-nowrap">
-                  {column.title}
-                  {column.title &&
-                    column.key !== "action" &&
-                    isSort &&
-                    getSortIcon(column.key as keyof T)}
+                <div className="flex flex-col w-full">
+                  <div className="flex items-center gap-2.5 whitespace-nowrap">
+                    {column.title}
+                    {column.title &&
+                      column.key !== "action" &&
+                      isSort &&
+                      getSortIcon(column.key as keyof T)}
+                  </div>
+
+                  {
+                    column.title && <div className="h-[2px] bg-[#d1d5db] mt-2"></div>
+                  }
                 </div>
               </th>
             ))}
@@ -122,7 +162,10 @@ const Table = <T extends { id: number }>({
                 onClick={() => onRowClick?.(row.id)}
               >
                 {isSelect && (
-                  <td className="text-center">
+                  <td className={`text-center ${columns.some((col) => col.fixed === "left")
+                    ? "sticky left-0 bg-white shadow-right"
+                    : ""
+                    }`}>
                     <div className="flex justify-center">
                       <CustomRadio
                         checked={selectedRow?.id === row.id}
@@ -142,11 +185,20 @@ const Table = <T extends { id: number }>({
                       column.key === "action"
                         ? "w-0 whitespace-nowrap text-center"
                         : "",
-                      "pb-2 pt-4 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate",
-                      column.title ? "border-b-2 border-[#e5e7eb]" : "",
+                      "px-3 pb-2 pt-4 text-base sm:text-lg md:text-[1.5rem] lg:text-[1.6rem] text-gray-900 max-w-[200px] truncate",
+                      column.fixed ? `sticky bg-white` : "",
                     ]
                       .filter(Boolean)
                       .join(" ")}
+                    style={{
+                      ...(column.fixed === "left" && {
+                        left: offsets[column.key as string]?.left,
+                      }),
+                      ...(column.fixed === "right" && {
+                        right: offsets[column.key as string]?.right,
+                      }),
+                      ...(column.width && { width: column.width, minWidth: column.width }),
+                    }}
                     title={
                       column.key !== "action"
                         ? String(row[column.key as keyof T])
@@ -180,6 +232,7 @@ const Table = <T extends { id: number }>({
                     ) : (
                       String(row[column.key as keyof T])
                     )}
+                    {!column.actions && <div className="h-[2px] bg-[#e5e7eb] mt-2.5"></div>}
                   </td>
                 ))}
               </tr>
@@ -208,3 +261,4 @@ const Table = <T extends { id: number }>({
 };
 
 export default Table;
+
