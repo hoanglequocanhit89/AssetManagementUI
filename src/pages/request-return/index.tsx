@@ -1,7 +1,8 @@
-import React from "react";
+
+import React, { useEffect, useState } from "react";
 import ContentWrapper from "../../components/ui/content-wrapper"
 import SelectFilter from "../../components/ui/select-filter";
-import { data, useSearchParams } from "react-router-dom";
+import { data, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import DateFilter from "../../components/ui/date-filter";
 import SearchInput from "../../components/ui/search";
 import Table, { Column } from "../../components/ui/table";
@@ -10,6 +11,8 @@ import { getStatusLabel, getStatusRequestReturningLabel } from "../../utils/stat
 import Pagination from "../../components/ui/pagination";
 import CompletedRequestReturningModal from "./components/completed-request-returning";
 import CancelRequestReturningModal from "./components/cancel-request-returing";
+import { useDebounce } from "../../hooks/useDebounce";
+import requestReturningApi from "../../api/requestReturningApi";
 
 const stateArr = [
     {
@@ -94,21 +97,25 @@ interface SortFilterProps {
 const RequestForReturn = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get("states") || "");
-    const [assignedDateFilter, setAssignedDateFilter] = React.useState<Date | undefined>(undefined);
+    const [returnedDateFilter, setReturnedDateFilter] = React.useState<Date | undefined>(undefined);
     const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get("keyword") || "");
     const [completedRequestReturningId, setCompletedRequestReturningId] = React.useState<number>(0);
     const [viewCompletedModal, setViewCompletedModal] = React.useState<boolean>(false);
     const [cancelRequestReturningId, setCancelRequestReturningId] = React.useState<number>(0);
     const [viewCancelModal, setViewCancelModal] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [pagingData, setPagingData] = React.useState<PagingProps>({
         currentPage: Number(searchParams.get("page")) || 1,
         totalPage: 0,
     });
-    const [RequestReturningList, setRequestReturningList] = React.useState<RequestReturning[]>([]);
+    const [requestReturningList, setRequestReturningList] = React.useState<RequestReturning[]>([]);
     const [sortFilter, setSortFilter] = React.useState<SortFilterProps>({
         sortBy: searchParams.get("sortBy") || "assetCode",
         sortDir: searchParams.get("sortDir") || "asc",
     });
+    const debouncedKeyword = useDebounce(searchFilter, 500);
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const handleCompleted = async (row: RequestReturning) => {
         setCompletedRequestReturningId(row.id);
@@ -132,36 +139,96 @@ const RequestForReturn = () => {
         setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction });
     };
 
-    React.useEffect(() => {
-        const mockData: RequestReturning[] = [
-            {
-                id: 1,
-                assetCode: "AC001",
-                assetName: "Laptop Dell",
-                requestedBy: "John Doe",
-                assignedDate: "2024-05-01",
-                acceptedBy: "Jane Smith",
-                returnedDate: "2024-05-10",
-                status: "WAITING"
-            },
-            {
-                id: 2,
-                assetCode: "AC002",
-                assetName: "Monitor Samsung",
-                requestedBy: "Alice Johnson",
-                assignedDate: "2024-05-03",
-                acceptedBy: "Bob Brown",
-                returnedDate: "2024-05-12",
-                status: "COMPLETED"
-            },
-        ];
+    const fetchRequestReturningList = async () => {
+        const formatDateToLocalString = (date: Date) => {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const day = date.getDate().toString().padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
 
-        setRequestReturningList(mockData);
-        setPagingData(prev => ({
-            ...prev,
-            totalPage: 1
-        }));
-    }, []);
+        try {
+            const tempRequestReturning = location.state?.tempRequestReturning;
+            const response = await requestReturningApi.getRequestReturningList({
+                status: stateFilter || undefined,
+                returnedDate: returnedDateFilter ? formatDateToLocalString(returnedDateFilter) : undefined,
+                query: searchFilter || undefined,
+                page: pagingData.currentPage - 1,
+                size: 20,
+                sortBy: sortFilter.sortBy || "assetCode",
+                sortDir: sortFilter.sortDir || "asc",
+            });
+            if (response.data) {
+                if (tempRequestReturning) {
+                    response.data.content = response.data.content.filter(
+                        (a) => a.id !== tempRequestReturning.id
+                    )
+                    response.data.content.unshift(tempRequestReturning);
+                    setRequestReturningList(response.data.content);
+                } else {
+                    setRequestReturningList(response.data.content);
+                }
+                setPagingData((prev) => ({
+                    ...prev,
+                    totalPage: response.data.totalPages,
+                }));
+                setIsLoading(false);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        setStateFilter(searchParams.get("states") || "");
+        setPagingData({ currentPage: Number(searchParams.get("page")) || 1, totalPage: 0 });
+        setSearchFilter(searchParams.get("keyword") || "");
+        setSortFilter({
+            sortBy: searchParams.get("sortBy") || "assetCode",
+            sortDir: searchParams.get("sortDir") || "asc",
+        });
+        requestReturningList.length = 0;
+        setIsLoading(true);
+    }, [searchParams]);
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (debouncedKeyword) params.set("keyword", debouncedKeyword);
+        params.set("states", stateFilter);
+        params.set("page", pagingData.currentPage.toString());
+        params.set("sortBy", sortFilter.sortBy);
+        params.set("sortDir", sortFilter.sortDir);
+        const newSearch = params.toString();
+
+        const formatDateToLocalString = (date: Date) => {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const day = date.getDate().toString().padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
+
+        if (returnedDateFilter) {
+            params.set("returnedDate", formatDateToLocalString(returnedDateFilter));
+        }
+
+        if (location.search !== `?${newSearch}`) {
+            navigate(
+                {
+                    pathname: location.pathname,
+                    search: newSearch,
+                },
+                { replace: false }
+            );
+        }
+        fetchRequestReturningList();
+    }, [
+        stateFilter,
+        debouncedKeyword,
+        sortFilter.sortBy,
+        sortFilter.sortDir,
+        pagingData.currentPage,
+        returnedDateFilter,
+    ]);
 
     return (
         <>
@@ -174,16 +241,16 @@ const RequestForReturn = () => {
                         selected={stateFilter}
                     />
                     <DateFilter
-                        label="Assigned Date"
-                        selectedDate={assignedDateFilter}
-                        onSelect={(date) => setAssignedDateFilter(date)}
-                        isHighlight={!!assignedDateFilter}
+                        label="Returned Date"
+                        selectedDate={returnedDateFilter}
+                        onSelect={(date) => setReturnedDateFilter(date)}
+                        isHighlight={!!returnedDateFilter}
                     />
                     <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
                 </div>
                 <Table
                     columns={colums}
-                    data={RequestReturningList}
+                    data={requestReturningList}
                     sortBy={sortFilter.sortBy as keyof RequestReturning}
                     orderBy={sortFilter.sortDir as keyof RequestReturning}
                     onSort={handleSort}
@@ -201,7 +268,7 @@ const RequestForReturn = () => {
                     <CompletedRequestReturningModal
                         closeModal={() => setViewCompletedModal(false)}
                         id={cancelRequestReturningId}
-                        setRequestReturningList={(id) => setRequestReturningList([...RequestReturningList.filter((item) => item.id !== id)])
+                        setRequestReturningList={(id) => setRequestReturningList([...requestReturningList.filter((item) => item.id !== id)])
                         }
                     />
                 )
@@ -212,7 +279,7 @@ const RequestForReturn = () => {
                         closeModal={() => setViewCancelModal(false)}
                         id={cancelRequestReturningId}
                         setRequestReturningList={(id) =>
-                            setRequestReturningList([...RequestReturningList.filter((item) => item.id !== id)])}
+                            setRequestReturningList([...requestReturningList.filter((item) => item.id !== id)])}
                     />
                 )
             }

@@ -176,6 +176,10 @@ const ManageAsset = () => {
     };
 
     useEffect(() => {
+        fetchCategoryList();
+    }, []);
+
+    useEffect(() => {
         setStateFilter(searchParams.get('states') || '');
         setCategoryFilter(searchParams.get('categoryName') || '');
         setPagingData({ currentPage: Number(searchParams.get('page')) || 1, totalPage: 0 });

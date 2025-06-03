@@ -1,70 +1,47 @@
 {
-    "routes": [
-      {
-        "route": "/login",
-        "allowedRoles": ["anonymous", "authenticated"]
-      },
-      {
-        "route": "/home",
-        "allowedRoles": ["authenticated"]
-      },
-      {
-        "route": "/manage-user",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/manage-user/create",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/manage-user/edit/*",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/manage-asset",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/manage-asset/create",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/manage-asset/edit/*",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/manage-assignment",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/manage-assignment/create",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/manage-assignment/edit/*",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/request-return",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      },
-      {
-        "route": "/report",
-        "allowedRoles": ["authenticated", "ADMIN"]
-      }
-    ],
-    "navigationFallback": {
-      "rewrite": "/index.html",
-      "exclude": ["/api/*", "/assets/*", "/images/*", "/css/*", "/js/*"]
+  "routes": [
+    {
+      "route": "/login"
     },
-    "responseOverrides": {
-      "401": {
-        "redirect": "/login",
-        "statusCode": 302
-      },
-      "403": {
-        "redirect": "/login",
-        "statusCode": 302
-      }
+    {
+      "route": "/home"
+    },
+    {
+      "route": "/manage-user"
+    },
+    {
+      "route": "/manage-user/create"
+    },
+    {
+      "route": "/manage-user/edit/*"
+    },
+    {
+      "route": "/manage-asset"
+    },
+    {
+      "route": "/manage-asset/create"
+    },
+    {
+      "route": "/manage-asset/edit/*"
+    },
+    {
+      "route": "/manage-assignment"
+    },
+    {
+      "route": "/manage-assignment/create"
+    },
+    {
+      "route": "/manage-assignment/edit/*"
+    },
+    {
+      "route": "/request-return"
+    },
+    {
+      "route": "/report"
     }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/api/*", "/assets/*", "/images/*", "/css/*", "/js/*"]
   }
+}
