@@ -1,17 +1,56 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "../../components/ui/button";
 import ContentWrapper from "../../components/ui/content-wrapper"
 import Table, { Column } from "../../components/ui/table";
 import { Report } from "../../types";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { toast } from "react-toastify";
-import reportApi from "../../api/reportApi";
+
+const data: Report[] = [
+    {
+        category: 'Laptop',
+        total: 50,
+        assigned: 30,
+        available: 15,
+        notAvailable: 3,
+        waiting: 1,
+        recycled: 1,
+    },
+    {
+        category: 'Monitor',
+        total: 70,
+        assigned: 45,
+        available: 20,
+        notAvailable: 2,
+        waiting: 2,
+        recycled: 1,
+    },
+    {
+        category: 'Keyboard',
+        total: 100,
+        assigned: 60,
+        available: 30,
+        notAvailable: 5,
+        waiting: 3,
+        recycled: 2,
+    },
+    {
+        category: 'Mouse',
+        total: 90,
+        assigned: 55,
+        available: 25,
+        notAvailable: 4,
+        waiting: 4,
+        recycled: 2,
+    },
+];
 
 type ReportWithId = Report & { id: number };
 
 const columns: Column<ReportWithId>[] = [
+    { key: "id", title: "" },
     { key: "category", title: "Category" },
     { key: "total", title: "Total" },
     { key: "assigned", title: "Assigned" },
@@ -22,33 +61,12 @@ const columns: Column<ReportWithId>[] = [
 ]
 
 const ReportPage = () => {
-
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
-    const location = useLocation();
 
-    const [loading, setLoading] = useState<boolean>(true);
-    const [reportData, setReportData] = useState<Report[]>([]);
     const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "category");
     const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
 
-    const sortedData = [...reportData].sort((a, b) => {
-        const key = sortBy as keyof Report;
-        const aValue = a[key];
-        const bValue = b[key];
-
-        if (key === "category") {
-            return orderBy === "asc"
-                ? String(aValue).localeCompare(String(bValue))
-                : String(bValue).localeCompare(String(aValue));
-        } else {
-            return orderBy === "asc"
-                ? Number(aValue) - Number(bValue)
-                : Number(bValue) - Number(aValue);
-        }
-    });
-
-    const dataWithId = sortedData.map((item, index) => ({
+    const dataWithId = data.map((item, index) => ({
         ...item,
         id: index + 1,
     }));
@@ -56,7 +74,7 @@ const ReportPage = () => {
     const exportToExcel = async () => {
         try {
 
-            const exportData = sortedData.map((item, index) => ({
+            const exportData = data.map((item, index) => ({
                 "No": index + 1,
                 "Category": item.category,
                 "Total": item.total,
@@ -73,16 +91,12 @@ const ReportPage = () => {
             const range = XLSX.utils.decode_range(ref);
             worksheet['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
 
-            worksheet['!cols'] = [
-                { wch: 10 },
-                { wch: 20 },
-                { wch: 10 },
-                { wch: 10 },
-                { wch: 10 },
-                { wch: 15 },
-                { wch: 25 },
-                { wch: 10 }
-            ];
+            // worksheet['!cols'] = [
+            //     { wch: 10 },
+            //     { wch: 20 },
+            //     { wch: 10 },
+            //     { wch: 30 },
+            // ];
 
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
@@ -104,52 +118,13 @@ const ReportPage = () => {
             toast.error(
                 (error as any)?.response?.data?.message ||
                 (error as Error)?.message ||
-                "Error when exporting file"
+                "An unexpected error occurred"
             );
         }
     };
 
-    useEffect(() => {
-        const newSortBy = searchParams.get("sortBy") || "category";
-        const newOrderBy = searchParams.get("orderBy") || "asc";
-        setSortBy(newSortBy);
-        setOrderBy(newOrderBy);
-    }, [searchParams]);
-
-    useEffect(() => {
-
-        const params = new URLSearchParams();
-        params.set("sortBy", sortBy);
-        params.set("orderBy", orderBy);
-
-        const newSearch = params.toString();
-        if (location.search !== `?${newSearch}`) {
-            navigate({
-                pathname: location.pathname,
-                search: newSearch
-            }, { replace: false });
-        }
-    }, [sortBy, orderBy]);
-
-    useEffect(() => {
-        const fetchReportList = async () => {
-            try {
-                const response = await reportApi.getReportList()
-                setLoading(true);
-                setReportData(response.data)
-            } catch (error) {
-                console.log(error)
-            }
-            finally {
-                setLoading(false);
-            }
-        }
-        fetchReportList()
-    }, [])
-
     return (
         <ContentWrapper title={'Report'}>
-
             <div className="flex justify-end w-full mb-[20px]">
                 <Button
                     text="Export"
@@ -157,19 +132,12 @@ const ReportPage = () => {
                     onClick={() => exportToExcel()}
                 />
             </div>
-
             <Table
                 columns={columns}
                 data={dataWithId}
-                isDataLoading={loading}
-                onSort={(key, direction) => {
-                    setSortBy(key)
-                    setOrderBy(direction)
-                }}
-                sortBy={sortBy as keyof Report}
-                orderBy={orderBy}
+                isDataLoading
+            // onSelected={}
             />
-
         </ContentWrapper>
     )
 };
