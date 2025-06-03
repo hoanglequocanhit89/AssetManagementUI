@@ -16,7 +16,8 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsLoading(true);
     await authApi.loginAction(loginData)
     .then(response => {
@@ -34,7 +35,7 @@ const Login = () => {
   return (
     <>
       <FormModal title="Welcome to Online Asset Management" overlay={false}>
-        <div className="form">
+        <form onSubmit={handleLogin} className="form">
           <FormInputGroup
             label="Username"
             type="text"
@@ -51,12 +52,11 @@ const Login = () => {
             <Button
               color="primary"
               text="Login"
-              type="button"
-              onClick={handleLogin}
+              type="submit"
               disabled={loginData.username === "" || loginData.password === ""}
             />
           </div>
-        </div>
+        </form>
       </FormModal>
       { isLoading && <BigLoading /> }
     </>
