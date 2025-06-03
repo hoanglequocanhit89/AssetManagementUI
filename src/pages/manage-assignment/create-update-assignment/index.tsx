@@ -129,7 +129,7 @@ const CreateUpdateAssignment = () => {
     const params = new URLSearchParams(searchParams);
     params.delete("modal");
     setSearchParams(params);
-  },[]);
+  },[searchParams, setSearchParams]);
 
   const [defaultAssignment, setDefaultAssignment] =
     useState<CreateUpdateAssignmentRequest>({
@@ -181,7 +181,18 @@ const CreateUpdateAssignment = () => {
     (): Column<UserBrief>[] => [
       { key: "staffCode", title: "Staff Code" },
       { key: "fullName", title: "Full Name" },
-      { key: "role", title: "Type" },
+      { key: "role", title: "Type",
+        render: (value) => {
+          const strValue = String(value);
+          return (
+              <p>
+                  {strValue
+                      ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase()
+                      : ""}
+              </p>
+          );
+      }
+       },
     ],
     []
   );
@@ -320,7 +331,7 @@ const CreateUpdateAssignment = () => {
     removeModalParam();
     // Trigger validation for assignDate because assignDate cannot auto trigger
     trigger("assignedDate");
-  }, [userModalState.pickedItem, setValue, updateModal, trigger]);
+  }, [userModalState.pickedItem, setValue, updateModal, trigger, removeModalParam]);
 
   const handleSubmitSelectAsset = useCallback(() => {
     setSelectedItems((prev) => ({
@@ -332,7 +343,7 @@ const CreateUpdateAssignment = () => {
     removeModalParam();
     // Trigger validation for assignDate because assignDate cannot auto trigger
     trigger("assignedDate");
-  }, [assetModalState.pickedItem, setValue, updateModal, trigger]);
+  }, [assetModalState.pickedItem, setValue, updateModal, trigger, removeModalParam]);
 
   const isFormChanged = useCallback(() => {
     const formValues = getValues();
