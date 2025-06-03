@@ -250,6 +250,12 @@ const ManageAsset = () => {
     const handleSort = (key: string, direction: string) => {
         setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction })
     };
+
+    const handleSearch = (value: string) => {
+        setSearchFilter(value)
+        pagingData.currentPage = 1;
+    };
+    
     return (
         <>
             <ContentWrapper title={'Asset List'}>
@@ -267,7 +273,7 @@ const ManageAsset = () => {
                         selected={categoryFilter}
                         placeholder="All"
                     />
-                    <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
+                    <SearchInput value={searchFilter} onSearch={handleSearch} />
                     <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
                 </div>
                 <Table
