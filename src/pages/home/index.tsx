@@ -175,7 +175,8 @@ const Home = () => {
     const params = new URLSearchParams();
     params.set("sortBy", sortBy);
     params.set("orderBy", orderBy);
-
+    assignmentData?.data.splice(0); // Clear list for showing loading spinner
+    setIsLoading(true);
     const newSearch = params.toString();
     if (location.search !== `?${newSearch}`) {
       navigate(
@@ -192,8 +193,6 @@ const Home = () => {
   useEffect(() => {
     setSortBy(searchParams.get("sortBy") || "assetCode");
     setOrderBy(searchParams.get("orderBy") || "asc");
-    assignmentData?.data.splice(0); // Clear list for showing loading spinner
-    setIsLoading(true);
   }, [searchParams]);
 
   // Handle browser back button to close modals
