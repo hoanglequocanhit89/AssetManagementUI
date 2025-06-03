@@ -22,6 +22,10 @@ const stateArr = [
     {
         value: "COMPLETED",
         label: "Completed"
+    },
+    {
+        value: "",
+        label: "All"
     }
 ]
 
@@ -254,6 +258,7 @@ const RequestForReturn = () => {
                     sortBy={sortFilter.sortBy as keyof RequestReturning}
                     orderBy={sortFilter.sortDir as keyof RequestReturning}
                     onSort={handleSort}
+                    isDataLoading={isLoading}
                 />
                 <div className="self-end mt-[20px]">
                     <Pagination
@@ -267,7 +272,7 @@ const RequestForReturn = () => {
                 viewCompletedModal && (
                     <CompletedRequestReturningModal
                         closeModal={() => setViewCompletedModal(false)}
-                        id={cancelRequestReturningId}
+                        id={completedRequestReturningId}
                         setRequestReturningList={(id) => setRequestReturningList([...requestReturningList.filter((item) => item.id !== id)])
                         }
                     />

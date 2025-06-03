@@ -1,5 +1,5 @@
-import { BaseResponse } from "../types";
-import { RequestReturning } from "../types/request-returning";
+import { RequestReturning } from './../types/request-returning';
+import { BaseResponse, BaseResponseWithoutPagination } from "../types";
 import axiosClients from "./axiosClients";
 
 interface RequestReturningParams {
@@ -43,6 +43,13 @@ const requestReturningApi = {
         const url = `return`;
 
         return axiosClients.get(url, { params: params });
+    },
+
+    CompletedRequestReturning(
+        id: number
+    ): Promise<BaseResponseWithoutPagination<string>> {
+        const url = `return/${id}/complete`;
+        return axiosClients.patch(url);
     }
 }
 

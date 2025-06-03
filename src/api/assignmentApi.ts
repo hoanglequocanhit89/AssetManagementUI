@@ -48,9 +48,9 @@ const assignmentApi = {
       sortDir,
     };
 
-    (Object.keys(params) as (keyof typeof params)[]).forEach(
-      (key) => params[key] === undefined && delete params[key]
-    );
+      (Object.keys(params) as (keyof typeof params)[]).forEach(
+        (key) => params[key] === undefined && delete params[key]
+      );
 
     const url = `assignments`;
 

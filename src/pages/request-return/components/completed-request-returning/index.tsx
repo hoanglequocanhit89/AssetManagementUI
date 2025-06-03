@@ -1,5 +1,7 @@
 import FormModal from "../../../../components/ui/form-modal";
 import Button from "../../../../components/ui/button";
+import requestReturningApi from "../../../../api/requestReturningApi";
+import { toast } from "react-toastify";
 
 interface CompletedRequestReturningProps {
     id: number,
@@ -9,6 +11,17 @@ interface CompletedRequestReturningProps {
 
 const CompletedRequestReturningModal = (props: CompletedRequestReturningProps) => {
     const handleCompletedRequestReturning = async () => {
+        try {
+            const response = await requestReturningApi.CompletedRequestReturning(props.id);
+            if (response) {
+                toast.success(response.message || "Request returning completed successfully!");
+                props.setRequestReturningList(props.id);
+                props.closeModal();
+            }
+        } catch (error) {
+            toast.error("Failed to completed request returning.");
+            console.error(error);
+        }
     }
 
     return (
@@ -26,4 +39,4 @@ const CompletedRequestReturningModal = (props: CompletedRequestReturningProps) =
     )
 }
 
-export default CompletedRequestReturningModal
+export default CompletedRequestReturningModal;

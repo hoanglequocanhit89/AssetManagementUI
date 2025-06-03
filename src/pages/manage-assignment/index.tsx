@@ -158,7 +158,7 @@ const ManageAssignment = () => {
       const year = date.getFullYear();
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const day = date.getDate().toString().padStart(2, "0");
-      return `${year}-${month}-${day}`; // Output: 2025-04-20
+      return `${year}-${month}-${day}`;
     };
 
     try {
