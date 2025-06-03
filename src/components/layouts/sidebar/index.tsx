@@ -7,27 +7,27 @@ import { RootState } from "../../../store";
 const navItems = [
     {
         title: 'Home',
-        tag: 'home',
+        tag: '/home',
     },
     {
         title: 'Manage User',
-        tag: 'manage-user',
+        tag: '/manage-user',
     },
     {
         title: 'Manage Asset',
-        tag: 'manage-asset',
+        tag: '/manage-asset',
     },
     {
         title: 'Manage Assignment',
-        tag: 'manage-assignment',
+        tag: '/manage-assignment',
     },
     {
         title: 'Request for Returning',
-        tag: 'request-return',
+        tag: '/request-return',
     },
     {
         title: 'Report',
-        tag: 'report',
+        tag: '/report',
     }
 ];
 
@@ -51,6 +51,14 @@ const Sidebar = (props: SidebarProps) => {
     const navigate = useNavigate();
     const { setTitle } = props;
 
+    const handleChangeTag = (item: { title: string, tag: string }) => {
+        const currentPath = location.pathname;
+        if(!currentPath.startsWith(item.tag)) {
+            setTitle(item.title);
+            navigate(item.tag)
+        }
+    }
+
     return (
         <aside className="sidebar">
             <div className="sidebar__inner">
@@ -63,11 +71,8 @@ const Sidebar = (props: SidebarProps) => {
                         {
                             (auth.role === 'ADMIN' ? navItems : staffItems).map((item, idx) => (
                                 <li key={idx}
-                                    onClick={() => {
-                                        setTitle(item.title);
-                                        navigate(item.tag);
-                                    }}
-                                    className={`sidebar-nav__item ${location.pathname.includes(`/${item.tag}`)  ? 'active' : ''}`}
+                                    onClick={() => handleChangeTag(item)}
+                                    className={`sidebar-nav__item ${location.pathname.startsWith(item.tag)  ? 'active' : ''}`}
                                 >
                                     {item.title}
                                 </li>
