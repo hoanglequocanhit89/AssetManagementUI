@@ -50,6 +50,13 @@ const requestReturningApi = {
     ): Promise<BaseResponseWithoutPagination<string>> {
         const url = `return/${id}/complete`;
         return axiosClients.patch(url);
+    },
+
+    CancelRequestReturningModal(
+        returningRequestId: number
+    ): Promise<BaseResponseWithoutPagination<string>> {
+        const url = `return/${returningRequestId}`;
+        return axiosClients.delete(url);
     }
 }
 
