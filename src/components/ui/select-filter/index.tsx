@@ -6,14 +6,14 @@ type Option = {
 };
 
 type SelectFilterProps = {
-    label: string;
+    placeholder: string;
     options: Option[];
     selected?: string;
     onSelect: (value: string) => void;
 };
 
 const SelectFilter: React.FC<SelectFilterProps> = ({
-    label,
+    placeholder,
     options,
     selected,
     onSelect,
@@ -31,13 +31,14 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const selectedLabel = options.find((opt) => opt.value === selected)?.label;
+
+    const selectedLabel = selected ? options.find((opt) => opt.value === selected)?.label : null;
 
     return (
         <div className="relative w-full" ref={ref}>
             <div className="flex items-stretch border border-gray-500 rounded-md shadow-sm bg-white overflow-hidden">
                 <div className="flex-grow pl-4 pr-2 mr-8 py-2 text-[1.6rem] text-gray-800 text-left flex items-center truncate overflow-hidden whitespace-nowrap">
-                    {selectedLabel || label}
+                    {selectedLabel ?? placeholder}
                 </div>
                 <button
                     onClick={() => setIsOpen((prev) => !prev)}

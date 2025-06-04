@@ -37,18 +37,18 @@ const SearchSelect: React.FC<SearchSelectProps> = ({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const selectedLabel = options.find((opt) => opt.value === selected)?.label;
+    const selectedLabel = options.find((opt) => opt.value === selected && selected !== "")?.label;
 
     return (
         <div className="relative w-full" ref={ref}>
             <div className="flex items-stretch border border-gray-500 rounded-md shadow-sm bg-white overflow-hidden">
                 <input
                     type="text"
-                    value={isOpen ? search : selectedLabel || ""}
+                    value={isOpen ? search : selectedLabel ?? ""}
                     onChange={e => setSearch(e.target.value)}
                     onFocus={() => setIsOpen(true)}
-                    placeholder={placeholder}
-                    className="flex-grow min-w-0 px-3 py-2 text-[1.6rem] text-gray-800 focus:outline-none"
+                    placeholder={selectedLabel ? "" : placeholder}
+                    className="flex-grow min-w-0 px-3 py-2 text-[1.6rem] text-gray-800 focus:outline-none placeholder-gray-800"
                 />
                 <button
                     onClick={() => setIsOpen((prev) => !prev)}
