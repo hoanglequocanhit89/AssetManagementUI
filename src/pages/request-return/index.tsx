@@ -154,7 +154,6 @@ const RequestForReturn = () => {
             return `${year}-${month}-${day}`;
         };
 
-
         try {
             const tempRequestReturning = location.state?.tempRequestReturning;
             const response = await requestReturningApi.getRequestReturningList({
@@ -190,6 +189,7 @@ const RequestForReturn = () => {
                 }));
                 setIsLoading(false);
                 setRequestReturningList(filteredContent);
+
             }
         } catch (error) {
             console.log(error);
