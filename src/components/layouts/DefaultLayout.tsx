@@ -3,7 +3,6 @@ import Header from "./header";
 import Sidebar from "./sidebar";
 import { useEffect, useState } from "react";
 
-
 const pathItems = [
   {
     title: "Create new user",
@@ -45,15 +44,15 @@ const DefaultLayout = () => {
     return (
         <>
             <Header title={title} subTitle={subTitle} />
-            <div className="container full-screen">
-                <div className="row row-cols-2 py-[60px] h-full">
-                    <div className="col col-3 h-full">
+            <div className="container">
+              <div className="row py-[60px]">
+                    <div className="col col-xl-3 col-xxl-3 col-3 d-lg-none d-md-none">
                         <Sidebar setTitle={setTitle} />
                     </div>
-                    <div className="col col-9 h-full">
+                    <div className="col col-md-12 col-lg-12 col-9 col-xl-9 col-xxl-9">
                         <Outlet />
                     </div>
-                </div>
+              </div>
             </div>
         </>
     )
