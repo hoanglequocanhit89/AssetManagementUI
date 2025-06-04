@@ -1,3 +1,5 @@
+@use "../../../assets/scss/abstracts";
+
 .sidebar {
 
     &__img--wrapper {
@@ -41,6 +43,11 @@
             &:hover {
                 background-color: var(--primary-color);
                 color: var(--text-white-color);
+            }
+
+            @include abstracts.screen(xl) {
+                padding: 15px;
+                width: 100%;
             }
         }
     }

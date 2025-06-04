@@ -339,6 +339,7 @@ const ManageAsset = () => {
           closeModal={() => setViewDetailModal(false)}
           data={{
             ...detailAssetData,
+            status: formatStatus(detailAssetData.status),
             assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
           }}
         />
