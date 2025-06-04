@@ -13,11 +13,14 @@ import DetailAssignmentModal from "./components/detail-assignment";
 import DeleteAssignmentModal from "./components/delete-assignment";
 import { useDebounce } from "../../hooks/useDebounce";
 import { getStatusLabel } from "../../utils/status-label";
+import ReturnAssignmentModal from "./components/assignment-own-return";
+import ReturnAdminAssignmentModal from "./components/assignment-admin-return";
 
 const getColumns = (props: {
   handlers: {
     onEdit: (row: Assignment) => void;
     onDelete: (row: Assignment) => void;
+    onReturn: (row: Assignment) => void
   };
   pagingData: PagingProps;
 }): Column<Assignment>[] => {
@@ -48,7 +51,7 @@ const getColumns = (props: {
       actions: [
         {
           render: (row) => {
-            const isDisabled = row.status === "ACCEPTED" || row.status === "DECLINED";
+            const isDisabled = row.status === "ACCEPTED" || row.status === "DECLINED" || row.status === "RETURNED";
             return (
               <button disabled={isDisabled}>
                 <i
@@ -62,7 +65,7 @@ const getColumns = (props: {
         },
         {
           render: (row) => {
-            const isDisabled = row.status === "ACCEPTED";
+            const isDisabled = row.status === "ACCEPTED" || row.status === "RETURNED";
             return (
               <button disabled={isDisabled}>
                 <i
@@ -76,12 +79,15 @@ const getColumns = (props: {
           onClick: handlers.onDelete,
         },
         {
-          render: (row) => (
-            <button>
-              <i className="fa-solid fa-rotate-left" title="Return"></i>
-            </button>
-          ),
-          onClick: () => { }
+          render: (row) => {
+            const isDisabled = row.status === "RETURNED" || row.status === "WAITING_FOR_RETURNING" || row.status === "WAITING";
+            return (
+              <button disabled={isDisabled}>
+                <i className={`fa-solid fa-rotate-left text-blue-600 ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`} title="Return"></i>
+              </button>
+            );
+          },
+          onClick: handlers.onReturn,
         },
       ],
     },
@@ -149,6 +155,8 @@ const ManageAssignment = () => {
     note: "",
     canDelete: false,
   });
+
+  const [showReturnModal, setShowReturnModal] = useState(false);
 
   const debouncedKeyword = useDebounce(searchFilter, 500);
   const navigate = useNavigate();
@@ -254,10 +262,16 @@ const ManageAssignment = () => {
     setViewDeleteModal(true);
   };
 
+  const handleReturn = (row: Assignment) => {
+    setEditAssignmentId(row.id);
+    setShowReturnModal(true);
+  }
+
   const columns = getColumns({
     handlers: {
       onEdit: handleEdit,
       onDelete: handleDelete,
+      onReturn: handleReturn
     },
     pagingData: pagingData,
   });
@@ -342,6 +356,19 @@ const ManageAssignment = () => {
           setAssignmentList={(id) =>
             setAssignementList([...assignmentList.filter((item) => item.id !== id)])
           }
+        />
+      )}
+
+      {/* showReturnModal */}
+      {showReturnModal && (
+        <ReturnAdminAssignmentModal
+          assignmentId={editAssignmentId}
+          showModal={showReturnModal}
+          onSuccess={() => {
+            setShowReturnModal(false);
+            fetchAssignmentList();
+          }}
+          closeModal={() => setShowReturnModal(false)}
         />
       )}
     </>
