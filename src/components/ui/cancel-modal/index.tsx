@@ -1,6 +1,6 @@
-import React from 'react'
-import FormModal from '../form-modal';
-import Button from '../button';
+import FormModal from "../form-modal";
+import Button from "../button";
+import { useEscapeKey } from "../../../hooks/useEscapeKey";
 
 interface CancelModalProps {
   content: string;
@@ -9,35 +9,38 @@ interface CancelModalProps {
   onSuccess: () => void;
 }
 
-const CancelModal = ({ content, showModal, closeModal, onSuccess }: CancelModalProps) => {
+const CancelModal = ({
+  content,
+  showModal,
+  closeModal,
+  onSuccess,
+}: CancelModalProps) => {
+  useEscapeKey(closeModal);
   return (
     <div>
-      {showModal && <FormModal
-        closeBtn={true}
-        title={"Are you sure?"}
-        closeModal={() => closeModal()}
-      >
-        {
-          <div className="flex flex-col gap-5">
-            <p>{content}</p>
-            <div className="flex gap-5">
-              <Button
-                text="Yes"
-                color="primary"
-                onClick={onSuccess}
-              />
-              <Button
-                text="Cancel"
-                color="outline"
-                onClick={() => closeModal()}
-              />
+      {showModal && (
+        <FormModal
+          closeBtn={true}
+          title={"Are you sure?"}
+          closeModal={() => closeModal()}
+        >
+          {
+            <div className="flex flex-col gap-5">
+              <p>{content}</p>
+              <div className="flex gap-5">
+                <Button text="Yes" color="primary" onClick={onSuccess} />
+                <Button
+                  text="Cancel"
+                  color="outline"
+                  onClick={() => closeModal()}
+                />
+              </div>
             </div>
-          </div>
-        }
-      </FormModal>
-      }
+          }
+        </FormModal>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default CancelModal
+export default CancelModal;

@@ -86,6 +86,10 @@ const assignmentApi = {
     const url = `assignments/${assignmentId}`;
     return axiosClients.put(url, payload);
   },
+
+  async returnAssignmentForAdmin(assignmentId: number): Promise<void> {
+    await axiosClients.post(`return/${assignmentId}`);
+  }
 };
 
 export default assignmentApi;

@@ -18,88 +18,93 @@ const getColumns = (handlers: {
   onDecline: (row: OwnAssignment) => void;
   onAccept: (row: OwnAssignment) => void;
 }): Column<OwnAssignment>[] => [
-  { key: "assetCode", title: "Asset Code" },
-  { key: "assetName", title: "Asset Name" },
-  { key: "category", title: "Category" },
-  { key: "assignedDate", title: "Assigned Date" },
-  {
-    key: "status",
-    title: "State",
-    // render status labels
-    render: (value) => {
-      let strValue = String(value);
-      if (strValue === "WAITING") {
-        strValue = "Waiting for Acceptance";
-      }
-      if (strValue === "ACCEPTED") {
-        strValue = "Accepted";
-      }
-      return (
-        <span>
-          {strValue ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase() : ""}
-        </span>
-      );
+    { key: "assetCode", title: "Asset Code" },
+    { key: "assetName", title: "Asset Name" },
+    { key: "category", title: "Category" },
+    { key: "assignedDate", title: "Assigned Date" },
+    {
+      key: "status",
+      title: "State",
+      // render status labels
+      render: (value) => {
+        let strValue = String(value);
+        if (strValue === "WAITING") {
+          strValue = "Waiting for Acceptance";
+        }
+        if (strValue === "ACCEPTED") {
+          strValue = "Accepted";
+        }
+        if (strValue === "WAITING_FOR_RETURNING") {
+          strValue = "Waiting for returning"
+        }
+        return (
+          <span>
+            {strValue ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase() : ""}
+          </span>
+        );
+      },
     },
-  },
-  // Action column with icons for accepting, declining, and returning assignments
-  {
-    key: "action",
-    actions: [
-      {
-        // Render a check icon for accepting the assignment
-        render: (row) => {
-          return (
-            <i
-              className={`fa-solid fa-check text-red-600 text-3xl font-extrabold ${
-                row.status === "ACCEPTED" ? "disabled text-red-600/30 cursor-not-allowed" : ""
-              }`}
-              title="Accept"
-            ></i>
-          );
+    // Action column with icons for accepting, declining, and returning assignments
+    {
+      key: "action",
+      actions: [
+        {
+          // Render a check icon for accepting the assignment
+          render: (row) => {
+            const isDisabled = row.status === "ACCEPTED" || row.status === "WAITING_FOR_RETURNING";
+            return (
+              <i
+                className={`fa-solid fa-check text-red-600 text-3xl font-extrabold ${isDisabled ? "disabled text-red-600/30 cursor-not-allowed" : ""
+                  }`}
+                title="Accept"
+              ></i>
+            );
+          },
+          onClick: (row) => {
+            if (row.status === "WAITING") {
+              handlers.onAccept(row);
+            }
+          },
         },
-        onClick: (row) => {
-          if (row.status === "WAITING") {
-            handlers.onAccept(row);
-          }
+        {
+          // Render a cross icon for declining the assignment
+          render: (row) => {
+            const isDisabled = row.status === "ACCEPTED" || row.status === "WAITING_FOR_RETURNING";
+            return (
+              <i
+                className={`fa-solid fa-xmark text-black text-3xl font-extrabold ${isDisabled ? "pointer-events-none opacity-30 cursor-not-allowed" : ""
+                  }`}
+                title="Reject"
+              ></i>
+            );
+          },
+          onClick: (row) => {
+            if (row.status === "WAITING") {
+              handlers.onDecline(row);
+            }
+          },
         },
-      },
-      {
-        // Render a cross icon for declining the assignment
-        render: (row) => (
-          <button>
-            <i
-              className={`fa-solid fa-xmark text-black text-3xl font-extrabold ${
-                row.status === "ACCEPTED" ? "disabled text-black/30 cursor-not-allowed" : ""
-              }`}
-              title="Reject"
-            ></i>
-          </button>
-        ),
-        onClick: (row) => {
-          if (row.status === "WAITING") {
-            handlers.onDecline(row);
-          }
+        {
+          // Render a return icon for returning the assignment
+          render: (row) => {
+            const isDisabled = row.status !== "ACCEPTED" || (row.status as string) === "WAITING_FOR_RETURNING";
+            return (
+              <i
+                className={`fa-solid fa-arrow-rotate-left text-blue-600 text-3xl font-extrabold ${isDisabled ? "pointer-events-none opacity-30 cursor-not-allowed" : ""
+                  }`}
+                title="Return"
+              ></i>
+            );
+          },
+          onClick: (row) => {
+            if (row.status === "ACCEPTED") {
+              handlers.onReturn(row);
+            }
+          },
         },
-      },
-      {
-        // Render a return icon for returning the assignment
-        render: (row) => (
-          <i
-            className={`fa-solid fa-arrow-rotate-left text-blue-600 text-3xl font-extrabold ${
-              row.status === "WAITING" ? "disabled text-blue-600/30 cursor-not-allowed" : ""
-            }`}
-            title="Return"
-          ></i>
-        ),
-        onClick: (row) => {
-          if (row.status === "ACCEPTED") {
-            handlers.onReturn(row);
-          }
-        },
-      },
-    ],
-  },
-];
+      ],
+    },
+  ];
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -111,9 +116,13 @@ const Home = () => {
     useState<BaseResponseWithoutPagination<OwnAssignment[]>>();
   const [assignmentId, setAssignmentId] = useState<number>(0);
 
-  const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "assetCode");
+  const [sortBy, setSortBy] = useState<string>(
+    searchParams.get("sortBy") || "assetCode"
+  );
   const [sortFieldForApi, setSortFieldForApi] = useState<string>("assetCode");
-  const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
+  const [orderBy, setOrderBy] = useState<string>(
+    searchParams.get("orderBy") || "asc"
+  );
 
   // detail assignment info modal state
   const [showModal, setShowModal] = useState(false);
@@ -122,9 +131,12 @@ const Home = () => {
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
-  const [showChangePasswordModal, setChangePasswordModal] = useState(auth.isFirstLogin || false);
+  const [showChangePasswordModal, setChangePasswordModal] = useState(
+    auth.isFirstLogin || false
+  );
 
-  const [isDeclineAssignment, setIsDeclineAssignment] = useState<boolean>(false);
+  const [isDeclineAssignment, setIsDeclineAssignment] =
+    useState<boolean>(false);
 
   const handleClickRow = (id: number) => {
     setShowModal(true);

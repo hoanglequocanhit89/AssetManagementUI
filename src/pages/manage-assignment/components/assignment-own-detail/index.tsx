@@ -3,6 +3,7 @@ import { OwnAssignmentDetail } from "../../../../types/assignment";
 import assignmentApi from "../../../../api/ownAssignmentApi";
 import FormModal from "../../../../components/ui/form-modal";
 import FormModalGroup from "../../../../components/ui/form-modal-group";
+import BigLoading from "../../../../components/ui/loading-big/LoadingBig";
 
 interface DetailOwnAssignmentProps {
   showModal: boolean;
@@ -10,17 +11,28 @@ interface DetailOwnAssignmentProps {
   assignmentId: number;
 }
 
-const DetailUser = ({ showModal, closeModal, assignmentId }: DetailOwnAssignmentProps) => {
+const DetailUser = ({
+  showModal,
+  closeModal,
+  assignmentId,
+}: DetailOwnAssignmentProps) => {
   const [assignmentData, setAssignmentData] = useState<OwnAssignmentDetail>();
+  const [isDetailAssignmentLoading, setIsDetailAssignmentLoading] =
+    useState(true);
 
   useEffect(() => {
     if (!showModal) return;
     const fetchDetailUser = async () => {
       try {
-        const response = await assignmentApi.getOwnAssignmentDetail(assignmentId);
+        setIsDetailAssignmentLoading(true);
+        const response = await assignmentApi.getOwnAssignmentDetail(
+          assignmentId
+        );
         setAssignmentData(response.data);
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsDetailAssignmentLoading(false);
       }
     };
     fetchDetailUser();
@@ -40,6 +52,8 @@ const DetailUser = ({ showModal, closeModal, assignmentId }: DetailOwnAssignment
           ? "Waiting for acceptance"
           : assignmentData?.status === "ACCEPTED"
           ? "Accepted"
+          : assignmentData?.status === "WAITING_FOR_RETURNING"
+          ? "Waiting for returning"
           : "",
     },
     { title: "Note", value: assignmentData?.note },
@@ -49,12 +63,24 @@ const DetailUser = ({ showModal, closeModal, assignmentId }: DetailOwnAssignment
 
   return (
     <div>
-      {showModal && (
-        <FormModal title="Detailed assignment Information" closeBtn closeModal={() => closeModal()}>
-          {fields.map((field) => (
-            <FormModalGroup key={field.title} title={field.title} value={field.value} />
-          ))}
-        </FormModal>
+      {isDetailAssignmentLoading ? (
+        <BigLoading />
+      ) : (
+        showModal && (
+          <FormModal
+            title="Detailed assignment Information"
+            closeBtn
+            closeModal={() => closeModal()}
+          >
+            {fields.map((field) => (
+              <FormModalGroup
+                key={field.title}
+                title={field.title}
+                value={field.value}
+              />
+            ))}
+          </FormModal>
+        )
       )}
     </div>
   );

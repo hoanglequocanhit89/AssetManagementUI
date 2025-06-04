@@ -252,7 +252,7 @@ const RequestForReturn = () => {
             <ContentWrapper title={'Request List'}>
                 <div className="d-flex gap-[20px] mb-[20px] z-20">
                     <SelectFilter
-                        label="State"
+                        placeholder="State"
                         options={stateArr}
                         onSelect={(value) => setStateFilter(value)}
                         selected={stateFilter}
@@ -286,7 +286,11 @@ const RequestForReturn = () => {
                     <CompletedRequestReturningModal
                         closeModal={() => setViewCompletedModal(false)}
                         id={completedRequestReturningId}
-                        setRequestReturningList={(id) => setRequestReturningList([...requestReturningList.filter((item) => item.id !== id)])
+                        setRequestReturningList={(id) => setRequestReturningList(prev =>
+                            prev.map(item =>
+                                item.id === id ? { ...item, status: "COMPLETED" } : item
+                            )
+                        )
                         }
                     />
                 )
