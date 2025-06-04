@@ -6,6 +6,10 @@ export const getStatusLabel = (status: string): string => {
             return "Accepted";
         case "DECLINED":
             return "Declined";
+        case "RETURNED":
+            return "Returned";
+        case "WAITING_FOR_RETURNING":
+            return "Waiting for returning"
         default:
             return status;
     }

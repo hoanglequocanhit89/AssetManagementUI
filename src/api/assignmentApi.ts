@@ -48,9 +48,9 @@ const assignmentApi = {
       sortDir,
     };
 
-      (Object.keys(params) as (keyof typeof params)[]).forEach(
-        (key) => params[key] === undefined && delete params[key]
-      );
+    (Object.keys(params) as (keyof typeof params)[]).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
     const url = `assignments`;
 
@@ -86,6 +86,21 @@ const assignmentApi = {
     const url = `assignments/${assignmentId}`;
     return axiosClients.put(url, payload);
   },
+
+  async returnAssignmentForAdmin(assignmentId: number): Promise<void> {
+    if (!assignmentId || assignmentId <= 0) {
+      throw new Error("Invalid assignmentId for return request");
+    }
+    await axiosClients.post(`return`, {
+      assignmentId: assignmentId
+    });
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  }
 };
 
 export default assignmentApi;
