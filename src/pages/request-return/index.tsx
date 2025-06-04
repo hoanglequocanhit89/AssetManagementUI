@@ -22,6 +22,10 @@ const stateArr = [
     {
         value: "COMPLETED",
         label: "Completed"
+    },
+    {
+        value: "",
+        label: "All"
     }
 ]
 
@@ -36,10 +40,12 @@ const getColumns = (props: {
     return [
         {
             key: "id",
+            fixed: "left",
+            width: 50,
             title: "No.",
             render: (_valued, _row, index: number) => (pagingData.currentPage - 1) * 20 + index + 1,
         },
-        { key: "assetCode", title: "Asset Code" },
+        { key: "assetCode", title: "Asset Code", fixed: "left", width: 50 },
         { key: "assetName", title: "Asset Name" },
         { key: "requestedBy", title: "Requested By" },
         { key: "assignedDate", title: "Assigned Date" },
@@ -54,6 +60,7 @@ const getColumns = (props: {
         },
         {
             key: "action",
+            fixed: "right",
             actions: [
                 {
                     render: (row) => {
@@ -158,6 +165,14 @@ const RequestForReturn = () => {
                 sortBy: sortFilter.sortBy || "assetCode",
                 sortDir: sortFilter.sortDir || "asc",
             });
+
+            let filteredContent = response.data.content.filter(item => item.status !== "CANCELLED");
+
+            if (tempRequestReturning) {
+                filteredContent = filteredContent.filter(a => a.id !== tempRequestReturning.id);
+                filteredContent.unshift(tempRequestReturning);
+            }
+
             if (response.data) {
                 if (tempRequestReturning) {
                     response.data.content = response.data.content.filter(
@@ -173,6 +188,8 @@ const RequestForReturn = () => {
                     totalPage: response.data.totalPages,
                 }));
                 setIsLoading(false);
+                setRequestReturningList(filteredContent);
+
             }
         } catch (error) {
             console.log(error);
@@ -233,7 +250,7 @@ const RequestForReturn = () => {
     return (
         <>
             <ContentWrapper title={'Request List'}>
-                <div className="d-flex gap-[20px] mb-[20px]">
+                <div className="d-flex gap-[20px] mb-[20px] z-20">
                     <SelectFilter
                         label="State"
                         options={stateArr}
@@ -254,6 +271,7 @@ const RequestForReturn = () => {
                     sortBy={sortFilter.sortBy as keyof RequestReturning}
                     orderBy={sortFilter.sortDir as keyof RequestReturning}
                     onSort={handleSort}
+                    isDataLoading={isLoading}
                 />
                 <div className="self-end mt-[20px]">
                     <Pagination
@@ -267,7 +285,7 @@ const RequestForReturn = () => {
                 viewCompletedModal && (
                     <CompletedRequestReturningModal
                         closeModal={() => setViewCompletedModal(false)}
-                        id={cancelRequestReturningId}
+                        id={completedRequestReturningId}
                         setRequestReturningList={(id) => setRequestReturningList([...requestReturningList.filter((item) => item.id !== id)])
                         }
                     />

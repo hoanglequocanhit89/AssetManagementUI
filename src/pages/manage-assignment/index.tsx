@@ -25,10 +25,12 @@ const getColumns = (props: {
   return [
     {
       key: "id",
+      fixed: 'left',
       title: "No.",
+      width: 50,
       render: (_value, _row, index: number) => (pagingData.currentPage - 1) * 20 + index + 1,
     },
-    { key: "assetCode", title: "Asset Code" },
+    { key: "assetCode", title: "Asset Code", fixed: "left", width: 60 },
     { key: "assetName", title: "Asset Name" },
     { key: "assignedTo", title: "Assigned to" },
     { key: "assignedBy", title: "Assigned By" },
@@ -42,6 +44,7 @@ const getColumns = (props: {
     },
     {
       key: "action",
+      fixed: "right",
       actions: [
         {
           render: (row) => {
@@ -155,7 +158,7 @@ const ManageAssignment = () => {
       const year = date.getFullYear();
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const day = date.getDate().toString().padStart(2, "0");
-      return `${year}-${month}-${day}`; // Output: 2025-04-20
+      return `${year}-${month}-${day}`;
     };
 
     try {
@@ -290,7 +293,7 @@ const ManageAssignment = () => {
   return (
     <>
       <ContentWrapper title={"Assignment List"}>
-        <div className="d-flex gap-[20px] mb-[20px]">
+        <div className="d-flex gap-[20px] mb-[20px] z-20">
           <SelectFilter
             label="State"
             options={stateArr}
@@ -301,7 +304,7 @@ const ManageAssignment = () => {
             label="Assigned Date"
             selectedDate={assignedDateFilter}
             onSelect={(date) => setAssignedDateFilter(date)}
-            isHighlight={!!assignedDateFilter}
+            isHighlight={false}
           />
           <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
           <Button text="Create new assignment" color="primary" onClick={() => navigate("create")} />

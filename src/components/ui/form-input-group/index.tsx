@@ -30,6 +30,7 @@ const FormInputGroup = (props : FormInputGroupProps) => {
                     } 
                     id={label} 
                     className="form__input--field" 
+                    maxLength={128}
                 />
                 { type === 'password' && 
                     <i onClick={handleIconClick} 

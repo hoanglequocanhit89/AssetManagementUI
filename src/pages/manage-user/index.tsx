@@ -137,14 +137,12 @@ const ManageUser = () => {
     }, [selectedType, sortFieldForApi, orderBy, currentPage, debouncedKeyword])
 
     useEffect(() => {
-
         const params = new URLSearchParams();
         if (debouncedKeyword) params.set("keyword", debouncedKeyword);
         if (selectedType) params.set("type", selectedType);
         params.set("page", currentPage.toString());
         params.set("sortBy", sortBy);
         params.set("orderBy", orderBy);
-
         const newSearch = params.toString();
         if (location.search !== `?${newSearch}`) {
             navigate({
@@ -152,6 +150,8 @@ const ManageUser = () => {
                 search: newSearch
             }, { replace: false });
         }
+        userData?.data.content.splice(0);
+        setIsLoading(true);
     }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage]);
 
 
@@ -161,8 +161,6 @@ const ManageUser = () => {
         setSortBy(searchParams.get("sortBy") || "firstName");
         setOrderBy(searchParams.get("orderBy") || "asc");
         setCurrentPage(Number(searchParams.get("page")) || 1);
-        userData?.data.content.splice(0);
-        setIsLoading(true);
     }, [searchParams]);
 
     useEffect(() => {
@@ -182,7 +180,7 @@ const ManageUser = () => {
     return (
         <>
             <ContentWrapper title={'User List'}>
-                <div className="flex justify-between items-center w-full mb-[20px]">
+                <div className="flex justify-between items-center w-full mb-[20px] z-20">
                     <div className="min-w-[220px]">
                         <SelectFilter
                             label="Type"

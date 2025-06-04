@@ -26,7 +26,7 @@ const getColumns = (handlers: {
                 {
                     render: (row) => (
                         <button disabled={row.status === 'ASSIGNED'}>
-                            <i 
+                            <i
                                 className={`fa-solid fa-pen ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}
                                 title="Edit"
                             ></i>
@@ -37,11 +37,11 @@ const getColumns = (handlers: {
                 {
                     render: (row) => (
                         <button disabled={row.status === 'ASSIGNED'}>
-                            <i 
+                            <i
                                 className={`fa-regular fa-circle-xmark text-[var(--primary-color)] 
                                     ${row.status === 'ASSIGNED' ? 'opacity-50 cursor-default' : ''}`}
-                                    title="Delete"
-                                ></i>
+                                title="Delete"
+                            ></i>
                         </button>
                     ),
                     onClick: handlers.onDelete,
@@ -250,10 +250,16 @@ const ManageAsset = () => {
     const handleSort = (key: string, direction: string) => {
         setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction })
     };
+
+    const handleSearch = (value: string) => {
+        setSearchFilter(value)
+        pagingData.currentPage = 1;
+    };
+    
     return (
         <>
             <ContentWrapper title={'Asset List'}>
-                <div className="d-flex gap-[20px] mb-[20px]">
+                <div className="d-flex gap-[20px] mb-[20px] z-20">
                     <SelectFilter
                         label="State"
                         options={stateArr}
@@ -267,7 +273,7 @@ const ManageAsset = () => {
                         selected={categoryFilter}
                         placeholder="All"
                     />
-                    <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
+                    <SearchInput value={searchFilter} onSearch={handleSearch} />
                     <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
                 </div>
                 <Table

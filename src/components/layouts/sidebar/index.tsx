@@ -34,7 +34,7 @@ const navItems = [
 const staffItems = [
     {
         title: 'Home',
-        tag: 'home',
+        tag: '/home',
     }
 ]
 
