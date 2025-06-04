@@ -133,8 +133,8 @@ const Home = () => {
     window.history.pushState({ modal: true }, "");
   };
 
-  const handleReturning = () => {
-    setAssignmentId(assignmentId);
+  const handleReturning = (row: OwnAssignment) => {
+    setAssignmentId(row.id);
     setShowReturnModal(true);
   };
 

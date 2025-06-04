@@ -154,6 +154,7 @@ const RequestForReturn = () => {
             return `${year}-${month}-${day}`;
         };
 
+
         try {
             const tempRequestReturning = location.state?.tempRequestReturning;
             const response = await requestReturningApi.getRequestReturningList({
@@ -165,6 +166,14 @@ const RequestForReturn = () => {
                 sortBy: sortFilter.sortBy || "assetCode",
                 sortDir: sortFilter.sortDir || "asc",
             });
+
+            let filteredContent = response.data.content.filter(item => item.status !== "CANCELLED");
+
+            if (tempRequestReturning) {
+                filteredContent = filteredContent.filter(a => a.id !== tempRequestReturning.id);
+                filteredContent.unshift(tempRequestReturning);
+            }
+
             if (response.data) {
                 if (tempRequestReturning) {
                     response.data.content = response.data.content.filter(
@@ -180,6 +189,7 @@ const RequestForReturn = () => {
                     totalPage: response.data.totalPages,
                 }));
                 setIsLoading(false);
+                setRequestReturningList(filteredContent);
             }
         } catch (error) {
             console.log(error);

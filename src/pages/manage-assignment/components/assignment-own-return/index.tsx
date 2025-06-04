@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import assignmentApi from "../../../../api/ownAssignmentApi";
 import Button from "../../../../components/ui/button";
 import FormModal from "../../../../components/ui/form-modal";
+import { toast } from "react-toastify";
 
 interface ReturnAssignmentModalProps {
   showModal: boolean;
@@ -22,10 +23,10 @@ const ReturnAssignmentModal = ({
       await assignmentApi.returnOwnAssignment(assignmentId);
       closeModal();
       onSuccess?.();
-      // Navigate to the assignment list page after returning
-      navigate("request-return");
+      toast.success("Request returning successfully");
     } catch (error) {
       console.log(error);
+      toast.error("Failed to request returning assignment.");
     } finally {
       closeModal();
     }

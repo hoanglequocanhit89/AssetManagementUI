@@ -29,8 +29,12 @@ const assignmentApi = {
   },
 
   async returnOwnAssignment(assignmentId: number): Promise<void> {
-    // const response = await axiosClients.post(`users/assignments/${assignmentId}/return`);
-    // return response.data;
+    if (!assignmentId || assignmentId <= 0) {
+      throw new Error("Invalid assignmentId for return request");
+    }
+    await axiosClients.post(`return/me`, {
+      assignmentId: assignmentId
+    });
 
     return new Promise((resolve) => {
       setTimeout(() => {
