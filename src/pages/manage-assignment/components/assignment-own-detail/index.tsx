@@ -52,6 +52,8 @@ const DetailUser = ({
           ? "Waiting for acceptance"
           : assignmentData?.status === "ACCEPTED"
           ? "Accepted"
+          : assignmentData?.status === "WAITING_FOR_RETURNING"
+          ? "Waiting for returning"
           : "",
     },
     { title: "Note", value: assignmentData?.note },

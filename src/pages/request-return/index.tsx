@@ -286,7 +286,11 @@ const RequestForReturn = () => {
                     <CompletedRequestReturningModal
                         closeModal={() => setViewCompletedModal(false)}
                         id={completedRequestReturningId}
-                        setRequestReturningList={(id) => setRequestReturningList([...requestReturningList.filter((item) => item.id !== id)])
+                        setRequestReturningList={(id) => setRequestReturningList(prev =>
+                            prev.map(item =>
+                                item.id === id ? { ...item, status: "COMPLETED" } : item
+                            )
+                        )
                         }
                     />
                 )
