@@ -128,7 +128,7 @@ const Header = ({ isLogin = true, title, subTitle, setSubTitle }: HeaderProps) =
             }
 
             {/* Overlay + Animated Menu */}
-            <div className={`fixed inset-0 z-[30] ${showMenu ? '' : 'pointer-events-none'}`}>
+            <div className={`d-lg-block d-none fixed inset-0 z-[30] ${showMenu ? '' : 'pointer-events-none'}`}>
                 {/* Overlay background */}
                 <div
                     onClick={() => setShowMenu(false)}
