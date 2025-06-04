@@ -24,7 +24,7 @@ const DropDown = ({username, onChangePassword, onLogout}: DropDownProps) => {
   }, []);
 
   return (
-    <div ref={dropdownRef} className="relative inline-block text-left">
+    <div ref={dropdownRef} className="relative inline-block text-left d-lg-none">
       <button
         onClick={() => setOpen(!open)}
         className="px-4 py-2 rounded text-white font-bold flex items-center space-x-4"

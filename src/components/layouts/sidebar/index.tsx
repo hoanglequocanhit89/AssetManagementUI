@@ -4,7 +4,7 @@ import "./style.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 
-const navItems = [
+export const navItems = [
     {
         title: 'Home',
         tag: '/home',
