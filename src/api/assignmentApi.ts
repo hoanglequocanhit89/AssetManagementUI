@@ -88,18 +88,7 @@ const assignmentApi = {
   },
 
   async returnAssignmentForAdmin(assignmentId: number): Promise<void> {
-    if (!assignmentId || assignmentId <= 0) {
-      throw new Error("Invalid assignmentId for return request");
-    }
-    await axiosClients.post(`return`, {
-      assignmentId: assignmentId
-    });
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 1000);
-    });
+    await axiosClients.post(`return/${assignmentId}`);
   }
 };
 
