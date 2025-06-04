@@ -11,7 +11,6 @@ import Pagination from "../../components/ui/pagination";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import userApi from "../../api/userApi";
 import { useDebounce } from "../../hooks/useDebounce";
-import BigLoading from "../../components/ui/loading-big/LoadingBig";
 
 const getColumns = (handlers: {
     onEdit: (row: User) => void;
@@ -183,7 +182,7 @@ const ManageUser = () => {
                 <div className="flex justify-between items-center w-full mb-[20px] z-20">
                     <div className="min-w-[220px]">
                         <SelectFilter
-                            label="Type"
+                            placeholder="Type"
                             options={options}
                             selected={selectedType}
                             onSelect={(value) => {

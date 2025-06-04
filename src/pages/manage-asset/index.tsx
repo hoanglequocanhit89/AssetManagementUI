@@ -255,13 +255,13 @@ const ManageAsset = () => {
         setSearchFilter(value)
         pagingData.currentPage = 1;
     };
-    
+
     return (
         <>
             <ContentWrapper title={'Asset List'}>
                 <div className="d-flex gap-[20px] mb-[20px] z-20">
                     <SelectFilter
-                        label="State"
+                        placeholder="State"
                         options={stateArr}
                         onSelect={(value) => setStateFilter(value)}
                         selected={stateFilter}
@@ -271,7 +271,7 @@ const ManageAsset = () => {
                         options={categoryList}
                         onSelect={(value) => setCategoryFilter(value)}
                         selected={categoryFilter}
-                        placeholder="All"
+                        placeholder="Category"
                     />
                     <SearchInput value={searchFilter} onSearch={handleSearch} />
                     <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />

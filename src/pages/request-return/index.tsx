@@ -252,7 +252,7 @@ const RequestForReturn = () => {
             <ContentWrapper title={'Request List'}>
                 <div className="d-flex gap-[20px] mb-[20px] z-20">
                     <SelectFilter
-                        label="State"
+                        placeholder="State"
                         options={stateArr}
                         onSelect={(value) => setStateFilter(value)}
                         selected={stateFilter}
