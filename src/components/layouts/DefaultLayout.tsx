@@ -31,31 +31,31 @@ const pathItems = [
 ];
 
 const DefaultLayout = () => {
-    const [title, setTitle] = useState("Home");
-    const [subTitle, setSubTitle] = useState("");
+  const [title, setTitle] = useState("Home");
+  const [subTitle, setSubTitle] = useState("");
 
-    const location = useLocation();
+  const location = useLocation();
 
-    useEffect(() => {
-        const result = pathItems.find(item => location.pathname.includes(item.path))
-        setSubTitle(result?.title ?? "")
-    }, [location.pathname]);
+  useEffect(() => {
+    const result = pathItems.find(item => location.pathname.includes(item.path))
+    setSubTitle(result?.title ?? "")
+  }, [location.pathname]);
 
-    return (
-        <>
-            <Header title={title} subTitle={subTitle} />
-            <div className="container">
-              <div className="row py-[60px]">
-                    <div className="col col-xl-3 col-xxl-3 col-3 d-lg-none d-md-none">
-                        <Sidebar setTitle={setTitle} />
-                    </div>
-                    <div className="col col-md-12 col-lg-12 col-9 col-xl-9 col-xxl-9">
-                        <Outlet />
-                    </div>
-              </div>
-            </div>
-        </>
-    )
+  return (
+    <>
+      <Header title={title} subTitle={subTitle} />
+      <div className="container full-screen">
+        <div className="row py-[60px] h-full">
+          <div className="col col-xl-3 col-xxl-3 col-3 d-lg-none d-md-none h-full">
+            <Sidebar setTitle={setTitle} />
+          </div>
+          <div className="col col-md-12 col-lg-12 col-9 col-xl-9 col-xxl-9 h-full">
+            <Outlet />
+          </div>
+        </div>
+      </div>
+    </>
+  )
 };
 
 export default DefaultLayout;

@@ -1,6 +1,6 @@
 import ContentWrapper from "../../components/ui/content-wrapper";
 import Table, { Column } from "../../components/ui/table";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DetailAssetModal from "./components/detail-asset";
 import SelectFilter from "../../components/ui/select-filter";
 import SearchInput from "../../components/ui/search";
@@ -12,51 +12,55 @@ import assetApi from "../../api/assetApi";
 import { Asset, AssetDetail } from "../../types/asset";
 import { useDebounce } from "../../hooks/useDebounce";
 import SearchSelect from "../../components/ui/search-select";
-import BigLoading from "../../components/ui/loading-big/LoadingBig";
+
+function formatStatus(status: string) {
+  return status
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/^\w/, c => c.toUpperCase());
+}
 
 const getColumns = (handlers: {
   onEdit: (row: Asset) => void;
   onDelete: (row: Asset) => void;
 }): Column<Asset>[] => [
-  { key: "assetCode", title: "Asset Code" },
-  { key: "name", title: "Asset Name" },
-  { key: "categoryName", title: "Category" },
-  { key: "status", title: "State" },
-  {
-    key: "action",
-    actions: [
-      {
-        render: (row) => (
-          <button disabled={row.status === "ASSIGNED"}>
-            <i
-              className={`fa-solid fa-pen ${
-                row.status === "ASSIGNED" ? "opacity-50 cursor-default" : ""
-              }`}
-              title="Edit"
-            ></i>
-          </button>
-        ),
-        onClick: handlers.onEdit,
-      },
-      {
-        render: (row) => (
-          <button disabled={row.status === "ASSIGNED"}>
-            <i
-              className={`fa-regular fa-circle-xmark text-[var(--primary-color)] 
-                                    ${
-                                      row.status === "ASSIGNED"
-                                        ? "opacity-50 cursor-default"
-                                        : ""
-                                    }`}
-              title="Delete"
-            ></i>
-          </button>
-        ),
-        onClick: handlers.onDelete,
-      },
-    ],
-  },
-];
+    { key: "assetCode", title: "Asset Code" },
+    { key: "name", title: "Asset Name" },
+    { key: "categoryName", title: "Category" },
+    { key: "status", title: "State", render: (value) => formatStatus(value as string) },
+    {
+      key: "action",
+      actions: [
+        {
+          render: (row) => (
+            <button disabled={row.status === "ASSIGNED"}>
+              <i
+                className={`fa-solid fa-pen ${row.status === "ASSIGNED" ? "opacity-50 cursor-default" : ""
+                  }`}
+                title="Edit"
+              ></i>
+            </button>
+          ),
+          onClick: handlers.onEdit,
+        },
+        {
+          render: (row) => (
+            <button disabled={row.status === "ASSIGNED"}>
+              <i
+                className={`fa-regular fa-circle-xmark text-[var(--primary-color)] 
+                                    ${row.status === "ASSIGNED"
+                    ? "opacity-50 cursor-default"
+                    : ""
+                  }`}
+                title="Delete"
+              ></i>
+            </button>
+          ),
+          onClick: handlers.onDelete,
+        },
+      ],
+    },
+  ];
 
 const stateArr = [
   {
@@ -292,64 +296,64 @@ const ManageAsset = () => {
     setSortFilter({ ...sortFilter, sortBy: key, sortDir: direction });
   };
 
-    const handleSearch = (value: string) => {
-        setSearchFilter(value)
-        pagingData.currentPage = 1;
-    };
+  const handleSearch = (value: string) => {
+    setSearchFilter(value)
+    pagingData.currentPage = 1;
+  };
 
-    return (
-        <>
-            <ContentWrapper title={'Asset List'}>
-                <div className="d-flex gap-[20px] mb-[20px] z-20">
-                    <SelectFilter
-                        placeholder="State"
-                        options={stateArr}
-                        onSelect={(value) => setStateFilter(value)}
-                        selected={stateFilter}
-                    />
+  return (
+    <>
+      <ContentWrapper title={'Asset List'}>
+        <div className="d-flex gap-[20px] mb-[20px] z-20">
+          <SelectFilter
+            placeholder="State"
+            options={stateArr}
+            onSelect={(value) => setStateFilter(value)}
+            selected={stateFilter}
+          />
 
-                    <SearchSelect
-                        options={categoryList}
-                        onSelect={(value) => setCategoryFilter(value)}
-                        selected={categoryFilter}
-                        placeholder="Category"
-                    />
-                    <SearchInput value={searchFilter} onSearch={handleSearch} />
-                    <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
-                </div>
-                <Table
-                    columns={columns}
-                    data={assetList}
-                    sortBy={sortFilter.sortBy as keyof Asset}
-                    orderBy={sortFilter.sortDir as keyof Asset}
-                    onSort={handleSort}
-                    onRowClick={handleOnRowClick}
-                    isDataLoading={isLoading}
-                />
-                <div className="self-end mt-[20px]">
-                    <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })} />
-                </div>
-            </ContentWrapper>
-            {viewDetailModal &&
-                <DetailAssetModal
-                    closeModal={() => setViewDetailModal(false)}
-                    data={{
-                        ...detailAssetData,
-                        assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
-                    }}
-                />
-            }
-            {
-                viewDeleteModal &&
-                <DeleteAssetModal
-                    closeModal={() => setViewDeleteModal(false)}
-                    id={editAssetId}
-                    isDeletable={isAssetDeletable}
-                    setAssetList={(id) => setAssetList([...assetList.filter(item => item.id !== id)])}
-                />
-            }
-        </>
-    )
+          <SearchSelect
+            options={categoryList}
+            onSelect={(value) => setCategoryFilter(value)}
+            selected={categoryFilter}
+            placeholder="Category"
+          />
+          <SearchInput value={searchFilter} onSearch={handleSearch} />
+          <Button text="Create new asset" color="primary" onClick={() => navigate("create")} />
+        </div>
+        <Table
+          columns={columns}
+          data={assetList}
+          sortBy={sortFilter.sortBy as keyof Asset}
+          orderBy={sortFilter.sortDir as keyof Asset}
+          onSort={handleSort}
+          onRowClick={handleOnRowClick}
+          isDataLoading={isLoading}
+        />
+        <div className="self-end mt-[20px]">
+          <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })} />
+        </div>
+      </ContentWrapper>
+      {viewDetailModal &&
+        <DetailAssetModal
+          closeModal={() => setViewDetailModal(false)}
+          data={{
+            ...detailAssetData,
+            assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
+          }}
+        />
+      }
+      {
+        viewDeleteModal &&
+        <DeleteAssetModal
+          closeModal={() => setViewDeleteModal(false)}
+          id={editAssetId}
+          isDeletable={isAssetDeletable}
+          setAssetList={(id) => setAssetList([...assetList.filter(item => item.id !== id)])}
+        />
+      }
+    </>
+  )
 };
 
 export default ManageAsset;
