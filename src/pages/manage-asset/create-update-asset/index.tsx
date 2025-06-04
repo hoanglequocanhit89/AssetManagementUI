@@ -183,8 +183,8 @@ const CreateUpdateAsset = () => {
 
     try {
       const response = await categoryApi.createCategory({
-        name: newCategoryName,
-        prefix: newPrefix
+        name: newCategoryName.trim(),
+        prefix: newPrefix.trim()
       });
 
       toast.success("Category created successfully");
