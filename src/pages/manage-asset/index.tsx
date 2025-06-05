@@ -21,6 +21,13 @@ function formatStatus(status: string) {
     .replace(/^\w/, c => c.toUpperCase());
 }
 
+function formatStatus(status: string) {
+  return status
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/^\w/, c => c.toUpperCase());
+}
+
 const getColumns = (handlers: {
   onEdit: (row: Asset) => void;
   onDelete: (row: Asset) => void;
