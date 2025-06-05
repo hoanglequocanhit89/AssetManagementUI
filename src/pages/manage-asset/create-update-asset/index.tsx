@@ -141,7 +141,8 @@ const CreateUpdateAsset = () => {
           state: {
             tempAsset: {
               ...response.data,
-              status: response.data.state
+              canDelete: true,
+              status: response.data.state,
             }
           }
         });

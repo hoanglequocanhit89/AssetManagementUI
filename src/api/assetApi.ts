@@ -21,7 +21,7 @@ interface AssetParams {
 
 const assetApi = {
   getAssetList(props: AssetParams): Promise<BaseResponse<Asset>> {
-    const { keyword, categoryName, states } = props;
+    const { keyword, categoryName, states, params } = props;
 
     //buil params
 
@@ -35,6 +35,13 @@ const assetApi = {
     }
     if (states) {
       searchParams.append("states", states);
+    }
+
+    if(params) {
+      searchParams.append("sortBy", params.sortBy);
+      searchParams.append("sortDir", params.sortDir);
+      searchParams.append("pageSize", params.size.toString());
+      searchParams.append("page", params.page.toString());
     }
 
     return axiosClients.get("assets", { params: searchParams });
