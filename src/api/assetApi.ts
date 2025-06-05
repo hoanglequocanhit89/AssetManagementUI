@@ -8,11 +8,7 @@ import {
   EditAssetResponse,
   getAllAssetsParams,
 } from "../types/asset";
-import {
-  BaseResponse,
-  BaseParams,
-  BaseResponseWithoutPagination,
-} from "./../types/common";
+import { BaseResponse, BaseParams, BaseResponseWithoutPagination } from "./../types/common";
 import axiosClients from "./axiosClients";
 
 interface AssetParams {
@@ -25,16 +21,26 @@ interface AssetParams {
 
 const assetApi = {
   getAssetList(props: AssetParams): Promise<BaseResponse<Asset>> {
-    const { locationId, keyword, categoryName, states, params } = props;
+    const { keyword, categoryName, states } = props;
 
-    const url = `assets?locationId=${locationId}&keyword=${keyword}&categoryName=${categoryName}&states=${states}`;
+    //buil params
 
-    return axiosClients.get(url, { params: params });
+    const searchParams = new URLSearchParams();
+
+    if (keyword) {
+      searchParams.append("keyword", keyword);
+    }
+    if (categoryName) {
+      searchParams.append("categoryName", categoryName);
+    }
+    if (states) {
+      searchParams.append("states", states);
+    }
+
+    return axiosClients.get("assets", { params: searchParams });
   },
 
-  getAssetDetail(
-    assetId: number
-  ): Promise<BaseResponseWithoutPagination<AssetDetail>> {
+  getAssetDetail(assetId: number): Promise<BaseResponseWithoutPagination<AssetDetail>> {
     const url = `assets/${assetId}`;
 
     return axiosClients.get(url);
