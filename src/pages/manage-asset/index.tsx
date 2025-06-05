@@ -12,6 +12,7 @@ import assetApi from "../../api/assetApi";
 import { Asset, AssetDetail } from "../../types/asset";
 import { useDebounce } from "../../hooks/useDebounce";
 import SearchSelect from "../../components/ui/search-select";
+import BigLoading from "../../components/ui/loading-big/LoadingBig";
 
 function formatStatus(status: string) {
   return status
@@ -334,7 +335,9 @@ const ManageAsset = () => {
           <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })} />
         </div>
       </ContentWrapper>
-      {viewDetailModal &&
+      {
+      isAssetDetailLoading ? <BigLoading /> :
+      viewDetailModal &&
         <DetailAssetModal
           closeModal={() => setViewDetailModal(false)}
           data={{
