@@ -1,4 +1,5 @@
 import ContentWrapper from "../../components/ui/content-wrapper"
+import BarChart from "./bar-chart";
 import "./style.scss";
 
 const Dashboard = () => {
@@ -14,11 +15,11 @@ const Dashboard = () => {
                             </div>
                         </div>
                         <div className="dashboard__bottom">
-                            Report chart here
+                            <BarChart />
                         </div>
                     </div>
                 </div>
-            </ContentWrapper>        
+            </ContentWrapper>
         </>
     )
 };
