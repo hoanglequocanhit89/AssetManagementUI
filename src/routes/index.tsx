@@ -8,12 +8,12 @@ import ManageAssignment from "../pages/manage-assignment";
 import ManageUser from "../pages/manage-user";
 import Report from "../pages/report";
 import RequestForReturn from "../pages/request-return";
-import StaffDashboard from "../pages/staff";
 import Protected from "./protected";
 import CreateUpdateUser from "../pages/manage-user/create-update-user";
 import CreateUpdateAsset from "../pages/manage-asset/create-update-asset";
 import HeaderOnlyLayout from "../components/layouts/HeaderOnlyLayout";
 import CreateUpdateAssignment from "../pages/manage-assignment/create-update-assignment";
+import Dashboard from "../pages/dashboard";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +48,10 @@ const router = createBrowserRouter([
       {
         element: <Protected requiredRole="ADMIN" />,
         children: [
+          {
+            path: "dashboard",
+            element: <Dashboard />,
+          },
           {
             path: "manage-user",
             element: <ManageUser />,

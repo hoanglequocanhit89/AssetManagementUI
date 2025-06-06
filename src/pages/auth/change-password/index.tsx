@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import authApi from "../../../api/authApi";
 import Button from "../../../components/ui/button";
@@ -25,7 +25,7 @@ const ChangePasswordModal = (props: ChangePasswordModalProps) => {
 
   const handleChangePasswordAction = async () => {
     setIsLoading(true);
-    if(props.isFirstLogin) {
+    if (props.isFirstLogin) {
       await authApi.changeFirstPasswordAction(changePasswordData)
         .then(response => {
           setIsLoading(false);
@@ -92,14 +92,14 @@ const ChangePasswordModal = (props: ChangePasswordModalProps) => {
               text="Save"
               disabled={
                 props.isFirstLogin ?
-                changePasswordData.newPassword === ""
-                :
-                changePasswordData.oldPassword === "" || changePasswordData.newPassword === ""
+                  changePasswordData.newPassword === ""
+                  :
+                  changePasswordData.oldPassword === "" || changePasswordData.newPassword === ""
               }
               onClick={handleChangePasswordAction}
             />
             {
-              !props.isFirstLogin && 
+              !props.isFirstLogin &&
               <Button
                 color="outline"
                 text="Cancel"
@@ -109,7 +109,7 @@ const ChangePasswordModal = (props: ChangePasswordModalProps) => {
           </div>
         </div>
       </FormModal>
-      { isLoading && <BigLoading /> }
+      {isLoading && <BigLoading />}
     </>
   );
 };

@@ -1,0 +1,17 @@
+.dashboard {
+    height: 100%;
+
+    &__inner {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    &__top {
+        border-bottom: 1px solid #000;
+    }
+    &__top,
+    &__bottom {
+        height: 50%;
+        flex: 1;
+    }
+}

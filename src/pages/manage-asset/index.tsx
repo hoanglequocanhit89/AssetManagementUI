@@ -108,7 +108,7 @@ interface SortFilterProps {
 const ManageAsset = () => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [viewDetailModal, setViewDetailModal] = useState<boolean>(false);
   const [viewDeleteModal, setViewDeleteModal] = useState<boolean>(false);
   const [editAssetId, setEditAssetId] = useState<number>(0);
@@ -189,20 +189,20 @@ const ManageAsset = () => {
     }
   };
 
-  const fetchCategoryList = async () => {
-    try {
-      const response = await assetApi.getCategoryList();
-      const cateArr = [...response.data].map((item) => ({
-        value: item.name,
-        label: item.name,
-      }));
-      response && setCategoryList([...cateArr, { value: "", label: "All" }]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
+    const fetchCategoryList = async () => {
+      try {
+        const response = await assetApi.getCategoryList();
+        const cateArr = [...response.data].map((item) => ({
+          value: item.name,
+          label: item.name,
+        }));
+        response && setCategoryList([...cateArr, { value: "", label: "All" }]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchCategoryList();
   }, []);
 
@@ -336,16 +336,16 @@ const ManageAsset = () => {
         </div>
       </ContentWrapper>
       {
-      isAssetDetailLoading ? <BigLoading /> :
-      viewDetailModal &&
-        <DetailAssetModal
-          closeModal={() => setViewDetailModal(false)}
-          data={{
-            ...detailAssetData,
-            status: formatStatus(detailAssetData.status),
-            assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
-          }}
-        />
+        isAssetDetailLoading ? <BigLoading /> :
+          viewDetailModal &&
+          <DetailAssetModal
+            closeModal={() => setViewDetailModal(false)}
+            data={{
+              ...detailAssetData,
+              status: formatStatus(detailAssetData.status),
+              assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
+            }}
+          />
       }
       {
         viewDeleteModal &&

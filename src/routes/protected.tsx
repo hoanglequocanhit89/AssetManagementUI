@@ -9,6 +9,7 @@ interface ProtectedProps {
 
 const rolePermissions = {
     ADMIN: ["/home", 
+            "/dashboard",
             "/manage-user", "/manage-user/create", "/manage-user/edit/",
             "/manage-asset", "/manage-asset/create", "/manage-asset/edit/",
             "/manage-assignment", "/manage-assignment/create", 

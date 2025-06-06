@@ -15,6 +15,7 @@ export interface DetailUser extends User {
     gender: string;
     type: string;
     location: string;
+    email: string;
 }
 
 export interface UserFilterRequest {
@@ -31,6 +32,7 @@ export interface CreateUserRequest {
     joinedDate: string;
     type: "STAFF" | "ADMIN";
     location?: "HCM" | "DN" | "HN";
+    email: string;
 }
 
 export interface CreateUserResponse {
@@ -42,7 +44,9 @@ export interface CreateUserResponse {
     role: string;
     fullName: string;
     dob: Date;
-    gender: string
+    gender: string;
+    email:string;
+    isSentEmail: boolean;
 }
 
 export type UserDetailResponse = Omit<DetailUser, "id" | "canDisable" | "type">

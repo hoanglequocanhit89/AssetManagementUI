@@ -12,7 +12,6 @@ interface InputFieldProps {
 const InputField: React.FC<InputFieldProps> = ({ placeholder = '', value, onChange, id, disabled, onClick, ...rest }) => {
     return (
         <input
-            type="text"
             id={id}
             placeholder={placeholder}
             value={value}

@@ -117,6 +117,7 @@ const CreateUpdateAsset = () => {
           state: {
             tempAsset: {
               ...response.data,
+              canDelete: true,
               status: response.data.state
             }
           }
@@ -157,12 +158,40 @@ const CreateUpdateAsset = () => {
             type: "custom",
             message: "This field is unique"
           });
+        } if (errorMessage === "Update failed: The asset was modified by another user. Please refresh and try again.") {
+          localStorage.setItem("redirectAfterRefresh", "true");
         }
       } else {
         toast.error("An unexpected error occurred");
       }
     }
   }
+
+  useEffect(() => {
+    const shouldRedirect = localStorage.getItem("redirectAfterRefresh");
+    if (shouldRedirect === "true") {
+      localStorage.removeItem("redirectAfterRefresh");
+      navigate("/manage-asset");
+      return;
+    }
+
+    if (!isEdit) {
+      fetchCategoryList();
+    } else {
+      fetchAssetDetail();
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isEdit, id]);
 
   const handleAddCategory = async () => {
     setCategoryError('');
@@ -281,16 +310,14 @@ const CreateUpdateAsset = () => {
                 })}
               />
               <div
-                className={`w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer ${
-                  isEdit ? "bg-gray-300" : ""
-                }`}
+                className={`w-full border border-gray-500 rounded-md px-4 py-2 flex justify-between items-center cursor-pointer ${isEdit ? "bg-gray-300" : ""
+                  }`}
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <span>{selectedCategory || "\u00A0 "}</span>
                 <i
-                  className={`fa-solid fa-caret-${
-                    isDropdownOpen && !isEdit ? "up" : "down"
-                  }`}
+                  className={`fa-solid fa-caret-${isDropdownOpen && !isEdit ? "up" : "down"
+                    }`}
                 ></i>
               </div>
               {isDropdownOpen && !isEdit && (

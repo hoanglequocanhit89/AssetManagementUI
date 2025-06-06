@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from "react";
 import ContentWrapper from "../../components/ui/content-wrapper"
 import SelectFilter from "../../components/ui/select-filter";
-import { data, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import DateFilter from "../../components/ui/date-filter";
 import SearchInput from "../../components/ui/search";
 import Table, { Column } from "../../components/ui/table";
 import { RequestReturning } from "../../types/request-returning";
-import { getStatusLabel, getStatusRequestReturningLabel } from "../../utils/status-label";
+import { getStatusRequestReturningLabel } from "../../utils/status-label";
 import Pagination from "../../components/ui/pagination";
 import CompletedRequestReturningModal from "./components/completed-request-returning";
 import CancelRequestReturningModal from "./components/cancel-request-returing";
@@ -102,7 +102,7 @@ interface SortFilterProps {
     sortDir: string;
 }
 const RequestForReturn = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get("states") || "");
     const [returnedDateFilter, setReturnedDateFilter] = React.useState<Date | undefined>(undefined);
     const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get("keyword") || "");

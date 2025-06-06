@@ -21,6 +21,7 @@ type FormFields = {
   joinedDate: Date;
   type: 'ADMIN' | 'STAFF';
   location?: "HN" | "DN" | "HCM";
+  email: string;
 };
 
 const locationOptions = [
@@ -80,6 +81,7 @@ const CreateUpdateUser: React.FC = () => {
             setValue("location", user.location as "HN" | "DN" | "HCM");
             setStaffCode(user.staffCode);
             setUsername(user.username);
+            setValue("email", user.email);
             trigger();
           }
           setIsLoading(false);
@@ -112,7 +114,7 @@ const CreateUpdateUser: React.FC = () => {
   };
 
   const onSubmit: SubmitHandler<FormFields> = async (data: FormFields) => {
-    const { firstName, lastName } = getValues();
+    const { firstName, lastName, email } = getValues();
 
     let hasError = false;
 
@@ -123,6 +125,11 @@ const CreateUpdateUser: React.FC = () => {
 
     if (!lastName?.trim()) {
       setError("lastName", { type: "manual", message: "This field is required" });
+      hasError = true;
+    }
+
+    if (!email?.trim()) {
+      setError("email", { type: "manual", message: "This field is required" });
       hasError = true;
     }
 
@@ -147,7 +154,7 @@ const CreateUpdateUser: React.FC = () => {
               staffCode,
               fullName: `${data.firstName} ${data.lastName}`,
               joinedDate: format(data.joinedDate, 'yyyy-MM-dd'),
-              role: data.type
+              role: data.type,
             }
           }
         });
@@ -158,11 +165,12 @@ const CreateUpdateUser: React.FC = () => {
           dob: format(data.dob, 'yyyy-MM-dd'),
           joinedDate: format(data.joinedDate, 'yyyy-MM-dd'),
           adminId: 1,
-          location: data.location
+          location: data.location,
+          email: data.email.trim().toLowerCase()
         });
         const newUser = response.data;
         setIsLoading(false);
-        toast.success("User created successfully");
+        toast.success(response.message);
         navigate("/manage-user", {
           state: {
             tempUser: {
@@ -175,10 +183,10 @@ const CreateUpdateUser: React.FC = () => {
         });
       }
     }
-    catch (error) {
+    catch (error: any) {
       console.log(error);
       setIsLoading(false);
-      toast.error(`Failed to ${isEdit ? "edit" : "create"} user`);
+      toast.error(error?.response?.data.message)
     }
 
   };
@@ -268,6 +276,40 @@ const CreateUpdateUser: React.FC = () => {
                 <div className="col-span-1"></div>
                 <p className="col-span-2 text-red-500 -mt-6">
                   {errors.lastName.message}
+                </p>
+              </>
+            )}
+
+            {/* Email */}
+            <label
+              htmlFor="email"
+              className="pr-4 after:content-['*'] after:text-red-500 after:ml-2"
+            >
+              Email
+            </label>
+            <div className="col-span-2">
+              <InputField
+                id="email"
+                disabled={isEdit}
+                {...register("email", {
+                  required: "This field is required",
+                  pattern: {
+                    value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                    message: "Invalid email address"
+                  }
+                })}
+                value={watch("email") || ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setValue("email", value, { shouldValidate: !isEdit });
+                }}
+              />
+            </div>
+            {errors.email && !isEdit && (
+              <>
+                <div className="col-span-1"></div>
+                <p className="col-span-2 text-red-500 -mt-6">
+                  {errors.email.message}
                 </p>
               </>
             )}
@@ -434,7 +476,7 @@ const CreateUpdateUser: React.FC = () => {
           closeModal={() => setShowModal(false)}
         />
       )}
-      { isLoading && <BigLoading /> }
+      {isLoading && <BigLoading />}
     </>
   );
 };
