@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import Button from "../../../../components/ui/button";
 import FormModal from "../../../../components/ui/form-modal";
 import { toast } from "react-toastify";
@@ -17,7 +16,6 @@ const ReturnAdminAssignmentModal = ({
   assignmentId,
   onSuccess,
 }: ReturnAssignmentModalProps) => {
-  const navigate = useNavigate();
   const handleReturnAssignment = async () => {
     try {
       await assignmentApi.returnAssignmentForAdmin(assignmentId);
