@@ -1,4 +1,4 @@
-import { Navigate, data, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../components/ui/button";
 import ContentWrapper from "../../components/ui/content-wrapper";
 import DateFilter from "../../components/ui/date-filter";
@@ -13,7 +13,6 @@ import DetailAssignmentModal from "./components/detail-assignment";
 import DeleteAssignmentModal from "./components/delete-assignment";
 import { useDebounce } from "../../hooks/useDebounce";
 import { getStatusLabel } from "../../utils/status-label";
-import ReturnAssignmentModal from "./components/assignment-own-return";
 import ReturnAdminAssignmentModal from "./components/assignment-admin-return";
 import BigLoading from "../../components/ui/loading-big/LoadingBig";
 
@@ -131,7 +130,7 @@ const ManageAssignment = () => {
   const [isAssignementDeletetable, setIsAssetDeletetable] = React.useState<boolean>(false);
   const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
   const [viewDeleteModal, setViewDeleteModal] = React.useState<boolean>(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get("states") || "");
   const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get("keyword") || "");
   const [assignmentList, setAssignementList] = React.useState<Assignment[]>([]);
@@ -346,16 +345,16 @@ const ManageAssignment = () => {
         </div>
       </ContentWrapper>
       {
-      isDetailAssignmentLoading ? <BigLoading /> :
-      viewDetailModal &&
-       (
-        <DetailAssignmentModal
-          closeModal={() => setViewDetailModal(false)}
-          data={{
-            ...detailAssignmentData,
-          }}
-        />
-      )}
+        isDetailAssignmentLoading ? <BigLoading /> :
+          viewDetailModal &&
+          (
+            <DetailAssignmentModal
+              closeModal={() => setViewDetailModal(false)}
+              data={{
+                ...detailAssignmentData,
+              }}
+            />
+          )}
       {viewDeleteModal && (
         <DeleteAssignmentModal
           closeModal={() => setViewDeleteModal(false)}

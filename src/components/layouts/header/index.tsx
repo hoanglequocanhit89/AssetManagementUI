@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { ChangePasswordProps } from "../../../types";
 import ChangePasswordModal from "../../../pages/auth/change-password";
 import { RootState } from "../../../store";
 import { toast } from "react-toastify";
