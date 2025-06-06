@@ -35,6 +35,7 @@ const DetailUser = ({ showModal, closeModal, userId }: DetailUserProps) => {
     { title: "Staff Code", value: userData?.staffCode },
     { title: "Full Name", value: userData?.fullName },
     { title: "Username", value: userData?.username },
+    { title: "Email", value: userData?.email },
     { title: "Date of Birth", value: userData?.dob },
     { title: "Gender", value: userData?.gender },
     { title: "Joined Date", value: userData?.joinedDate },
