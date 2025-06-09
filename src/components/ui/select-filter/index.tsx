@@ -32,12 +32,15 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
     }, []);
 
 
-    const selectedLabel = selected ? options.find((opt) => opt.value === selected)?.label : null;
+    const selectedLabel = options.find((opt) => opt.value === selected)?.label;
 
     return (
         <div className="relative w-full" ref={ref}>
+            <span className="absolute -top-4 left-3 bg-white px-2 text-[1.2rem] text-gray-800 pointer-events-none z-10">
+                {placeholder}
+            </span>
             <div className="flex items-stretch border border-gray-500 rounded-md shadow-sm bg-white overflow-hidden">
-                <div className="flex-grow pl-4 pr-2 mr-8 py-2 text-[1.6rem] text-gray-800 text-left flex items-center truncate overflow-hidden whitespace-nowrap">
+                <div className="flex-grow pl-4 pr-2 mr-8 pt-2.5 pb-1.5 text-[1.6rem] text-gray-800 text-left flex items-center truncate overflow-hidden whitespace-nowrap">
                     {selectedLabel ?? placeholder}
                 </div>
                 <button
