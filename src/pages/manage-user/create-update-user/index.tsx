@@ -394,6 +394,10 @@ const CreateUpdateUser: React.FC = () => {
                     if (day === 0 || day === 6) {
                       return "Joined date is Saturday or Sunday. Please select a different date";
                     }
+                    if (differenceInYears(value, watchDOB) < 18) {
+                      return "The user must be at least 18 years old at the time of joining the company."
+                    }
+                    
                     return true;
                   },
                 }}
