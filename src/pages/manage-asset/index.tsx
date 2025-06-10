@@ -13,6 +13,7 @@ import { Asset, AssetDetail } from "../../types/asset";
 import { useDebounce } from "../../hooks/useDebounce";
 import SearchSelect from "../../components/ui/search-select";
 import BigLoading from "../../components/ui/loading-big/LoadingBig";
+import PageSizeSelect from "../../components/ui/page-size-select";
 
 function formatStatus(status: string) {
   return status
@@ -123,6 +124,8 @@ const ManageAsset = () => {
     currentPage: Number(searchParams.get("page")) || 1,
     totalPage: 0,
   });
+  const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
+
   const [searchFilter, setSearchFilter] = useState<string>(
     searchParams.get("keyword") || ""
   );
@@ -162,7 +165,7 @@ const ManageAsset = () => {
         states: stateFilter,
         params: {
           page: pagingData.currentPage - 1,
-          size: 20,
+          size: pageSize,
           sortBy: sortFilter.sortBy,
           sortDir: sortFilter.sortDir,
         },
@@ -230,6 +233,7 @@ const ManageAsset = () => {
     params.set("page", pagingData.currentPage.toString());
     params.set("sortBy", sortFilter.sortBy);
     params.set("sortDir", sortFilter.sortDir);
+    params.set("size", pageSize.toString());
     const newSearch = params.toString();
 
     if (location.search !== `?${newSearch}`) {
@@ -249,6 +253,7 @@ const ManageAsset = () => {
     sortFilter.sortBy,
     sortFilter.sortDir,
     pagingData.currentPage,
+    pageSize
   ]);
 
   useEffect(() => {
@@ -331,7 +336,8 @@ const ManageAsset = () => {
           onRowClick={handleOnRowClick}
           isDataLoading={isLoading}
         />
-        <div className="self-end mt-[20px]">
+        <div className="flex justify-end w-full m-auto mt-[20px]">
+          <PageSizeSelect value={pageSize} setValue={setPageSize} />
           <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })} />
         </div>
       </ContentWrapper>

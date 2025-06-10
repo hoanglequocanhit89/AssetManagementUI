@@ -9,6 +9,7 @@ import { saveAs } from 'file-saver';
 import { toast } from "react-toastify";
 import reportApi from "../../api/reportApi";
 import Pagination from "../../components/ui/pagination";
+import PageSizeSelect from "../../components/ui/page-size-select";
 
 type ReportWithId = Report & { id: number };
 
@@ -38,6 +39,7 @@ const ReportPage = () => {
     const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "category");
     const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
     const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get("page")) || 1);
+    const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -119,16 +121,19 @@ const ReportPage = () => {
         setSortBy(newSortBy);
         setOrderBy(newOrderBy);
         setCurrentPage(newCurrentPage);
+        setPageSize(Number(searchParams.get("size")) || 20);
 
     }, [searchParams]);
 
     useEffect(() => {
 
+        setLoading(true)
         const params = new URLSearchParams();
 
         params.set("page", currentPage.toString());
         params.set("sortBy", sortBy);
         params.set("orderBy", orderBy);
+        params.set("size", pageSize.toString());
 
         const newSearch = params.toString();
         if (location.search !== `?${newSearch}`) {
@@ -137,19 +142,18 @@ const ReportPage = () => {
                 search: newSearch
             }, { replace: false });
         }
-        setLoading(true)
-    }, [currentPage, sortBy, orderBy]);
+    }, [currentPage, sortBy, orderBy, pageSize]);
 
     useEffect(() => {
         const fetchReportList = async () => {
             try {
+                setLoading(true);
                 const response = await reportApi.getReportListWithPagination({
                     page: currentPage - 1,
-                    size: 20,
+                    size: pageSize,
                     sortBy: sortBy,
                     sortDir: orderBy
                 })
-                setLoading(true);
                 setReportData(response)
             } catch (error) {
                 console.log(error)
@@ -159,7 +163,7 @@ const ReportPage = () => {
             }
         }
         fetchReportList()
-    }, [orderBy, sortBy, currentPage])
+    }, [orderBy, sortBy, currentPage, pageSize])
 
 
     useEffect(() => {
@@ -231,6 +235,7 @@ const ReportPage = () => {
             />
 
             <div className="flex justify-end w-full m-auto mt-[20px]">
+                <PageSizeSelect value={pageSize} setValue={setPageSize} />
                 <Pagination
                     currentPage={currentPage}
                     totalPages={reportData?.data.totalPages ?? 0}
