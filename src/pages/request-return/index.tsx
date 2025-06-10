@@ -266,7 +266,7 @@ const RequestForReturn = () => {
                         label="Returned Date"
                         selectedDate={returnedDateFilter}
                         onSelect={(date) => setReturnedDateFilter(date)}
-                        isHighlight={!!returnedDateFilter}
+                        isHighlight={false}
                     />
                     <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
                 </div>

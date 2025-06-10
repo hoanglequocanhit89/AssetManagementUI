@@ -30,7 +30,6 @@ const ReportPage = () => {
     const location = useLocation();
 
     const [showExportPopover, setShowExportPopover] = useState(false);
-    const [optionExport, setOptionExport] = useState("");
     const exportBtnRef = useRef<HTMLDivElement>(null);
 
     const [loading, setLoading] = useState<boolean>(true);
@@ -50,11 +49,11 @@ const ReportPage = () => {
         id: index + 1,
     }));
 
-    const exportToExcel = async () => {
+    const exportToExcel = async (option: "all" | "current") => {
         try {
             let optionData: Report[] = [];
 
-            if (optionExport === "all") {
+            if (option === "all") {
 
                 if (!allReportData || allReportData.length === 0) {
                     const response = await reportApi.getReportList();
@@ -198,9 +197,8 @@ const ReportPage = () => {
                             <div
                                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                 onClick={() => {
-                                    setOptionExport("all")
                                     setShowExportPopover(false);
-                                    exportToExcel()
+                                    exportToExcel("all")
                                 }}
                             >
                                 <i className="fa-solid fa-file-arrow-down mr-4 text-[var(--primary-color)]"></i>
@@ -210,9 +208,8 @@ const ReportPage = () => {
                             <div
                                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                 onClick={() => {
-                                    setOptionExport("current")
                                     setShowExportPopover(false);
-                                    exportToExcel()
+                                    exportToExcel("current")
                                 }}
                             >      <i className="fa-solid fa-file-lines mr-4 text-[var(--primary-color)]"></i>
                                 Export Current page
