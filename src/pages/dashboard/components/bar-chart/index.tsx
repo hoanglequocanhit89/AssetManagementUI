@@ -23,9 +23,21 @@ const BarChart = (props: HighchartsReact.Props) => {
             type: 'column',
             style: { fontSize: '2rem' },
             scrollablePlotArea: {
-                minWidth: 700,
-                scrollPositionX: 0
+                // minWidth: 700,
+                // scrollPositionX: 0
             }
+        },
+        responsive: {
+            rules: [{
+                condition: {
+                    maxHeight: 400,
+                },
+                chartOptions: {
+                    chart: {
+                        height: 300
+                    }
+                }
+            }]
         },
         xAxis: {
             categories: chartData.map((item) => item.category)
@@ -42,7 +54,7 @@ const BarChart = (props: HighchartsReact.Props) => {
         title: {
             text: 'Asset Statistics',
             align: 'left',
-            style: { fontSize: '2rem' }
+            style: { fontSize: '1.8rem' }
         },
         credits: { enabled: false },
         series: seriesList.map(series => ({
@@ -67,7 +79,7 @@ const BarChart = (props: HighchartsReact.Props) => {
     }, []);
 
     return (
-        <div>
+        <>
             {isLoading ?
                 <div className="flex justify-center items-center min-h-[300px]">
                     <SpinnerLoadingSmall />
@@ -80,7 +92,7 @@ const BarChart = (props: HighchartsReact.Props) => {
                     {...props}
                 />
             }
-        </div>
+        </>
     )
 }
 
