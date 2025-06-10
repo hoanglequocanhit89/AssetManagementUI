@@ -87,10 +87,10 @@ const assetApi = {
     return axiosClients.delete(url);
   },
 
-  getAllAssets(params: getAllAssetsParams): Promise<BaseResponseWithoutPagination<AssetBrief[]>> {
+  getAllAssets(params?: getAllAssetsParams): Promise<BaseResponseWithoutPagination<AssetBrief[]>> {
     const url = "assets/all/brief";
     return axiosClients.get(url, { params });
-  },
+  }
 };
 
 export default assetApi;

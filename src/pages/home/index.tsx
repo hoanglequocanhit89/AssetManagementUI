@@ -51,7 +51,7 @@ const getColumns = (handlers: {
         {
           // Render a check icon for accepting the assignment
           render: (row) => {
-            const isDisabled = row.status === "ACCEPTED" || row.status === "WAITING_FOR_RETURNING";
+            const isDisabled = row.status === "ACCEPTED" || row.status === "WAITING_FOR_RETURNING" || (row.status as string) === "RETURNED";
             return (
               <i
                 className={`fa-solid fa-check text-red-600 text-3xl font-extrabold ${isDisabled ? "disabled text-red-600/30 cursor-not-allowed" : ""
@@ -69,7 +69,7 @@ const getColumns = (handlers: {
         {
           // Render a cross icon for declining the assignment
           render: (row) => {
-            const isDisabled = row.status === "ACCEPTED" || row.status === "WAITING_FOR_RETURNING";
+            const isDisabled = row.status === "ACCEPTED" || row.status === "WAITING_FOR_RETURNING" || (row.status as string) === "RETURNED";
             return (
               <i
                 className={`fa-solid fa-xmark text-black text-3xl font-extrabold ${isDisabled ? "pointer-events-none opacity-30 cursor-not-allowed" : ""
@@ -87,7 +87,8 @@ const getColumns = (handlers: {
         {
           // Render a return icon for returning the assignment
           render: (row) => {
-            const isDisabled = row.status !== "ACCEPTED" || (row.status as string) === "WAITING_FOR_RETURNING";
+            const isDisabled = row.status !== "ACCEPTED" || (row.status as string) === "WAITING_FOR_RETURNING" 
+            || (row.status as string) === "RETURNED";
             return (
               <i
                 className={`fa-solid fa-arrow-rotate-left text-blue-600 text-3xl font-extrabold ${isDisabled ? "pointer-events-none opacity-30 cursor-not-allowed" : ""

@@ -1,9 +1,9 @@
 import * as Highcharts from 'highcharts';
 import { HighchartsReact } from 'highcharts-react-official';
 import { useEffect, useRef, useState } from 'react';
-import { Report } from '../../../types';
-import reportApi from '../../../api/reportApi';
-import { SpinnerLoadingSmall } from '../../../components/ui/loading-small/SpinnerLoading';
+import { Report } from '../../../../types';
+import reportApi from '../../../../api/reportApi';
+import { SpinnerLoadingSmall } from '../../../../components/ui/loading-small/SpinnerLoading';
 
 const seriesList = [
     { name: 'Assigned', key: 'assigned' },
@@ -67,7 +67,7 @@ const BarChart = (props: HighchartsReact.Props) => {
     }, []);
 
     return (
-        <>
+        <div>
             {isLoading ?
                 <div className="flex justify-center items-center min-h-[300px]">
                     <SpinnerLoadingSmall />
@@ -80,7 +80,7 @@ const BarChart = (props: HighchartsReact.Props) => {
                     {...props}
                 />
             }
-        </>
+        </div>
     )
 }
 
