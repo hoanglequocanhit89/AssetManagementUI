@@ -247,6 +247,8 @@ const ManageAssignment = () => {
         { replace: false }
       );
     }
+    assignmentList.length = 0;
+    setIsLoading(true);
     fetchAssignmentList();
   }, [
     stateFilter,
@@ -307,6 +309,9 @@ const ManageAssignment = () => {
       }
       if (viewDeleteModal) {
         setViewDeleteModal(false);
+      }
+      if (showReturnModal) {
+        setShowReturnModal(false);
       }
     };
     window.addEventListener("popstate", handlePopState);

@@ -1,5 +1,7 @@
 import ContentWrapper from "../../components/ui/content-wrapper"
 import BarChart from "./bar-chart";
+import AssetChart from "./components/asset-chart";
+import SecondChart from "./components/second-chart";
 import "./style.scss";
 
 const Dashboard = () => {
@@ -8,10 +10,12 @@ const Dashboard = () => {
             <ContentWrapper title={"Dashboard"} >
                 <div className="dashboard">
                     <div className="dashboard__inner">
-                        <div className="dashboard__top">
-                            <div className="row row-cols-2">
-                                <div className="col">1</div>
-                                <div className="col">2</div>
+                        <div className="dashboard__top row row-cols-2">
+                            <div className="col">
+                            </div>
+                            <div className="col">
+                                <AssetChart />
+                                {/* <SecondChart /> */}
                             </div>
                         </div>
                         <div className="dashboard__bottom">
@@ -24,4 +28,4 @@ const Dashboard = () => {
     )
 };
 
-export default Dashboard;
+export default Dashboard; 

@@ -61,6 +61,11 @@ input:-webkit-autofill:hover {
     caret-color: var(--text-color);
 }
 
+input::-ms-reveal,
+input::-ms-clear {
+display: none;
+}
+
 .icon {
     filter: var(--icon-color);
 }
