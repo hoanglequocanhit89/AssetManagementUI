@@ -5,7 +5,7 @@ import { isSameDay } from "date-fns";
 import "./react-datepicker-overrides.scss"
 
 type DateFilterProps = {
-    label: string;
+    label?: string;
     selectedDate?: Date;
     onSelect: (date: Date) => void;
     width?: string;
@@ -36,9 +36,14 @@ const DateFilter: React.FC<DateFilterProps> = ({
             className="relative w-full"
             ref={ref}
         >
-            <div className={`flex items-stretch border  rounded-md shadow-sm bg-white overflow-hidden ${isHighlight ? 'border-red-500' : 'border-gray-500'}`}>
-                <div className="flex-grow px-3 py-2 text-[1.6rem] text-gray-800 text-left whitespace-nowrap">
-                    {selectedDate ? selectedDate.toLocaleDateString() : label}
+            <div className={`flex items-stretch border rounded-md shadow-sm bg-white overflow-hidden ${isHighlight ? 'border-red-500' : 'border-gray-500'}`}>
+                {label ?
+                    <span className="absolute -top-4 left-3 bg-white px-2 text-[1.2rem] text-gray-800 pointer-events-none z-10">
+                        {label}
+                    </span> : "\u00A0 "
+                }
+                <div className="flex-grow px-3 pt-2.5 pb-1.5 text-[1.6rem] text-gray-800 text-left whitespace-nowrap">
+                    {selectedDate ? selectedDate.toLocaleDateString() : "\u00A0 "}
                 </div>
 
                 {selectedDate && (

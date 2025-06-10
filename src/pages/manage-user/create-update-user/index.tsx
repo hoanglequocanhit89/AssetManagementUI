@@ -330,7 +330,7 @@ const CreateUpdateUser: React.FC = () => {
                 }}
                 render={({ field }) => (
                   <DateFilter
-                    label={"\u00A0 "}
+                    // label={"\u00A0 "}
                     selectedDate={field.value}
                     onSelect={field.onChange}
                     isHighlight={!!errors.dob}
@@ -397,13 +397,13 @@ const CreateUpdateUser: React.FC = () => {
                     if (differenceInYears(value, watchDOB) < 18) {
                       return "The user must be at least 18 years old at the time of joining the company."
                     }
-                    
+
                     return true;
                   },
                 }}
                 render={({ field }) => (
                   <DateFilter
-                    label={"\u00A0 "}
+                    // label={"\u00A0 "}
                     selectedDate={field.value}
                     onSelect={field.onChange}
                     isHighlight={!!errors.joinedDate}
