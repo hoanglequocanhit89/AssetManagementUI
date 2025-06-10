@@ -8,8 +8,8 @@ interface PageSizeSelectProps {
 const PageSizeSelect = ({ value, setValue }: PageSizeSelectProps) => {
   return (
     <select className="mr-8 border" value={value} onChange={e => setValue(Number(e.target.value))}>
-      {sizes.map(size => (
-        <option value={size} className="">{size} records/page</option>
+      {sizes.map((size, index) => (
+        <option key={index} value={size} className="">{size} records/page</option>
       ))}
     </select>
   )
