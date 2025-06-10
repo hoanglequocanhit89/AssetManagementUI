@@ -37,10 +37,10 @@ const assetApi = {
       searchParams.append("states", states);
     }
 
-    if(params) {
+    if (params) {
       searchParams.append("sortBy", params.sortBy);
       searchParams.append("sortDir", params.sortDir);
-      searchParams.append("pageSize", params.size.toString());
+      searchParams.append("size", params.size.toString());
       searchParams.append("page", params.page.toString());
     }
 
