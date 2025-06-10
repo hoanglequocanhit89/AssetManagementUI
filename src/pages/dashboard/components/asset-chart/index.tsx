@@ -20,45 +20,63 @@ const AssetChart = () => {
   }, [])
 
   const options: Highcharts.Options = {
-      title: {
-        text: '',
-        style: { fontSize: '1.6rem' }
+    chart: {
+      height: '100%',
+      style: { fontSize: '2rem' },
+    },
+    title: {
+        text: 'Assets statistics',
+        align: 'left',
+        style: { fontSize: '1.8rem' },
       },
       credits: { enabled: false },
       series: [{
           type: 'pie',
-          innerSize: '20%',
           name: 'Total',
+          innerSize: '80%',
+          dataLabels: {
+            enabled: false
+          },
+          showInLegend: true,
           data: assetList
           ? assetList.map(category => ({
               name: category.category,
-              y: category.total
+              y: category.total || 0
             }))
           : [],
-          dataLabels: {
-              enabled: true,
-              style: {
-                  fontSize: '1.2rem',
-              },
-              filter: {
-                property: 'y',
-                operator: '>',
-                value: 0
-              }
-          }
         }],
-      tooltip: {
-        style: {
-          fontSize: '1.6rem'
-        }
-      }
+        legend: {
+          enabled: true,
+          layout: 'horizontal',
+          align: 'center',
+          verticalAlign: 'bottom',
+          itemStyle: {
+            fontSize: '1.4rem',
+            display: 'inline-block',
+            marginRight: '20px',
+          },
+          symbolWidth: 10,
+          symbolHeight: 10,
+          symbolRadius: 5, // Circular markers
+          labelFormatter: function () {
+            const point = this as Highcharts.Point;
+            return `<span style="margin-right: 5px;">•</span> ${this.name} ${point.y}`;
+          },
+        },
+        tooltip: {
+          style: {
+            fontSize: '1.6rem',
+          },
+          pointFormat: '{series.name}: <b>Total: {point.y} {point.name}</b>', // Match tooltip format from image
+        },
   };
 
   return (
-      <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-      />
+    <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        containerProps={{ style: { height: '100%', width: '100%' } }}
+    />
   )
 };
 

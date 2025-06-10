@@ -2,12 +2,59 @@
     height: 100%;
 
     &__inner {
+        padding-bottom: 40px;
         height: 100%;
         display: grid;
         grid-template-rows: 1fr 1fr;
+        gap: 30px;
     }
-    &__top,
-    &__bottom {
-        height: 50%;
+
+    .chart-wrapper {
+        height: 100%;
+        padding: 20px;
+        overflow: hidden;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(12, 11, 11, 0.3);
+    }
+
+    &__card {
+        &--row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        &--column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &--title {
+            font-size: 2rem;
+            font-weight: 500;
+        }
+
+        &--sub-title {
+            font-size: 2rem;
+            font-weight: 500;
+            color: rgb(117, 108, 108);
+        }
+
+        &--thumb {
+            width: 60px;
+            height: 60px;
+            background-color: #fff6d9;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &--icon {
+            font-size: 4rem;
+            color: #feca21;
+        }
     }
 }
+
