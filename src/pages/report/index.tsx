@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../../components/ui/button";
 import ContentWrapper from "../../components/ui/content-wrapper"
 import Table, { Column } from "../../components/ui/table";
-import { Report } from "../../types";
+import { BaseResponse, Report } from "../../types";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { toast } from "react-toastify";
 import reportApi from "../../api/reportApi";
+import Pagination from "../../components/ui/pagination";
+import PageSizeSelect from "../../components/ui/page-size-select";
 
 type ReportWithId = Report & { id: number };
 
@@ -27,36 +29,45 @@ const ReportPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [showExportPopover, setShowExportPopover] = useState(false);
+    const [optionExport, setOptionExport] = useState("");
+    const exportBtnRef = useRef<HTMLDivElement>(null);
+
     const [loading, setLoading] = useState<boolean>(true);
-    const [reportData, setReportData] = useState<Report[]>([]);
+    const [reportData, setReportData] = useState<BaseResponse<Report>>();
+    const [allReportData, setAllReportData] = useState<Report[]>([]);
     const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "category");
     const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
+    const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get("page")) || 1);
+    const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
 
-    const sortedData = [...reportData].sort((a, b) => {
-        const key = sortBy as keyof Report;
-        const aValue = a[key];
-        const bValue = b[key];
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
 
-        if (key === "category") {
-            return orderBy === "asc"
-                ? String(aValue).localeCompare(String(bValue))
-                : String(bValue).localeCompare(String(aValue));
-        } else {
-            return orderBy === "asc"
-                ? Number(aValue) - Number(bValue)
-                : Number(bValue) - Number(aValue);
-        }
-    });
-
-    const dataWithId = sortedData.map((item, index) => ({
+    const dataWithId = reportData?.data.content.map((item, index) => ({
         ...item,
         id: index + 1,
     }));
 
     const exportToExcel = async () => {
         try {
+            let optionData: Report[] = [];
 
-            const exportData = sortedData.map((item, index) => ({
+            if (optionExport === "all") {
+
+                if (!allReportData || allReportData.length === 0) {
+                    const response = await reportApi.getReportList();
+                    optionData = response.data;
+                    setAllReportData(response.data);
+                } else {
+                    optionData = allReportData;
+                }
+            } else {
+                optionData = reportData?.data.content ?? [];
+            }
+
+            const exportData = optionData.map((item, index) => ({
                 "No": index + 1,
                 "Category": item.category,
                 "Total": item.total,
@@ -67,26 +78,17 @@ const ReportPage = () => {
                 "Recycled": item.recycled
             }));
 
-            const worksheet = XLSX.utils.json_to_sheet(exportData);
-
+            const worksheet = XLSX.utils.json_to_sheet(exportData ?? []);
             const ref = worksheet['!ref'] ?? '';
             const range = XLSX.utils.decode_range(ref);
             worksheet['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
-
             worksheet['!cols'] = [
-                { wch: 10 },
-                { wch: 20 },
-                { wch: 10 },
-                { wch: 10 },
-                { wch: 10 },
-                { wch: 15 },
-                { wch: 25 },
-                { wch: 10 }
+                { wch: 10 }, { wch: 20 }, { wch: 10 }, { wch: 10 },
+                { wch: 10 }, { wch: 15 }, { wch: 25 }, { wch: 10 }
             ];
 
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-
             const excelBuffer = await XLSX.write(workbook, {
                 bookType: 'xlsx',
                 type: 'array',
@@ -97,8 +99,10 @@ const ReportPage = () => {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             });
 
-            saveAs(file, 'data_export.xlsx');
+            const now = new Date();
+            const timestamp = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
+            saveAs(file, `data_export_${timestamp}.xlsx`);
 
         } catch (error) {
             toast.error(
@@ -110,17 +114,26 @@ const ReportPage = () => {
     };
 
     useEffect(() => {
+
         const newSortBy = searchParams.get("sortBy") || "category";
         const newOrderBy = searchParams.get("orderBy") || "asc";
+        const newCurrentPage = Number(searchParams.get("page")) || 1;
         setSortBy(newSortBy);
         setOrderBy(newOrderBy);
+        setCurrentPage(newCurrentPage);
+        setPageSize(Number(searchParams.get("size")) || 20);
+
     }, [searchParams]);
 
     useEffect(() => {
 
+        setLoading(true)
         const params = new URLSearchParams();
+
+        params.set("page", currentPage.toString());
         params.set("sortBy", sortBy);
         params.set("orderBy", orderBy);
+        params.set("size", pageSize.toString());
 
         const newSearch = params.toString();
         if (location.search !== `?${newSearch}`) {
@@ -129,14 +142,19 @@ const ReportPage = () => {
                 search: newSearch
             }, { replace: false });
         }
-    }, [sortBy, orderBy]);
+    }, [currentPage, sortBy, orderBy, pageSize]);
 
     useEffect(() => {
         const fetchReportList = async () => {
             try {
-                const response = await reportApi.getReportList()
                 setLoading(true);
-                setReportData(response.data)
+                const response = await reportApi.getReportListWithPagination({
+                    page: currentPage - 1,
+                    size: pageSize,
+                    sortBy: sortBy,
+                    sortDir: orderBy
+                })
+                setReportData(response)
             } catch (error) {
                 console.log(error)
             }
@@ -145,22 +163,68 @@ const ReportPage = () => {
             }
         }
         fetchReportList()
-    }, [])
+    }, [orderBy, sortBy, currentPage, pageSize])
+
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+
+            if (
+                exportBtnRef.current &&
+                !exportBtnRef.current.contains(event.target as Node)
+            ) {
+                setShowExportPopover(false);
+            }
+        }
+        if (showExportPopover) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [showExportPopover]);
 
     return (
         <ContentWrapper title={'Report'}>
 
-            <div className="flex justify-end w-full mb-[20px]">
+            <div className="flex justify-end w-full mb-[20px] relative">
                 <Button
                     text="Export"
                     color="primary"
-                    onClick={() => exportToExcel()}
+                    onClick={() => setShowExportPopover((prev) => !prev)}
                 />
+
+                {
+                    showExportPopover && (
+                        <div className="absolute right-0 mt-[40px] w-fit bg-white border border-gray-300 rounded-lg shadow-lg z-20" ref={exportBtnRef}>
+                            <div
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                    setOptionExport("all")
+                                    setShowExportPopover(false);
+                                    exportToExcel()
+                                }}
+                            >
+                                <i className="fa-solid fa-file-arrow-down mr-4 text-[var(--primary-color)]"></i>
+                                Export All Data
+                            </div>
+
+                            <div
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                    setOptionExport("current")
+                                    setShowExportPopover(false);
+                                    exportToExcel()
+                                }}
+                            >      <i className="fa-solid fa-file-lines mr-4 text-[var(--primary-color)]"></i>
+                                Export Current page
+                            </div>
+                        </div>
+                    )
+                }
             </div>
 
             <Table
                 columns={columns}
-                data={dataWithId}
+                data={dataWithId ?? []}
                 isDataLoading={loading}
                 onSort={(key, direction) => {
                     setSortBy(key)
@@ -169,6 +233,16 @@ const ReportPage = () => {
                 sortBy={sortBy as keyof Report}
                 orderBy={orderBy}
             />
+
+            <div className="flex justify-end w-full m-auto mt-[20px]">
+                <PageSizeSelect value={pageSize} setValue={setPageSize} />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={reportData?.data.totalPages ?? 0}
+                    onPageChange={handlePageChange}
+                    maxVisiblePages={3}
+                />
+            </div>
 
         </ContentWrapper>
     )

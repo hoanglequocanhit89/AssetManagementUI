@@ -11,6 +11,7 @@ import Pagination from "../../components/ui/pagination";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import userApi from "../../api/userApi";
 import { useDebounce } from "../../hooks/useDebounce";
+import PageSizeSelect from "../../components/ui/page-size-select";
 
 const getColumns = (handlers: {
     onEdit: (row: User) => void;
@@ -71,6 +72,7 @@ const ManageUser = () => {
     const [sortFieldForApi, setSortFieldForApi] = useState<string>('firstName');
     const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
     const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get("page")) || 1);
+    const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
 
     const [showModal, setShowModal] = useState(false);
     const [showDisableModal, setShowDisableModal] = useState(false);
@@ -116,7 +118,7 @@ const ManageUser = () => {
         }, {
             page: currentPage - 1,
             // size: tempUser ? 19 : 20,
-            size: 20,
+            size: pageSize,
             sortBy: sortFieldForApi,
             sortDir: orderBy
         });
@@ -133,7 +135,7 @@ const ManageUser = () => {
 
     useEffect(() => {
         fetchAllUserList()
-    }, [selectedType, sortFieldForApi, orderBy, currentPage, debouncedKeyword])
+    }, [selectedType, sortFieldForApi, orderBy, currentPage, pageSize, debouncedKeyword])
 
     useEffect(() => {
         const params = new URLSearchParams();
@@ -142,6 +144,7 @@ const ManageUser = () => {
         params.set("page", currentPage.toString());
         params.set("sortBy", sortBy);
         params.set("orderBy", orderBy);
+        params.set("size", pageSize.toString());
         const newSearch = params.toString();
         if (location.search !== `?${newSearch}`) {
             navigate({
@@ -151,7 +154,7 @@ const ManageUser = () => {
         }
         userData?.data.content.splice(0);
         setIsLoading(true);
-    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage]);
+    }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage, pageSize]);
 
 
     useEffect(() => {
@@ -160,6 +163,7 @@ const ManageUser = () => {
         setSortBy(searchParams.get("sortBy") || "firstName");
         setOrderBy(searchParams.get("orderBy") || "asc");
         setCurrentPage(Number(searchParams.get("page")) || 1);
+        setPageSize(Number(searchParams.get("size")) || 20);
     }, [searchParams]);
 
     useEffect(() => {
@@ -218,6 +222,7 @@ const ManageUser = () => {
                 />
 
                 <div className="flex justify-end w-full m-auto mt-[20px]">
+                    <PageSizeSelect value={pageSize} setValue={setPageSize} />
                     <Pagination
                         currentPage={currentPage}
                         totalPages={userData?.data.totalPages ?? 0}

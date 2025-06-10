@@ -1,4 +1,4 @@
-import { Navigate, data, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../components/ui/button";
 import ContentWrapper from "../../components/ui/content-wrapper";
 import DateFilter from "../../components/ui/date-filter";
@@ -13,9 +13,9 @@ import DetailAssignmentModal from "./components/detail-assignment";
 import DeleteAssignmentModal from "./components/delete-assignment";
 import { useDebounce } from "../../hooks/useDebounce";
 import { getStatusLabel } from "../../utils/status-label";
-import ReturnAssignmentModal from "./components/assignment-own-return";
 import ReturnAdminAssignmentModal from "./components/assignment-admin-return";
 import BigLoading from "../../components/ui/loading-big/LoadingBig";
+import PageSizeSelect from "../../components/ui/page-size-select";
 
 const getColumns = (props: {
   handlers: {
@@ -131,7 +131,7 @@ const ManageAssignment = () => {
   const [isAssignementDeletetable, setIsAssetDeletetable] = React.useState<boolean>(false);
   const [viewDetailModal, setViewDetailModal] = React.useState<boolean>(false);
   const [viewDeleteModal, setViewDeleteModal] = React.useState<boolean>(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get("states") || "");
   const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get("keyword") || "");
   const [assignmentList, setAssignementList] = React.useState<Assignment[]>([]);
@@ -143,6 +143,7 @@ const ManageAssignment = () => {
     currentPage: Number(searchParams.get("page")) || 1,
     totalPage: 0,
   });
+  const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
   const [assignedDateFilter, setAssignedDateFilter] = React.useState<Date | undefined>(undefined);
   const [detailAssignmentData, setDetailAssignmentData] = React.useState<AssignmentDetail>({
     id: 0,
@@ -178,7 +179,7 @@ const ManageAssignment = () => {
         assignedDate: assignedDateFilter ? formatDateToLocalString(assignedDateFilter) : undefined,
         query: searchFilter || undefined,
         page: pagingData.currentPage - 1,
-        size: 20,
+        size: pageSize,
         sortBy: sortFilter.sortBy || "assetCode",
         sortDir: sortFilter.sortDir || "asc",
       });
@@ -211,6 +212,7 @@ const ManageAssignment = () => {
       sortBy: searchParams.get("sortBy") || "assetCode",
       sortDir: searchParams.get("sortDir") || "asc",
     });
+    setPageSize(Number(searchParams.get("size")) || 20);
     assignmentList.length = 0;
     setIsLoading(true);
   }, [searchParams]);
@@ -222,6 +224,7 @@ const ManageAssignment = () => {
     params.set("page", pagingData.currentPage.toString());
     params.set("sortBy", sortFilter.sortBy);
     params.set("sortDir", sortFilter.sortDir);
+    params.set("size", pageSize.toString());
     const newSearch = params.toString();
 
     const formatDateToLocalString = (date: Date) => {
@@ -244,6 +247,8 @@ const ManageAssignment = () => {
         { replace: false }
       );
     }
+    assignmentList.length = 0;
+    setIsLoading(true);
     fetchAssignmentList();
   }, [
     stateFilter,
@@ -252,6 +257,7 @@ const ManageAssignment = () => {
     sortFilter.sortDir,
     pagingData.currentPage,
     assignedDateFilter,
+    pageSize
   ]);
 
   const handleEdit = (row: Assignment) => {
@@ -304,6 +310,9 @@ const ManageAssignment = () => {
       if (viewDeleteModal) {
         setViewDeleteModal(false);
       }
+      if (showReturnModal) {
+        setShowReturnModal(false);
+      }
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
@@ -337,7 +346,8 @@ const ManageAssignment = () => {
           onRowClick={handleOnRowClick}
           isDataLoading={isLoading}
         />
-        <div className="self-end mt-[20px]">
+        <div className="flex justify-end w-full m-auto mt-[20px]">
+          <PageSizeSelect value={pageSize} setValue={setPageSize} />
           <Pagination
             currentPage={pagingData?.currentPage}
             totalPages={pagingData?.totalPage}
@@ -346,16 +356,16 @@ const ManageAssignment = () => {
         </div>
       </ContentWrapper>
       {
-      isDetailAssignmentLoading ? <BigLoading /> :
-      viewDetailModal &&
-       (
-        <DetailAssignmentModal
-          closeModal={() => setViewDetailModal(false)}
-          data={{
-            ...detailAssignmentData,
-          }}
-        />
-      )}
+        isDetailAssignmentLoading ? <BigLoading /> :
+          viewDetailModal &&
+          (
+            <DetailAssignmentModal
+              closeModal={() => setViewDetailModal(false)}
+              data={{
+                ...detailAssignmentData,
+              }}
+            />
+          )}
       {viewDeleteModal && (
         <DeleteAssignmentModal
           closeModal={() => setViewDeleteModal(false)}

@@ -1,0 +1,13 @@
+.dashboard {
+    height: 100%;
+
+    &__inner {
+        height: 100%;
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+    }
+    &__top,
+    &__bottom {
+        height: 50%;
+    }
+}

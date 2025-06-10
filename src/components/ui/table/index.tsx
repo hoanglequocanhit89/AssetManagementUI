@@ -230,9 +230,9 @@ const Table = <T extends { id: number }>({
                     ) : column.render ? (
                       column.render(row[column.key as keyof T], row, index)
                     ) : (
-                      String(row[column.key as keyof T])
+                      String(row[column.key as keyof T] ?? "")
                     )}
-                    {!column.actions && <div className="h-[2px] bg-[#e5e7eb] mt-2.5"></div>}
+                    {!column.actions && <div className={`h-[2px] bg-[#e5e7eb] ${row[column.key as keyof T] != null ? 'mt-2.5' : 'mt-10'}`}></div>}
                   </td>
                 ))}
               </tr>

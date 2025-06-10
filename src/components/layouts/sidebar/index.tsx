@@ -10,6 +10,10 @@ export const navItems = [
         tag: '/home',
     },
     {
+        title: 'Dashboard',
+        tag: '/dashboard',
+    },
+    {
         title: 'Manage User',
         tag: '/manage-user',
     },

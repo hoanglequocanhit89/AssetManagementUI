@@ -2,17 +2,18 @@
 import React, { useEffect, useState } from "react";
 import ContentWrapper from "../../components/ui/content-wrapper"
 import SelectFilter from "../../components/ui/select-filter";
-import { data, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import DateFilter from "../../components/ui/date-filter";
 import SearchInput from "../../components/ui/search";
 import Table, { Column } from "../../components/ui/table";
 import { RequestReturning } from "../../types/request-returning";
-import { getStatusLabel, getStatusRequestReturningLabel } from "../../utils/status-label";
+import { getStatusRequestReturningLabel } from "../../utils/status-label";
 import Pagination from "../../components/ui/pagination";
 import CompletedRequestReturningModal from "./components/completed-request-returning";
 import CancelRequestReturningModal from "./components/cancel-request-returing";
 import { useDebounce } from "../../hooks/useDebounce";
 import requestReturningApi from "../../api/requestReturningApi";
+import PageSizeSelect from "../../components/ui/page-size-select";
 
 const stateArr = [
     {
@@ -102,7 +103,7 @@ interface SortFilterProps {
     sortDir: string;
 }
 const RequestForReturn = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const [stateFilter, setStateFilter] = React.useState<string>(searchParams.get("states") || "");
     const [returnedDateFilter, setReturnedDateFilter] = React.useState<Date | undefined>(undefined);
     const [searchFilter, setSearchFilter] = React.useState<string>(searchParams.get("keyword") || "");
@@ -120,6 +121,7 @@ const RequestForReturn = () => {
         sortBy: searchParams.get("sortBy") || "assetCode",
         sortDir: searchParams.get("sortDir") || "asc",
     });
+    const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
     const debouncedKeyword = useDebounce(searchFilter, 500);
     const location = useLocation();
     const navigate = useNavigate();
@@ -161,7 +163,7 @@ const RequestForReturn = () => {
                 returnedDate: returnedDateFilter ? formatDateToLocalString(returnedDateFilter) : undefined,
                 query: searchFilter || undefined,
                 page: pagingData.currentPage - 1,
-                size: 20,
+                size: pageSize,
                 sortBy: sortFilter.sortBy || "assetCode",
                 sortDir: sortFilter.sortDir || "asc",
             });
@@ -204,6 +206,7 @@ const RequestForReturn = () => {
             sortBy: searchParams.get("sortBy") || "assetCode",
             sortDir: searchParams.get("sortDir") || "asc",
         });
+        setPageSize(Number(searchParams.get("size")) || 20)
         requestReturningList.length = 0;
         setIsLoading(true);
     }, [searchParams]);
@@ -215,6 +218,7 @@ const RequestForReturn = () => {
         params.set("page", pagingData.currentPage.toString());
         params.set("sortBy", sortFilter.sortBy);
         params.set("sortDir", sortFilter.sortDir);
+        params.set("size", pageSize.toString());
         const newSearch = params.toString();
 
         const formatDateToLocalString = (date: Date) => {
@@ -245,6 +249,7 @@ const RequestForReturn = () => {
         sortFilter.sortDir,
         pagingData.currentPage,
         returnedDateFilter,
+        pageSize
     ]);
 
     return (
@@ -273,7 +278,8 @@ const RequestForReturn = () => {
                     onSort={handleSort}
                     isDataLoading={isLoading}
                 />
-                <div className="self-end mt-[20px]">
+                <div className="flex justify-end w-full m-auto mt-[20px]">
+                    <PageSizeSelect value={pageSize} setValue={setPageSize} />
                     <Pagination
                         currentPage={pagingData?.currentPage}
                         totalPages={pagingData?.totalPage}

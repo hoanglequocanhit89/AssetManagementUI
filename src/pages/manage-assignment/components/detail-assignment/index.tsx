@@ -14,7 +14,7 @@ const DetailAssignmentModal = (props: DetailedAssignmentProps) => {
 
     return(
         <FormModal
-            title="Datailed Assignment Information"
+            title="Detail Assignment Information"
             closeBtn
             closeModal={props.closeModal}
         >
