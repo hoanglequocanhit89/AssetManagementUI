@@ -15,6 +15,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 import { getStatusLabel } from "../../utils/status-label";
 import ReturnAdminAssignmentModal from "./components/assignment-admin-return";
 import BigLoading from "../../components/ui/loading-big/LoadingBig";
+import PageSizeSelect from "../../components/ui/page-size-select";
 
 const getColumns = (props: {
   handlers: {
@@ -142,6 +143,7 @@ const ManageAssignment = () => {
     currentPage: Number(searchParams.get("page")) || 1,
     totalPage: 0,
   });
+  const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
   const [assignedDateFilter, setAssignedDateFilter] = React.useState<Date | undefined>(undefined);
   const [detailAssignmentData, setDetailAssignmentData] = React.useState<AssignmentDetail>({
     id: 0,
@@ -177,7 +179,7 @@ const ManageAssignment = () => {
         assignedDate: assignedDateFilter ? formatDateToLocalString(assignedDateFilter) : undefined,
         query: searchFilter || undefined,
         page: pagingData.currentPage - 1,
-        size: 20,
+        size: pageSize,
         sortBy: sortFilter.sortBy || "assetCode",
         sortDir: sortFilter.sortDir || "asc",
       });
@@ -210,6 +212,7 @@ const ManageAssignment = () => {
       sortBy: searchParams.get("sortBy") || "assetCode",
       sortDir: searchParams.get("sortDir") || "asc",
     });
+    setPageSize(Number(searchParams.get("size")) || 20);
     assignmentList.length = 0;
     setIsLoading(true);
   }, [searchParams]);
@@ -221,6 +224,7 @@ const ManageAssignment = () => {
     params.set("page", pagingData.currentPage.toString());
     params.set("sortBy", sortFilter.sortBy);
     params.set("sortDir", sortFilter.sortDir);
+    params.set("size", pageSize.toString());
     const newSearch = params.toString();
 
     const formatDateToLocalString = (date: Date) => {
@@ -251,6 +255,7 @@ const ManageAssignment = () => {
     sortFilter.sortDir,
     pagingData.currentPage,
     assignedDateFilter,
+    pageSize
   ]);
 
   const handleEdit = (row: Assignment) => {
@@ -336,7 +341,8 @@ const ManageAssignment = () => {
           onRowClick={handleOnRowClick}
           isDataLoading={isLoading}
         />
-        <div className="self-end mt-[20px]">
+        <div className="flex justify-end w-full m-auto mt-[20px]">
+          <PageSizeSelect value={pageSize} setValue={setPageSize} />
           <Pagination
             currentPage={pagingData?.currentPage}
             totalPages={pagingData?.totalPage}
