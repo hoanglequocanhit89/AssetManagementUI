@@ -13,6 +13,9 @@ import FormModal from "../../ui/form-modal";
 import Button from "../../ui/button";
 import { Link } from "react-router-dom";
 import { navItems } from "../sidebar";
+import NotificationDropdown from "./components/notification";
+import notificationApi from "../../../api/notificationApi";
+import { Notification } from "../../../types/notification";
 
 
 interface HeaderProps {
@@ -31,6 +34,7 @@ const Header = ({ isLogin = true, title, subTitle, setSubTitle }: HeaderProps) =
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const auth = useSelector((state: RootState) => state.auth);
     const menuRef = useRef<HTMLDivElement>(null);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
 
     useEffect(() => {
         const handlePopState = () => {
@@ -74,6 +78,15 @@ const Header = ({ isLogin = true, title, subTitle, setSubTitle }: HeaderProps) =
         };
     }, [showMenu]);
 
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            const res = await notificationApi.getNotificationList();
+            setNotifications(res.data);
+        };
+
+        fetchNotifications();
+    }, []);
+
     return (
         <>
             <header className="header">
@@ -89,11 +102,15 @@ const Header = ({ isLogin = true, title, subTitle, setSubTitle }: HeaderProps) =
                             {subTitle && <> &gt; {subTitle}</>}
                         </h1>)}
                         {isLogin &&
-                            <DropDown
-                                onChangePassword={() => setChangePasswordModal(true)}
-                                onLogout={() => setConfirmModal(true)}
-                                username={auth.username || ''}
-                            />}
+                            <>
+                                <NotificationDropdown notifications={notifications} />
+                                <DropDown
+                                    onChangePassword={() => setChangePasswordModal(true)}
+                                    onLogout={() => setConfirmModal(true)}
+                                    username={auth.username || ''}
+                                />
+                            </>
+                        }
 
                         {isLogin && (
                             <div className="d-lg-block d-none ">
