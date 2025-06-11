@@ -3,7 +3,7 @@ import BarChart from "./components/bar-chart";
 import AssetChart from "./components/asset-chart";
 import "./style.scss";
 import UserChart from "./components/user-chart";
-import TestChart from "./components/test-chart";
+import AssignmentChart from "./components/assignment-chart";
 
 const Dashboard = () => {
     return (
@@ -24,7 +24,7 @@ const Dashboard = () => {
                             </div>
                             <div className="col">
                                 <div className="chart-wrapper">
-                                    <TestChart />
+                                    <AssignmentChart />
                                 </div>
                             </div>
                         </div>

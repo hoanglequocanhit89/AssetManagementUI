@@ -13,11 +13,11 @@ const AssetChart = () => {
     reportApi.getReportList()
       .then(res => setAssetList(res.data))
       .catch(err => toast.error(err))
-  }
+  };
 
   useEffect(() => {
     fetchApi();
-  }, [])
+  }, []);
 
   const options: Highcharts.Options = {
     chart: {
@@ -25,7 +25,7 @@ const AssetChart = () => {
       style: { fontSize: '2rem' },
     },
     title: {
-        text: 'Assets statistics',
+        text: 'Assets by Category',
         align: 'left',
         style: { fontSize: '1.8rem' },
       },
