@@ -16,12 +16,13 @@ const CancelRequestReturningModal = (props: CancelRequestReturningProps) => {
             if (response) {
                 toast.success(response.message || "Request returning cancel successfully!");
                 props.setRequestReturningList(props.id);
-                props.closeModal();
             }
-        } catch (error) {
-            toast.error("Failed to canceling request returning.");
-            console.error(error);
-        }
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || "Failed to canceling request returning.");
+        } finally {
+            props.closeModal();
+         }
+
 
     }
 
