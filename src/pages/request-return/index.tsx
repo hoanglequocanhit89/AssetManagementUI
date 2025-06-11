@@ -290,7 +290,9 @@ const RequestForReturn = () => {
                         {totalElements ?? 0} {totalElements === 1 ? "result" : "results"} found
                     </span>
                     <div className="flex justify-end w-full">
-                        <PageSizeSelect value={pageSize} setValue={setPageSize} />
+                        <PageSizeSelect value={pageSize} setValue={setPageSize} onChange={() => {
+                            setPagingData({ ...pagingData, currentPage: 1 })
+                        }} />
                         <Pagination
                             currentPage={pagingData?.currentPage}
                             totalPages={pagingData?.totalPage ?? 0}

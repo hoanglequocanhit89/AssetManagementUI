@@ -230,7 +230,7 @@ const ManageUser = () => {
                         {userData?.data.totalElements === 1 ? "result" : "results"} found
                     </span>
                     <div className="flex justify-end w-full">
-                        <PageSizeSelect value={pageSize} setValue={setPageSize} />
+                        <PageSizeSelect value={pageSize} setValue={setPageSize} onChange={() => setCurrentPage(1)}/>
                         <Pagination
                             currentPage={currentPage}
                             totalPages={userData?.data.totalPages ?? 0}
