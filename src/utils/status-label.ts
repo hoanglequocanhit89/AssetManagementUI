@@ -25,3 +25,20 @@ export const getStatusRequestReturningLabel = (status: string): string => {
             return status;
     }
 }
+
+export const getStatusAssetLabel = (status: string): string => {
+    switch (status) {
+        case "AVAILABLE":
+            return "Available";
+        case "NOT_AVAILABLE":
+            return "Not Available";
+        case "ASSIGNED":
+            return "Assigned";
+        case "WAITING":
+            return "Waiting for Recycling"
+        case "RECYCLED":
+            return "Recycled";
+        default:
+            return status;
+    }
+}
