@@ -224,7 +224,6 @@ const ManageUser = () => {
                     orderBy={orderBy}
                     isDataLoading={isLoading}
                 />
-
                 <div className="flex justify-between items-center w-full m-auto mt-[20px]">
                     <span className="text-2xl text-gray-500 font-semibold w-1/4">
                         {userData?.data.totalElements ?? 0}{" "}

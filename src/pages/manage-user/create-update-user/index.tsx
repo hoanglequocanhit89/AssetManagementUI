@@ -398,7 +398,6 @@ const CreateUpdateUser: React.FC = () => {
                     if (differenceInYears(value, watchDOB) < 18) {
                       return "The user must be at least 18 years old at the time of joining the company."
                     }
-
                     return true;
                   },
                 }}
