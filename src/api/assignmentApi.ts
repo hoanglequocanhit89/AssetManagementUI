@@ -87,8 +87,8 @@ const assignmentApi = {
     return axiosClients.put(url, payload);
   },
 
-  async returnAssignmentForAdmin(assignmentId: number): Promise<void> {
-    await axiosClients.post(`return/${assignmentId}`);
+  async returnAssignmentForAdmin(assignmentId: number): Promise<BaseResponseWithoutPagination<string>> {
+    return await axiosClients.post(`return/${assignmentId}`);
   }
 };
 

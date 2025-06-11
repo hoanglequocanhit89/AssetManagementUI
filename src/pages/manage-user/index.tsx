@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Button from "../../components/ui/button";
-import ContentWrapper from "../../components/ui/content-wrapper"
+import ContentWrapper from "../../components/ui/content-wrapper";
 import SearchInput from "../../components/ui/search";
 import SelectFilter from "../../components/ui/select-filter";
 import { BaseResponse, User } from "../../types";
@@ -17,46 +17,44 @@ const getColumns = (handlers: {
     onEdit: (row: User) => void;
     onDelete: (row: User) => void;
 }): Column<User>[] => [
-        { key: 'staffCode', title: 'Staff Code' },
-        { key: 'fullName', title: 'Full Name' },
-        { key: 'username', title: 'Username' },
-        { key: 'joinedDate', title: 'Joined Date' },
+        { key: "staffCode", title: "Staff Code" },
+        { key: "fullName", title: "Full Name" },
+        { key: "username", title: "Username" },
+        { key: "joinedDate", title: "Joined Date" },
         {
-            key: 'role', title: 'Type',
+            key: "role",
+            title: "Type",
             render: (value) => {
                 const strValue = String(value);
                 return (
-                    <p>
-                        {strValue
-                            ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase()
-                            : ""}
-                    </p>
+                    <p>{strValue ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase() : ""}</p>
                 );
-            }
+            },
         },
         {
-            key: 'action',
+            key: "action",
             actions: [
                 {
-                    render: (row) => <i className={`fa-solid fa-pen`} title="Edit" ></i>,
+                    render: (row) => <i id="edit" className={`fa-solid fa-pen`} title="Edit"></i>,
                     onClick: handlers.onEdit,
                 },
                 {
-                    render: (row) => <i className="fa-regular fa-circle-xmark text-[#CF2338]" title="Disable" ></i>,
+                    render: (row) => (
+                        <i id="disable" className="fa-regular fa-circle-xmark text-[#CF2338]" title="Disable"></i>
+                    ),
                     onClick: handlers.onDelete,
                 },
-            ]
+            ],
         },
     ];
 
 const options = [
-    { value: '', label: 'All' },
-    { value: 'ADMIN', label: 'Admin' },
-    { value: 'STAFF', label: 'Staff' },
+    { value: "", label: "All" },
+    { value: "ADMIN", label: "Admin" },
+    { value: "STAFF", label: "Staff" },
 ];
 
 const ManageUser = () => {
-
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -69,7 +67,7 @@ const ManageUser = () => {
     const debouncedKeyword = useDebounce(textSearch, 500);
 
     const [sortBy, setSortBy] = useState<string>(searchParams.get("sortBy") || "firstName");
-    const [sortFieldForApi, setSortFieldForApi] = useState<string>('firstName');
+    const [sortFieldForApi, setSortFieldForApi] = useState<string>("firstName");
     const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || "asc");
     const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get("page")) || 1);
     const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
@@ -80,8 +78,8 @@ const ManageUser = () => {
     const [isDisableUser, setIsDisableUser] = useState<boolean>(false);
 
     const handleSearch = (value: string) => {
-        setTextSearch(value)
-        setCurrentPage(1)
+        setTextSearch(value);
+        setCurrentPage(1);
     };
 
     const handlePageChange = (page: number) => {
@@ -89,20 +87,20 @@ const ManageUser = () => {
     };
 
     const handleClickRow = (id: number) => {
-        setShowModal(true)
-        setUserId(id)
+        setShowModal(true);
+        setUserId(id);
         // Push new state to browser history
         window.history.pushState({ modal: true }, "");
-    }
+    };
 
     const handleEdit = (row: User) => {
         navigate(`edit/${row.id}`);
     };
 
     const handleDisableUser = (row: User) => {
-        setIsDisableUser(row.canDisable)
-        setUserId(row.id)
-        setShowDisableModal(true)
+        setIsDisableUser(row.canDisable);
+        setUserId(row.id);
+        setShowDisableModal(true);
     };
 
     const columns = getColumns({
@@ -112,21 +110,25 @@ const ManageUser = () => {
 
     const fetchAllUserList = async () => {
         const tempUser = location.state?.tempUser;
-        const response = await userApi.getUserList(1, {
-            query: debouncedKeyword,
-            type: selectedType
-        }, {
-            page: currentPage - 1,
-            // size: tempUser ? 19 : 20,
-            size: pageSize,
-            sortBy: sortFieldForApi,
-            sortDir: orderBy
-        });
+        const response = await userApi.getUserList(
+            1,
+            {
+                query: debouncedKeyword,
+                type: selectedType,
+            },
+            {
+                page: currentPage - 1,
+                // size: tempUser ? 19 : 20,
+                size: pageSize,
+                sortBy: sortFieldForApi,
+                sortDir: orderBy,
+            }
+        );
 
         let users = response.data.content;
 
         if (tempUser) {
-            users = users.filter(u => u.id !== tempUser.id);
+            users = users.filter((u) => u.id !== tempUser.id);
             users.unshift(tempUser);
         }
         setUserData({ ...response, data: { ...response.data, content: users } });
@@ -134,8 +136,8 @@ const ManageUser = () => {
     };
 
     useEffect(() => {
-        fetchAllUserList()
-    }, [selectedType, sortFieldForApi, orderBy, currentPage, pageSize, debouncedKeyword])
+        fetchAllUserList();
+    }, [selectedType, sortFieldForApi, orderBy, currentPage, pageSize, debouncedKeyword]);
 
     useEffect(() => {
         const params = new URLSearchParams();
@@ -147,15 +149,17 @@ const ManageUser = () => {
         params.set("size", pageSize.toString());
         const newSearch = params.toString();
         if (location.search !== `?${newSearch}`) {
-            navigate({
-                pathname: location.pathname,
-                search: newSearch
-            }, { replace: false });
+            navigate(
+                {
+                    pathname: location.pathname,
+                    search: newSearch,
+                },
+                { replace: false }
+            );
         }
         userData?.data.content.splice(0);
         setIsLoading(true);
     }, [debouncedKeyword, selectedType, sortBy, orderBy, currentPage, pageSize]);
-
 
     useEffect(() => {
         setSelectedType(searchParams.get("type") || "");
@@ -182,7 +186,7 @@ const ManageUser = () => {
 
     return (
         <>
-            <ContentWrapper title={'User List'}>
+            <ContentWrapper title={"User List"}>
                 <div className="flex justify-between items-center w-full mb-[20px] z-20">
                     <div className="min-w-[220px]">
                         <SelectFilter
@@ -190,8 +194,8 @@ const ManageUser = () => {
                             options={options}
                             selected={selectedType}
                             onSelect={(value) => {
-                                setSelectedType(value)
-                                setCurrentPage(1)
+                                setSelectedType(value);
+                                setCurrentPage(1);
                             }}
                         />
                     </div>
@@ -209,52 +213,52 @@ const ManageUser = () => {
                     onSort={(key, direction) => {
                         setSortBy(key);
                         if (key === "fullName") {
-                            setSortFieldForApi("firstName")
+                            setSortFieldForApi("firstName");
                         } else {
-                            setSortFieldForApi(key)
+                            setSortFieldForApi(key);
                         }
-                        setOrderBy(direction)
+                        setOrderBy(direction);
                     }}
                     onRowClick={(id) => handleClickRow(id)}
                     sortBy={sortBy as keyof User}
                     orderBy={orderBy}
                     isDataLoading={isLoading}
                 />
-
-                <div className="flex justify-end w-full m-auto mt-[20px]">
-                    <PageSizeSelect value={pageSize} setValue={setPageSize} />
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={userData?.data.totalPages ?? 0}
-                        onPageChange={handlePageChange}
-                        maxVisiblePages={3}
-                    />
+                <div className="flex justify-between items-center w-full m-auto mt-[20px]">
+                    <span className="text-2xl text-gray-500 font-semibold w-1/4">
+                        {userData?.data.totalElements ?? 0}{" "}
+                        {userData?.data.totalElements === 1 ? "result" : "results"} found
+                    </span>
+                    <div className="flex justify-end w-full">
+                        <PageSizeSelect value={pageSize} setValue={setPageSize} />
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={userData?.data.totalPages ?? 0}
+                            onPageChange={handlePageChange}
+                            maxVisiblePages={3}
+                        />
+                    </div>
                 </div>
-
             </ContentWrapper>
 
-            {showModal &&
-                <DetailUser
-                    showModal={showModal}
-                    closeModal={() => setShowModal(false)}
-                    userId={userId}
-                />
-            }
+            {showModal && (
+                <DetailUser showModal={showModal} closeModal={() => setShowModal(false)} userId={userId} />
+            )}
 
-            {showDisableModal &&
+            {showDisableModal && (
                 <DisableUser
                     isDisable={isDisableUser}
                     userId={userId}
                     showModal={showDisableModal}
                     onSuccess={() => {
-                        setShowDisableModal(false)
-                        fetchAllUserList()
+                        setShowDisableModal(false);
+                        fetchAllUserList();
                     }}
                     closeModal={() => setShowDisableModal(false)}
                 />
-            }
+            )}
         </>
-    )
+    );
 };
 
 export default ManageUser;

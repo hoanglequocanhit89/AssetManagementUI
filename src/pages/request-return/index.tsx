@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from "react";
-import ContentWrapper from "../../components/ui/content-wrapper"
+import ContentWrapper from "../../components/ui/content-wrapper";
 import SelectFilter from "../../components/ui/select-filter";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import DateFilter from "../../components/ui/date-filter";
@@ -18,17 +17,17 @@ import PageSizeSelect from "../../components/ui/page-size-select";
 const stateArr = [
     {
         value: "WAITING",
-        label: "Waiting for returning"
+        label: "Waiting for returning",
     },
     {
         value: "COMPLETED",
-        label: "Completed"
+        label: "Completed",
     },
     {
         value: "",
-        label: "All"
-    }
-]
+        label: "All",
+    },
+];
 
 const getColumns = (props: {
     handlers: {
@@ -56,8 +55,8 @@ const getColumns = (props: {
             key: "status",
             title: "State",
             render: (value) => {
-                return <span>{getStatusRequestReturningLabel(String(value))}</span>
-            }
+                return <span>{getStatusRequestReturningLabel(String(value))}</span>;
+            },
         },
         {
             key: "action",
@@ -68,30 +67,34 @@ const getColumns = (props: {
                         const isDisabled = row.status === "COMPLETED";
                         return (
                             <button disabled={isDisabled}>
-                                <i className={`fa-solid fa-check text-red-600 text-4xl font-black ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}>
-
-                                </i>
+                                <i id="complete"
+                                    className={`fa-solid fa-check text-red-600 text-4xl font-black ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                                        }`}
+                                ></i>
                             </button>
                         );
                     },
-                    onClick: handlers.onCompleted
+                    onClick: handlers.onCompleted,
                 },
                 {
                     render: (row) => {
                         const isDisabled = row.status === "COMPLETED";
                         return (
                             <button disabled={isDisabled}>
-                                <i className={`fa-solid fa-xmark text-black-600 text-4xl font-black ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}>
-                                </i>
+                                <i
+                                    id="cancel"
+                                    className={`fa-solid fa-xmark text-black-600 text-4xl font-black ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                                        }`}
+                                ></i>
                             </button>
                         );
                     },
                     onClick: handlers.onCancel,
                 },
-            ]
-        }
-    ]
-}
+            ],
+        },
+    ];
+};
 
 interface PagingProps {
     currentPage: number;
@@ -121,6 +124,7 @@ const RequestForReturn = () => {
         sortBy: searchParams.get("sortBy") || "assetCode",
         sortDir: searchParams.get("sortDir") || "asc",
     });
+    const [totalElements, setTotalElements] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
     const debouncedKeyword = useDebounce(searchFilter, 500);
     const location = useLocation();
@@ -129,17 +133,17 @@ const RequestForReturn = () => {
     const handleCompleted = async (row: RequestReturning) => {
         setCompletedRequestReturningId(row.id);
         setViewCompletedModal(true);
-    }
+    };
 
     const handleCancel = async (row: RequestReturning) => {
         setCancelRequestReturningId(row.id);
         setViewCancelModal(true);
-    }
+    };
 
     const colums = getColumns({
         handlers: {
             onCompleted: handleCompleted,
-            onCancel: handleCancel
+            onCancel: handleCancel,
         },
         pagingData: pagingData,
     });
@@ -168,10 +172,10 @@ const RequestForReturn = () => {
                 sortDir: sortFilter.sortDir || "asc",
             });
 
-            let filteredContent = response.data.content.filter(item => item.status !== "CANCELLED");
+            let filteredContent = response.data.content.filter((item) => item.status !== "CANCELLED");
 
             if (tempRequestReturning) {
-                filteredContent = filteredContent.filter(a => a.id !== tempRequestReturning.id);
+                filteredContent = filteredContent.filter((a) => a.id !== tempRequestReturning.id);
                 filteredContent.unshift(tempRequestReturning);
             }
 
@@ -179,11 +183,13 @@ const RequestForReturn = () => {
                 if (tempRequestReturning) {
                     response.data.content = response.data.content.filter(
                         (a) => a.id !== tempRequestReturning.id
-                    )
+                    );
                     response.data.content.unshift(tempRequestReturning);
                     setRequestReturningList(response.data.content);
+                    setTotalElements(response.data.totalElements);
                 } else {
                     setRequestReturningList(response.data.content);
+                    setTotalElements(response.data.totalElements);
                 }
                 setPagingData((prev) => ({
                     ...prev,
@@ -191,12 +197,11 @@ const RequestForReturn = () => {
                 }));
                 setIsLoading(false);
                 setRequestReturningList(filteredContent);
-
             }
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     useEffect(() => {
         setStateFilter(searchParams.get("states") || "");
@@ -206,7 +211,7 @@ const RequestForReturn = () => {
             sortBy: searchParams.get("sortBy") || "assetCode",
             sortDir: searchParams.get("sortDir") || "asc",
         });
-        setPageSize(Number(searchParams.get("size")) || 20)
+        setPageSize(Number(searchParams.get("size")) || 20);
         requestReturningList.length = 0;
         setIsLoading(true);
     }, [searchParams]);
@@ -249,12 +254,12 @@ const RequestForReturn = () => {
         sortFilter.sortDir,
         pagingData.currentPage,
         returnedDateFilter,
-        pageSize
+        pageSize,
     ]);
 
     return (
         <>
-            <ContentWrapper title={'Request List'}>
+            <ContentWrapper title={"Request List"}>
                 <div className="d-flex gap-[20px] mb-[20px] z-20">
                     <SelectFilter
                         placeholder="State"
@@ -263,10 +268,11 @@ const RequestForReturn = () => {
                         selected={stateFilter}
                     />
                     <DateFilter
+                        id="returnedDate"
                         label="Returned Date"
                         selectedDate={returnedDateFilter}
                         onSelect={(date) => setReturnedDateFilter(date)}
-                        isHighlight={!!returnedDateFilter}
+                        isHighlight={false}
                     />
                     <SearchInput value={searchFilter} onSearch={(data) => setSearchFilter(data)} />
                 </div>
@@ -278,41 +284,43 @@ const RequestForReturn = () => {
                     onSort={handleSort}
                     isDataLoading={isLoading}
                 />
-                <div className="flex justify-end w-full m-auto mt-[20px]">
-                    <PageSizeSelect value={pageSize} setValue={setPageSize} />
-                    <Pagination
-                        currentPage={pagingData?.currentPage}
-                        totalPages={pagingData?.totalPage}
-                        onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })}
-                    />
+                {/* pagination */}
+                <div className="flex justify-between items-center w-full m-auto mt-[20px]">
+                    <span className="text-2xl text-gray-500 font-semibold w-1/4">
+                        {totalElements ?? 0} {totalElements === 1 ? "result" : "results"} found
+                    </span>
+                    <div className="flex justify-end w-full">
+                        <PageSizeSelect value={pageSize} setValue={setPageSize} />
+                        <Pagination
+                            currentPage={pagingData?.currentPage}
+                            totalPages={pagingData?.totalPage ?? 0}
+                            onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })}
+                        />
+                    </div>
                 </div>
             </ContentWrapper>
-            {
-                viewCompletedModal && (
-                    <CompletedRequestReturningModal
-                        closeModal={() => setViewCompletedModal(false)}
-                        id={completedRequestReturningId}
-                        setRequestReturningList={(id) => setRequestReturningList(prev =>
-                            prev.map(item =>
-                                item.id === id ? { ...item, status: "COMPLETED" } : item
-                            )
+            {viewCompletedModal && (
+                <CompletedRequestReturningModal
+                    closeModal={() => setViewCompletedModal(false)}
+                    id={completedRequestReturningId}
+                    setRequestReturningList={(id) =>
+                        setRequestReturningList((prev) =>
+                            prev.map((item) => (item.id === id ? { ...item, status: "COMPLETED" } : item))
                         )
-                        }
-                    />
-                )
-            }
-            {
-                viewCancelModal && (
-                    <CancelRequestReturningModal
-                        closeModal={() => setViewCancelModal(false)}
-                        id={cancelRequestReturningId}
-                        setRequestReturningList={(id) =>
-                            setRequestReturningList([...requestReturningList.filter((item) => item.id !== id)])}
-                    />
-                )
-            }
+                    }
+                />
+            )}
+            {viewCancelModal && (
+                <CancelRequestReturningModal
+                    closeModal={() => setViewCancelModal(false)}
+                    id={cancelRequestReturningId}
+                    setRequestReturningList={(id) =>
+                        setRequestReturningList([...requestReturningList.filter((item) => item.id !== id)])
+                    }
+                />
+            )}
         </>
-    )
+    );
 };
 
 export default RequestForReturn;

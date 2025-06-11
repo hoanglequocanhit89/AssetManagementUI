@@ -14,13 +14,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 import SearchSelect from "../../components/ui/search-select";
 import BigLoading from "../../components/ui/loading-big/LoadingBig";
 import PageSizeSelect from "../../components/ui/page-size-select";
-
-function formatStatus(status: string) {
-  return status
-    .toLowerCase()
-    .replace(/_/g, ' ')
-    .replace(/^\w/, c => c.toUpperCase());
-}
+import { getStatusAssetLabel } from "../../utils/status-label";
 
 const getColumns = (handlers: {
   onEdit: (row: Asset) => void;
@@ -29,7 +23,13 @@ const getColumns = (handlers: {
     { key: "assetCode", title: "Asset Code" },
     { key: "name", title: "Asset Name" },
     { key: "categoryName", title: "Category" },
-    { key: "status", title: "State", render: (value) => formatStatus(value as string) },
+    {
+      key: "status",
+      title: "State",
+      render: (value) => {
+        return <span>{getStatusAssetLabel(String(value))}</span>;
+      },
+    },
     {
       key: "action",
       actions: [
@@ -37,6 +37,7 @@ const getColumns = (handlers: {
           render: (row) => (
             <button disabled={row.status === "ASSIGNED"}>
               <i
+                id="edit"
                 className={`fa-solid fa-pen ${row.status === "ASSIGNED" ? "opacity-50 cursor-default" : ""
                   }`}
                 title="Edit"
@@ -49,10 +50,9 @@ const getColumns = (handlers: {
           render: (row) => (
             <button disabled={row.status === "ASSIGNED"}>
               <i
+                id="delete"
                 className={`fa-regular fa-circle-xmark text-[var(--primary-color)] 
-                                    ${row.status === "ASSIGNED"
-                    ? "opacity-50 cursor-default"
-                    : ""
+                                    ${row.status === "ASSIGNED" ? "opacity-50 cursor-default" : ""
                   }`}
                 title="Delete"
               ></i>
@@ -83,7 +83,7 @@ const stateArr = [
   },
   {
     value: "WAITING",
-    label: "Waiting",
+    label: "Waiting for recycling",
   },
   {
     value: "",
@@ -114,9 +114,7 @@ const ManageAsset = () => {
   const [viewDeleteModal, setViewDeleteModal] = useState<boolean>(false);
   const [editAssetId, setEditAssetId] = useState<number>(0);
   const [isAssetDeletable, setIsAssetDeletable] = useState<boolean>(false);
-  const [stateFilter, setStateFilter] = useState<string>(
-    searchParams.get("states") || ""
-  );
+  const [stateFilter, setStateFilter] = useState<string>(searchParams.get("states") || "");
   const [categoryFilter, setCategoryFilter] = useState<string>(
     searchParams.get("categoryName") || ""
   );
@@ -125,10 +123,9 @@ const ManageAsset = () => {
     totalPage: 0,
   });
   const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
+  const [totalElements, setTotalElements] = useState<number>(0);
 
-  const [searchFilter, setSearchFilter] = useState<string>(
-    searchParams.get("keyword") || ""
-  );
+  const [searchFilter, setSearchFilter] = useState<string>(searchParams.get("keyword") || "");
   const [categoryList, setCategoryList] = useState<CategoryProps[]>([]);
   const [sortFilter, setSortFilter] = useState<SortFilterProps>({
     sortBy: searchParams.get("sortBy") || "",
@@ -149,8 +146,7 @@ const ManageAsset = () => {
     specification: "",
     state: "",
   });
-  const [isAssetDetailLoading, setIsAssetDetailLoading] =
-    useState<boolean>(false);
+  const [isAssetDetailLoading, setIsAssetDetailLoading] = useState<boolean>(false);
 
   const debouncedKeyword = useDebounce(searchFilter, 500);
   const navigate = useNavigate();
@@ -177,8 +173,10 @@ const ManageAsset = () => {
           assets = assets.filter((a) => a.id !== tempAsset.id);
           assets.unshift(tempAsset);
           setAssetList(assets);
+          setTotalElements(response.data.totalElements);
         } else {
           setAssetList([...response.data.content]);
+          setTotalElements(response.data.totalElements);
         }
 
         setPagingData({
@@ -253,7 +251,7 @@ const ManageAsset = () => {
     sortFilter.sortBy,
     sortFilter.sortDir,
     pagingData.currentPage,
-    pageSize
+    pageSize,
   ]);
 
   useEffect(() => {
@@ -303,13 +301,13 @@ const ManageAsset = () => {
   };
 
   const handleSearch = (value: string) => {
-    setSearchFilter(value)
+    setSearchFilter(value);
     pagingData.currentPage = 1;
   };
 
   return (
     <>
-      <ContentWrapper title={'Asset List'}>
+      <ContentWrapper title={"Asset List"}>
         <div className="d-flex gap-[20px] mb-[20px] z-20">
           <SelectFilter
             placeholder="State"
@@ -336,34 +334,45 @@ const ManageAsset = () => {
           onRowClick={handleOnRowClick}
           isDataLoading={isLoading}
         />
-        <div className="flex justify-end w-full m-auto mt-[20px]">
-          <PageSizeSelect value={pageSize} setValue={setPageSize} />
-          <Pagination currentPage={pagingData?.currentPage} totalPages={pagingData?.totalPage} onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })} />
+        {/* pagination */}
+        <div className="flex justify-between items-center w-full m-auto mt-[20px]">
+          <span className="text-2xl text-gray-500 font-semibold w-1/4">
+            {totalElements ?? 0} {totalElements === 1 ? "result" : "results"} found
+          </span>
+          <div className="flex justify-end w-full">
+            <PageSizeSelect value={pageSize} setValue={setPageSize} />
+            <Pagination
+              currentPage={pagingData?.currentPage}
+              totalPages={pagingData?.totalPage ?? 0}
+              onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })}
+            />
+          </div>
         </div>
       </ContentWrapper>
-      {
-        isAssetDetailLoading ? <BigLoading /> :
-          viewDetailModal &&
+      {isAssetDetailLoading ? (
+        <BigLoading />
+      ) : (
+        viewDetailModal && (
           <DetailAssetModal
             closeModal={() => setViewDetailModal(false)}
             data={{
               ...detailAssetData,
-              status: formatStatus(detailAssetData.status),
-              assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
+              status: getStatusAssetLabel(detailAssetData.status),
+              assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx })),
             }}
           />
-      }
-      {
-        viewDeleteModal &&
+        )
+      )}
+      {viewDeleteModal && (
         <DeleteAssetModal
           closeModal={() => setViewDeleteModal(false)}
           id={editAssetId}
           isDeletable={isAssetDeletable}
-          setAssetList={(id) => setAssetList([...assetList.filter(item => item.id !== id)])}
+          setAssetList={(id) => setAssetList([...assetList.filter((item) => item.id !== id)])}
         />
-      }
+      )}
     </>
-  )
+  );
 };
 
 export default ManageAsset;

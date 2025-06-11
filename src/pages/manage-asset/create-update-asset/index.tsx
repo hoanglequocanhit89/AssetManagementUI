@@ -425,7 +425,8 @@ const CreateUpdateAsset = () => {
                 rules={{ required: "This field is required" }}
                 render={({ field }) => (
                   <DateFilter
-                    label={"\u00A0 "}
+                    id="installedDate"
+                    // label={"\u00A0 "}
                     selectedDate={field.value}
                     onSelect={field.onChange}
                   />

@@ -28,7 +28,7 @@ const assignmentApi = {
     return await axiosClients.patch(`assignments/${assignmentId}?status=${status}`);
   },
 
-  async returnOwnAssignment(assignmentId: number): Promise<void> {
+  async returnOwnAssignment(assignmentId: number): Promise<BaseResponseWithoutPagination<string>> {
     return axiosClients.post(`return/me/${assignmentId}`);
   },
 };

@@ -2,6 +2,7 @@ import Button from "../../../../components/ui/button";
 import FormModal from "../../../../components/ui/form-modal";
 import { toast } from "react-toastify";
 import assignmentApi from "../../../../api/assignmentApi";
+import { log } from "console";
 
 interface ReturnAssignmentModalProps {
   showModal: boolean;
@@ -18,13 +19,12 @@ const ReturnAdminAssignmentModal = ({
 }: ReturnAssignmentModalProps) => {
   const handleReturnAssignment = async () => {
     try {
-      await assignmentApi.returnAssignmentForAdmin(assignmentId);
+      const res = await assignmentApi.returnAssignmentForAdmin(assignmentId);
       closeModal();
       onSuccess?.();
-      toast.success("Request returning successfully");
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to request returning assignment.");
+      toast.success(res.message);
+    } catch (error: any) {
+      toast.error(error?.response?.data.message);
     } finally {
       closeModal();
     }

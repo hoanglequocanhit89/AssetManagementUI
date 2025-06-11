@@ -54,6 +54,7 @@ const getColumns = (handlers: {
             const isDisabled = row.status === "ACCEPTED" || row.status === "WAITING_FOR_RETURNING" || (row.status as string) === "RETURNED";
             return (
               <i
+                id="accept"
                 className={`fa-solid fa-check text-red-600 text-3xl font-extrabold ${isDisabled ? "disabled text-red-600/30 cursor-not-allowed" : ""
                   }`}
                 title="Accept"
@@ -72,6 +73,7 @@ const getColumns = (handlers: {
             const isDisabled = row.status === "ACCEPTED" || row.status === "WAITING_FOR_RETURNING" || (row.status as string) === "RETURNED";
             return (
               <i
+                id="reject"
                 className={`fa-solid fa-xmark text-black text-3xl font-extrabold ${isDisabled ? "pointer-events-none opacity-30 cursor-not-allowed" : ""
                   }`}
                 title="Reject"
@@ -87,10 +89,11 @@ const getColumns = (handlers: {
         {
           // Render a return icon for returning the assignment
           render: (row) => {
-            const isDisabled = row.status !== "ACCEPTED" || (row.status as string) === "WAITING_FOR_RETURNING" 
-            || (row.status as string) === "RETURNED";
+            const isDisabled = row.status !== "ACCEPTED" || (row.status as string) === "WAITING_FOR_RETURNING"
+              || (row.status as string) === "RETURNED";
             return (
               <i
+                id="return"
                 className={`fa-solid fa-arrow-rotate-left text-blue-600 text-3xl font-extrabold ${isDisabled ? "pointer-events-none opacity-30 cursor-not-allowed" : ""
                   }`}
                 title="Return"
