@@ -5,6 +5,7 @@ import { isSameDay } from "date-fns";
 import "./react-datepicker-overrides.scss"
 
 type DateFilterProps = {
+    id?: string;
     label?: string;
     selectedDate?: Date;
     onSelect: (date: Date) => void;
@@ -13,6 +14,7 @@ type DateFilterProps = {
 };
 
 const DateFilter: React.FC<DateFilterProps> = ({
+    id,
     label,
     selectedDate,
     onSelect,
@@ -48,6 +50,7 @@ const DateFilter: React.FC<DateFilterProps> = ({
 
                 {selectedDate && (
                     <button
+                        id={id}
                         type="button"
                         onClick={() => onSelect(undefined as any)}
                         className="flex items-center justify-center px-4 py-2 hover:bg-gray-100 text-gray-400 hover:text-black focus:outline-none"

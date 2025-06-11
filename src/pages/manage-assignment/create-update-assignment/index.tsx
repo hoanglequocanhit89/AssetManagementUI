@@ -129,7 +129,7 @@ const CreateUpdateAssignment = () => {
     const params = new URLSearchParams(searchParams);
     params.delete("modal");
     setSearchParams(params);
-  },[searchParams, setSearchParams]);
+  }, [searchParams, setSearchParams]);
 
   const [defaultAssignment, setDefaultAssignment] =
     useState<CreateUpdateAssignmentRequest>({
@@ -181,18 +181,19 @@ const CreateUpdateAssignment = () => {
     (): Column<UserBrief>[] => [
       { key: "staffCode", title: "Staff Code" },
       { key: "fullName", title: "Full Name" },
-      { key: "role", title: "Type",
+      {
+        key: "role", title: "Type",
         render: (value) => {
           const strValue = String(value);
           return (
-              <p>
-                  {strValue
-                      ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase()
-                      : ""}
-              </p>
+            <p>
+              {strValue
+                ? strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase()
+                : ""}
+            </p>
           );
-      }
-       },
+        }
+      },
     ],
     []
   );
@@ -407,9 +408,8 @@ const CreateUpdateAssignment = () => {
               >
                 <span>{selectedItems.user?.fullName || "\u00A0"}</span>
                 <i
-                  className={`fa-solid ${
-                    isEdit ? "fa-caret-down" : "fa-magnifying-glass"
-                  }`}
+                  className={`fa-solid ${isEdit ? "fa-caret-down" : "fa-magnifying-glass"
+                    }`}
                   aria-hidden="true"
                 />
               </div>
@@ -443,9 +443,8 @@ const CreateUpdateAssignment = () => {
                   {selectedItems.asset?.assetName || "\u00A0"}
                 </span>
                 <i
-                  className={`h-full fa-solid ${
-                    isEdit ? "fa-caret-down" : "fa-magnifying-glass"
-                  }`}
+                  className={`h-full fa-solid ${isEdit ? "fa-caret-down" : "fa-magnifying-glass"
+                    }`}
                   aria-hidden="true"
                 />
               </div>
@@ -473,6 +472,7 @@ const CreateUpdateAssignment = () => {
                 }}
                 render={({ field }) => (
                   <DateFilter
+                    id="assignedDate"
                     label={" "}
                     selectedDate={field.value}
                     onSelect={field.onChange}

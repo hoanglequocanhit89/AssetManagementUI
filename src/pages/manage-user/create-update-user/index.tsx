@@ -331,6 +331,7 @@ const CreateUpdateUser: React.FC = () => {
                 render={({ field }) => (
                   <DateFilter
                     // label={"\u00A0 "}
+                    id="dob"
                     selectedDate={field.value}
                     onSelect={field.onChange}
                     isHighlight={!!errors.dob}
@@ -403,6 +404,7 @@ const CreateUpdateUser: React.FC = () => {
                 }}
                 render={({ field }) => (
                   <DateFilter
+                    id="joinedDate"
                     // label={"\u00A0 "}
                     selectedDate={field.value}
                     onSelect={field.onChange}
