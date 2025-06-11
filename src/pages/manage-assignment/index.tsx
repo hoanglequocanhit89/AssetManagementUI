@@ -57,6 +57,7 @@ const getColumns = (props: {
             return (
               <button disabled={isDisabled}>
                 <i
+                  id="edit"
                   className={`fa-solid fa-pen ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                   title="Edit"
                 ></i>
@@ -71,9 +72,9 @@ const getColumns = (props: {
             return (
               <button disabled={isDisabled}>
                 <i
-                  className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                  id="delete"
+                  className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                   title="Delete"
                 ></i>
               </button>
@@ -90,9 +91,9 @@ const getColumns = (props: {
             return (
               <button disabled={isDisabled}>
                 <i
-                  className={`fa-solid fa-rotate-left text-blue-600 ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                  id="return"
+                  className={`fa-solid fa-rotate-left text-blue-600 ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                   title="Return"
                 ></i>
               </button>
@@ -340,6 +341,7 @@ const ManageAssignment = () => {
             selected={stateFilter}
           />
           <DateFilter
+            id="assignedDate"
             label="Assigned Date"
             selectedDate={assignedDateFilter}
             onSelect={(date) => setAssignedDateFilter(date)}

@@ -20,49 +20,49 @@ const getColumns = (handlers: {
   onEdit: (row: Asset) => void;
   onDelete: (row: Asset) => void;
 }): Column<Asset>[] => [
-  { key: "assetCode", title: "Asset Code" },
-  { key: "name", title: "Asset Name" },
-  { key: "categoryName", title: "Category" },
-  {
-    key: "status",
-    title: "State",
-    render: (value) => {
-      return <span>{getStatusAssetLabel(String(value))}</span>;
+    { key: "assetCode", title: "Asset Code" },
+    { key: "name", title: "Asset Name" },
+    { key: "categoryName", title: "Category" },
+    {
+      key: "status",
+      title: "State",
+      render: (value) => {
+        return <span>{getStatusAssetLabel(String(value))}</span>;
+      },
     },
-  },
-  {
-    key: "action",
-    actions: [
-      {
-        render: (row) => (
-          <button disabled={row.status === "ASSIGNED"}>
-            <i
-              className={`fa-solid fa-pen ${
-                row.status === "ASSIGNED" ? "opacity-50 cursor-default" : ""
-              }`}
-              title="Edit"
-            ></i>
-          </button>
-        ),
-        onClick: handlers.onEdit,
-      },
-      {
-        render: (row) => (
-          <button disabled={row.status === "ASSIGNED"}>
-            <i
-              className={`fa-regular fa-circle-xmark text-[var(--primary-color)] 
-                                    ${
-                                      row.status === "ASSIGNED" ? "opacity-50 cursor-default" : ""
-                                    }`}
-              title="Delete"
-            ></i>
-          </button>
-        ),
-        onClick: handlers.onDelete,
-      },
-    ],
-  },
-];
+    {
+      key: "action",
+      actions: [
+        {
+          render: (row) => (
+            <button disabled={row.status === "ASSIGNED"}>
+              <i
+                id="edit"
+                className={`fa-solid fa-pen ${row.status === "ASSIGNED" ? "opacity-50 cursor-default" : ""
+                  }`}
+                title="Edit"
+              ></i>
+            </button>
+          ),
+          onClick: handlers.onEdit,
+        },
+        {
+          render: (row) => (
+            <button disabled={row.status === "ASSIGNED"}>
+              <i
+                id="delete"
+                className={`fa-regular fa-circle-xmark text-[var(--primary-color)] 
+                                    ${row.status === "ASSIGNED" ? "opacity-50 cursor-default" : ""
+                  }`}
+                title="Delete"
+              ></i>
+            </button>
+          ),
+          onClick: handlers.onDelete,
+        },
+      ],
+    },
+  ];
 
 const stateArr = [
   {

@@ -111,6 +111,7 @@ const Table = <T extends { id: number }>({
             {columns.map((column) => (
               <th
                 key={String(column.key)}
+                id={`table-th-${String(column.key)}`}
                 className={[
                   "px-2 py-3 text-left text-lg sm:text-[1.4rem] md:text-[1.5rem] lg:text-[1.6rem] font-bold text-gray-900",
                   column.key === "action"
