@@ -18,13 +18,12 @@ const ReturnAssignmentModal = ({
 }: ReturnAssignmentModalProps) => {
   const handleReturnAssignment = async () => {
     try {
-      await assignmentApi.returnOwnAssignment(assignmentId);
+      const res = await assignmentApi.returnOwnAssignment(assignmentId);
       closeModal();
       onSuccess?.();
-      toast.success("Request returning successfully");
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to request returning assignment.");
+      toast.success(res.message);
+    } catch (error: any) {
+      toast.error(error?.response?.data.message);
     } finally {
       closeModal();
     }
