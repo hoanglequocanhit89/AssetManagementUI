@@ -16,11 +16,11 @@ const AssignmentChart = () => {
   }
 
   console.log(assignmentList);
-  
+
 
   useEffect(() => {
     fetchApi();
-  } , []);
+  }, []);
 
   const waitingCount = assignmentList?.filter(assignment => assignment.status === 'WAITING').length || 0;
   const acceptedCount = assignmentList?.filter(assignment => assignment.status === 'ACCEPTED').length || 0;
@@ -28,7 +28,7 @@ const AssignmentChart = () => {
 
   const options: Highcharts.Options = {
     chart: { height: '100%' },
-    title: { text: 'Assignment Statistics', align: 'left', style: { fontSize: '1.8rem' } },
+    title: { text: 'Assignment Statistics by Status', align: 'left', style: { fontSize: '1.8rem' } },
     credits: { enabled: false },
     plotOptions: { pie: { innerSize: '50%', dataLabels: { enabled: false }, showInLegend: true } },
     series: [{

@@ -52,7 +52,7 @@ const BarChart = (props: HighchartsReact.Props) => {
             }
         },
         title: {
-            text: 'Asset Statistics',
+            text: 'Asset Categories Statistics by Status',
             align: 'left',
             style: { fontSize: '1.8rem' }
         },

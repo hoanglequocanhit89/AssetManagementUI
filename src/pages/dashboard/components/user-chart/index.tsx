@@ -24,7 +24,7 @@ const UserChart = () => {
 
   const options: Highcharts.Options = {
     chart: { height: '100%' },
-    title: { text: 'User Statistics', align: 'left', style: { fontSize: '1.8rem' } },
+    title: { text: 'User Statistics by Role', align: 'left', style: { fontSize: '1.8rem' } },
     credits: { enabled: false },
     plotOptions: { pie: { innerSize: '50%', dataLabels: { enabled: false }, showInLegend: true } },
     series: [{
