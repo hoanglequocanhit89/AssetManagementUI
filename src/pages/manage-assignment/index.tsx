@@ -21,7 +21,7 @@ const getColumns = (props: {
   handlers: {
     onEdit: (row: Assignment) => void;
     onDelete: (row: Assignment) => void;
-    onReturn: (row: Assignment) => void
+    onReturn: (row: Assignment) => void;
   };
   pagingData: PagingProps;
 }): Column<Assignment>[] => {
@@ -29,7 +29,7 @@ const getColumns = (props: {
   return [
     {
       key: "id",
-      fixed: 'left',
+      fixed: "left",
       title: "No.",
       width: 50,
       render: (_value, _row, index: number) => (pagingData.currentPage - 1) * 20 + index + 1,
@@ -43,8 +43,8 @@ const getColumns = (props: {
       key: "status",
       title: "State",
       render: (value) => {
-        return <span>{getStatusLabel(String(value))}</span>
-      }
+        return <span>{getStatusLabel(String(value))}</span>;
+      },
     },
     {
       key: "action",
@@ -52,7 +52,8 @@ const getColumns = (props: {
       actions: [
         {
           render: (row) => {
-            const isDisabled = row.status === "ACCEPTED" || row.status === "DECLINED" || row.status === "RETURNED";
+            const isDisabled =
+              row.status === "ACCEPTED" || row.status === "DECLINED" || row.status === "RETURNED";
             return (
               <button disabled={isDisabled}>
                 <i
@@ -70,8 +71,9 @@ const getColumns = (props: {
             return (
               <button disabled={isDisabled}>
                 <i
-                  className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                  className={`fa-regular fa-circle-xmark text-[var(--primary-color)] ${
+                    isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                   title="Delete"
                 ></i>
               </button>
@@ -81,10 +83,18 @@ const getColumns = (props: {
         },
         {
           render: (row) => {
-            const isDisabled = row.status === "RETURNED" || row.status === "WAITING_FOR_RETURNING" || row.status === "WAITING";
+            const isDisabled =
+              row.status === "RETURNED" ||
+              row.status === "WAITING_FOR_RETURNING" ||
+              row.status === "WAITING";
             return (
               <button disabled={isDisabled}>
-                <i className={`fa-solid fa-rotate-left text-blue-600 ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`} title="Return"></i>
+                <i
+                  className={`fa-solid fa-rotate-left text-blue-600 ${
+                    isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  title="Return"
+                ></i>
               </button>
             );
           },
@@ -143,6 +153,7 @@ const ManageAssignment = () => {
     currentPage: Number(searchParams.get("page")) || 1,
     totalPage: 0,
   });
+  const [totalElements, setTotalElements] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(Number(searchParams.get("size")) || 20);
   const [assignedDateFilter, setAssignedDateFilter] = React.useState<Date | undefined>(undefined);
   const [detailAssignmentData, setDetailAssignmentData] = React.useState<AssignmentDetail>({
@@ -185,13 +196,13 @@ const ManageAssignment = () => {
       });
       if (response.data) {
         if (tempAsset) {
-          response.data.content = response.data.content.filter(
-            (a) => a.id !== tempAsset.id
-          )
+          response.data.content = response.data.content.filter((a) => a.id !== tempAsset.id);
           response.data.content.unshift(tempAsset);
           setAssignementList(response.data.content);
+          setTotalElements(response.data.totalElements);
         } else {
           setAssignementList(response.data.content);
+          setTotalElements(response.data.totalElements);
         }
         setPagingData((prev) => ({
           ...prev,
@@ -257,7 +268,7 @@ const ManageAssignment = () => {
     sortFilter.sortDir,
     pagingData.currentPage,
     assignedDateFilter,
-    pageSize
+    pageSize,
   ]);
 
   const handleEdit = (row: Assignment) => {
@@ -273,13 +284,13 @@ const ManageAssignment = () => {
   const handleReturn = (row: Assignment) => {
     setEditAssignmentId(row.id);
     setShowReturnModal(true);
-  }
+  };
 
   const columns = getColumns({
     handlers: {
       onEdit: handleEdit,
       onDelete: handleDelete,
-      onReturn: handleReturn
+      onReturn: handleReturn,
     },
     pagingData: pagingData,
   });
@@ -346,26 +357,33 @@ const ManageAssignment = () => {
           onRowClick={handleOnRowClick}
           isDataLoading={isLoading}
         />
-        <div className="flex justify-end w-full m-auto mt-[20px]">
-          <PageSizeSelect value={pageSize} setValue={setPageSize} />
-          <Pagination
-            currentPage={pagingData?.currentPage}
-            totalPages={pagingData?.totalPage}
-            onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })}
-          />
+        {/* pagination */}
+        <div className="flex justify-between items-center w-full m-auto mt-[20px]">
+          <span className="text-2xl text-gray-500 font-semibold w-1/4">
+            {totalElements ?? 0} {totalElements === 1 ? "result" : "results"} found
+          </span>
+          <div className="flex justify-end w-full">
+            <PageSizeSelect value={pageSize} setValue={setPageSize} />
+            <Pagination
+              currentPage={pagingData?.currentPage}
+              totalPages={pagingData?.totalPage ?? 0}
+              onPageChange={(page) => setPagingData({ ...pagingData, currentPage: page })}
+            />
+          </div>
         </div>
       </ContentWrapper>
-      {
-        isDetailAssignmentLoading ? <BigLoading /> :
-          viewDetailModal &&
-          (
-            <DetailAssignmentModal
-              closeModal={() => setViewDetailModal(false)}
-              data={{
-                ...detailAssignmentData,
-              }}
-            />
-          )}
+      {isDetailAssignmentLoading ? (
+        <BigLoading />
+      ) : (
+        viewDetailModal && (
+          <DetailAssignmentModal
+            closeModal={() => setViewDetailModal(false)}
+            data={{
+              ...detailAssignmentData,
+            }}
+          />
+        )
+      )}
       {viewDeleteModal && (
         <DeleteAssignmentModal
           closeModal={() => setViewDeleteModal(false)}
