@@ -14,13 +14,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 import SearchSelect from "../../components/ui/search-select";
 import BigLoading from "../../components/ui/loading-big/LoadingBig";
 import PageSizeSelect from "../../components/ui/page-size-select";
-
-function formatStatus(status: string) {
-  return status
-    .toLowerCase()
-    .replace(/_/g, ' ')
-    .replace(/^\w/, c => c.toUpperCase());
-}
+import { getStatusAssetLabel } from "../../utils/status-label";
 
 const getColumns = (handlers: {
   onEdit: (row: Asset) => void;
@@ -29,7 +23,9 @@ const getColumns = (handlers: {
     { key: "assetCode", title: "Asset Code" },
     { key: "name", title: "Asset Name" },
     { key: "categoryName", title: "Category" },
-    { key: "status", title: "State", render: (value) => formatStatus(value as string) },
+    { key: "status", title: "State", render: (value) => {
+      return <span>{getStatusAssetLabel(String(value))}</span>
+    } },
     {
       key: "action",
       actions: [
@@ -83,7 +79,7 @@ const stateArr = [
   },
   {
     value: "WAITING",
-    label: "Waiting",
+    label: "Waiting for recycling",
   },
   {
     value: "",
@@ -348,7 +344,7 @@ const ManageAsset = () => {
             closeModal={() => setViewDetailModal(false)}
             data={{
               ...detailAssetData,
-              status: formatStatus(detailAssetData.status),
+              status: getStatusAssetLabel(detailAssetData.status),
               assignments: detailAssetData?.assignments.map((item, idx) => ({ ...item, id: idx }))
             }}
           />
