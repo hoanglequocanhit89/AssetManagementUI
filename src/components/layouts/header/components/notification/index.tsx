@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Notification, NotificationDropdownProps } from "../../../../../types/notification";
-import { generateNotificationMessage } from "../../../../../utils/notification-label";
 import { formatNotificationTime } from "../../../../../utils/time-notification-format";
 import { useNavigate } from "react-router-dom";
+import { generateNotificationMessage } from "../../../../../utils/notification-label";
 
 const NotificationDropdown = ({
   notifications,
