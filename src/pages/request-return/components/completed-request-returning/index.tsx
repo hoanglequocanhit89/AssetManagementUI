@@ -16,11 +16,11 @@ const CompletedRequestReturningModal = (props: CompletedRequestReturningProps) =
             if (response) {
                 toast.success(response.message || "Request returning completed successfully!");
                 props.setRequestReturningList(props.id);
-                props.closeModal();
             }
-        } catch (error) {
-            toast.error("Failed to completed request returning.");
-            console.error(error);
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || "Failed to completed request returning.");
+        } finally { 
+            props.closeModal();
         }
     }
 

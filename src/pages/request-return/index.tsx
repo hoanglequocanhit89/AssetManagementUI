@@ -257,6 +257,19 @@ const RequestForReturn = () => {
         pageSize,
     ]);
 
+    useEffect(() => {
+        const handlePopState = () => {
+            if (viewCompletedModal) {
+                setViewCompletedModal(false);
+            }
+            if (viewCancelModal) {
+                setViewCancelModal(false);
+            }
+        };
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, [viewCompletedModal, viewCancelModal]);
+
     return (
         <>
             <ContentWrapper title={"Request List"}>
@@ -290,7 +303,9 @@ const RequestForReturn = () => {
                         {totalElements ?? 0} {totalElements === 1 ? "result" : "results"} found
                     </span>
                     <div className="flex justify-end w-full">
-                        <PageSizeSelect value={pageSize} setValue={setPageSize} />
+                        <PageSizeSelect value={pageSize} setValue={setPageSize} onChange={() => {
+                            setPagingData({ ...pagingData, currentPage: 1 })
+                        }} />
                         <Pagination
                             currentPage={pagingData?.currentPage}
                             totalPages={pagingData?.totalPage ?? 0}

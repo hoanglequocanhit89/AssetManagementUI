@@ -11,7 +11,7 @@ const Dashboard = () => {
             <ContentWrapper title={"Dashboard"} >
                 <div className="dashboard">
                     <div className="dashboard__inner">
-                        <div className="dashboard__top row row-cols-3 row-cols-xxl-2 row-cols-xl-2">
+                        <div className="dashboard__top row row-cols-3 row-cols-xl-1">
                             <div className="col">
                                 <div className="chart-wrapper">
                                     <AssetChart />

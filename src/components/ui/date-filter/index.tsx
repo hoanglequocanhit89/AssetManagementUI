@@ -49,8 +49,7 @@ const DateFilter: React.FC<DateFilterProps> = ({
                 </div>
 
                 {selectedDate && (
-                    <button
-                        id={id}
+                    <button 
                         type="button"
                         onClick={() => onSelect(undefined as any)}
                         className="flex items-center justify-center px-4 py-2 hover:bg-gray-100 text-gray-400 hover:text-black focus:outline-none"
@@ -62,6 +61,7 @@ const DateFilter: React.FC<DateFilterProps> = ({
 
                 <button
                     type="button"
+                    id={id}
                     onClick={() => setIsOpen((prev) => !prev)}
                     className="flex items-center justify-center px-3 py-2 border-l border-gray-500 hover:bg-gray-100 text-gray-600 hover:text-black focus:outline-none"
                 >

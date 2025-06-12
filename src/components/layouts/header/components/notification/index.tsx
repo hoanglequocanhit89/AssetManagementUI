@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { Notification, NotificationDropdownProps } from "../../../../../types/notification";
-import { generateNotificationMessage } from "../../../../../utils/notification-label";
 import { formatNotificationTime } from "../../../../../utils/time-notification-format";
+import { useNavigate } from "react-router-dom";
+import { generateNotificationMessage } from "../../../../../utils/notification-label";
 
-const NotificationDropdown = ({ notifications: initialNotifications }: NotificationDropdownProps) => {
+const NotificationDropdown = ({
+  notifications,
+  unreadCount,
+  onMarkAsRead,
+  onMarkAllAsRead,
+  userRole
+}: NotificationDropdownProps) => {
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const notifRef = useRef<HTMLDivElement>(null);
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -22,23 +27,10 @@ const NotificationDropdown = ({ notifications: initialNotifications }: Notificat
   }, []);
 
   const handleClickNotification = (id: number, assetName: string) => {
-    setNotifications((prev) =>
-      prev.map((n) =>
-        n.id === id ? { ...n, isRead: true } : n
-      )
-    );
-
-    // Navigate to the assignment page
-    const encodedAssetName = encodeURIComponent(assetName);
-    window.location.href = `/manage-assignment?keyword=${encodedAssetName}`;
-  };
-
-  useEffect(() => {
-    setNotifications(initialNotifications);
-  }, [initialNotifications]);
-
-  const handleMarkAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    onMarkAsRead(id);
+    if (userRole === 'ADMIN') {
+      navigate(`/manage-assignment?keyword=${encodeURIComponent(assetName)}`)
+    }
   };
 
   return (
@@ -61,25 +53,53 @@ const NotificationDropdown = ({ notifications: initialNotifications }: Notificat
               <div className="px-4 pb-2 flex justify-end">
                 <button
                   className="text-sm text-blue-600 hover:underline"
-                  onClick={handleMarkAllAsRead}
+                  onClick={onMarkAllAsRead}
                 >
                   Mark all as read
                 </button>
               </div>
               <div className="overflow-y-auto max-h-[240px]">
-                {notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    onClick={() => handleClickNotification(n.id, n.assetName)}
-                    className={`px-4 py-2 border-b hover:bg-gray-100 cursor-pointer ${n.isRead ? "text-gray-500" : "text-black font-medium"
-                      }`}
-                  >
-                    <p>{generateNotificationMessage(n.type, n.senderName, n.assetName)}</p>
-                    <span className="text-xs text-gray-400">
-                      {formatNotificationTime(n.createdAt)}
-                    </span>
-                  </div>
-                ))}
+                {notifications
+                  .filter(n => !n.isRead)
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .length > 0 && (
+                    <p className="px-4 py-1 text-sm font-semibold text-black bg-gray-100">Unread</p>
+                  )}
+
+                {notifications
+                  .filter(n => !n.isRead)
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .map((n) => (
+                    <div
+                      key={n.id}
+                      onClick={() => handleClickNotification(n.id, n.assetName)}
+                      className="px-4 py-2 border-b hover:bg-gray-100 cursor-pointer text-black font-medium"
+                    >
+                      <p>{generateNotificationMessage(n.type, n.senderName, n.assetName, userRole)}</p>
+                      <span className="text-xs text-gray-400">{formatNotificationTime(n.createdAt)}</span>
+                    </div>
+                  ))}
+
+                {notifications
+                  .filter(n => n.isRead)
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .length > 0 && (
+                    <p className="px-4 py-1 text-sm font-semibold text-gray-500 bg-gray-50">Read</p>
+                  )}
+
+                {notifications
+                  .filter(n => n.isRead)
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .map((n) => (
+                    <div
+                      key={n.id}
+                      onClick={() => handleClickNotification(n.id, n.assetName)}
+                      className="px-4 py-2 border-b hover:bg-gray-100 cursor-pointer text-gray-500 font-normal"
+                    >
+                      <p>{generateNotificationMessage(n.type, n.senderName, n.assetName, userRole)}</p>
+                      <span className="text-xs text-gray-400">{formatNotificationTime(n.createdAt)}</span>
+                    </div>
+                  ))}
               </div>
             </>
           )

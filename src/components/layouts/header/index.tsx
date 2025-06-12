@@ -35,6 +35,8 @@ const Header = ({ isLogin = true, title, subTitle, setSubTitle }: HeaderProps) =
     const auth = useSelector((state: RootState) => state.auth);
     const menuRef = useRef<HTMLDivElement>(null);
     const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const role = useSelector((state: RootState) => state.auth.role)
 
     useEffect(() => {
         const handlePopState = () => {
@@ -80,12 +82,44 @@ const Header = ({ isLogin = true, title, subTitle, setSubTitle }: HeaderProps) =
 
     useEffect(() => {
         const fetchNotifications = async () => {
-            const res = await notificationApi.getNotificationList();
-            setNotifications(res.data);
-        };
+            try {
+                const [listRes, countRes] = await Promise.all([
+                    notificationApi.getNotificationList(),
+                    notificationApi.getNotificationUnreadCount()
+                ]);
 
+                const sortedNotifications = listRes.data.sort(
+                    (a: Notification, b: Notification) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                );
+                
+                setNotifications(listRes.data);
+                setUnreadCount(countRes.data);
+            } catch (err) {
+                console.error("Failed to fetch notifications", err);
+            }
+        };
         fetchNotifications();
     }, []);
+
+    const markNotificationAsRead = async (id: number) => {
+        try {
+            await notificationApi.markAsRead(id);
+            setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+            setUnreadCount(prev => Math.max(prev - 1, 0));
+        } catch (err) {
+            console.error("Failed to mark notification as read", err);
+        }
+    };
+
+    const markAllAsRead = async () => {
+        try {
+            await notificationApi.markAsAllRead();
+            setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+            setUnreadCount(0);
+        } catch (err) {
+            console.error("Failed to mark all as read", err);
+        }
+    };
 
     return (
         <>
@@ -103,7 +137,14 @@ const Header = ({ isLogin = true, title, subTitle, setSubTitle }: HeaderProps) =
                         </h1>)}
                         {isLogin &&
                             <>
-                                <NotificationDropdown notifications={notifications} />
+                                <NotificationDropdown
+                                    notifications={notifications}
+                                    unreadCount={unreadCount}
+                                    onMarkAsRead={markNotificationAsRead}
+                                    onMarkAllAsRead={markAllAsRead}
+                                    userRole={role}
+                                />
+
                                 <DropDown
                                     onChangePassword={() => setChangePasswordModal(true)}
                                     onLogout={() => setConfirmModal(true)}
