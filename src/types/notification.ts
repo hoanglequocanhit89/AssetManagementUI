@@ -1,3 +1,5 @@
+import { UserRole } from "./auth";
+
 export interface Notification {
     id: number;
     senderName: string,
@@ -9,4 +11,8 @@ export interface Notification {
 
 export interface NotificationDropdownProps {
     notifications: Notification[];
+    unreadCount: number;
+    onMarkAsRead: (id: number) => void;
+    onMarkAllAsRead: () => void;
+    userRole: UserRole
 }
