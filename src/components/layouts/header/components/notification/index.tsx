@@ -35,10 +35,10 @@ const NotificationDropdown = ({
 
   return (
     <div ref={notifRef} className="relative text-white text-2xl ml-auto z-50">
-      <button onClick={() => setOpen(!open)} className="relative focus:outline-none">
+      <button onClick={() => setOpen(!open)} className="relative focus:outline-none mr-2">
         <i className="fa-solid fa-bell"></i>
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center">
             {unreadCount}
           </span>
         )}
