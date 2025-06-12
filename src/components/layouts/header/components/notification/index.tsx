@@ -59,21 +59,47 @@ const NotificationDropdown = ({
                 </button>
               </div>
               <div className="overflow-y-auto max-h-[240px]">
-                {notifications.map((n) => {
-                  console.log(`Notification ID ${n.id}: isRead =`, n.isRead, typeof n.isRead);
-                  return (
+                {notifications
+                  .filter(n => !n.isRead)
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .length > 0 && (
+                    <p className="px-4 py-1 text-sm font-semibold text-black bg-gray-100">Unread</p>
+                  )}
+
+                {notifications
+                  .filter(n => !n.isRead)
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .map((n) => (
                     <div
                       key={n.id}
                       onClick={() => handleClickNotification(n.id, n.assetName)}
-                      className={`px-4 py-2 border-b hover:bg-gray-100 cursor-pointer ${n.isRead ? "text-gray-500 font-normal" : "text-black font-medium"}`}
+                      className="px-4 py-2 border-b hover:bg-gray-100 cursor-pointer text-black font-medium"
                     >
-                      <p>{generateNotificationMessage(n.type, n.senderName, n.assetName)}</p>
-                      <span className="text-xs text-gray-400">
-                        {formatNotificationTime(n.createdAt)}
-                      </span>
+                      <p>{generateNotificationMessage(n.type, n.senderName, n.assetName, userRole)}</p>
+                      <span className="text-xs text-gray-400">{formatNotificationTime(n.createdAt)}</span>
                     </div>
-                  )
-                })}
+                  ))}
+
+                {notifications
+                  .filter(n => n.isRead)
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .length > 0 && (
+                    <p className="px-4 py-1 text-sm font-semibold text-gray-500 bg-gray-50">Read</p>
+                  )}
+
+                {notifications
+                  .filter(n => n.isRead)
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .map((n) => (
+                    <div
+                      key={n.id}
+                      onClick={() => handleClickNotification(n.id, n.assetName)}
+                      className="px-4 py-2 border-b hover:bg-gray-100 cursor-pointer text-gray-500 font-normal"
+                    >
+                      <p>{generateNotificationMessage(n.type, n.senderName, n.assetName, userRole)}</p>
+                      <span className="text-xs text-gray-400">{formatNotificationTime(n.createdAt)}</span>
+                    </div>
+                  ))}
               </div>
             </>
           )
