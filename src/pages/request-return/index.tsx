@@ -257,6 +257,19 @@ const RequestForReturn = () => {
         pageSize,
     ]);
 
+    useEffect(() => {
+        const handlePopState = () => {
+            if (viewCompletedModal) {
+                setViewCompletedModal(false);
+            }
+            if (viewCancelModal) {
+                setViewCancelModal(false);
+            }
+        };
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, [viewCompletedModal, viewCancelModal]);
+
     return (
         <>
             <ContentWrapper title={"Request List"}>
