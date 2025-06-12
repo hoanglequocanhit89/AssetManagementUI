@@ -1,3 +1,5 @@
+@use "../../../assets/scss/abstracts";
+
 .form-modal {
 
     position: fixed;
@@ -50,5 +52,9 @@
 
     &__content {
         padding: 15px 35px;
+
+        @include abstracts.screen(lg) {
+            padding: 10px;
+        }
     }
 }
