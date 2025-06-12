@@ -49,6 +49,11 @@
                 padding: 15px;
                 width: 100%;
             }
+
+            @include abstracts.screen(lg) {
+                padding: 10px;
+                width: 100%;
+            }
         }
     }
 }
