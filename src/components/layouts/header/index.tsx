@@ -87,6 +87,11 @@ const Header = ({ isLogin = true, title, subTitle, setSubTitle }: HeaderProps) =
                     notificationApi.getNotificationList(),
                     notificationApi.getNotificationUnreadCount()
                 ]);
+
+                const sortedNotifications = listRes.data.sort(
+                    (a: Notification, b: Notification) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                );
+                
                 setNotifications(listRes.data);
                 setUnreadCount(countRes.data);
             } catch (err) {
