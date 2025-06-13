@@ -30,8 +30,8 @@ export const generateNotificationMessage = (
     case "RETURN_REQUEST_COMPLETED":
       return (
         <>
-          {highlight(senderName, senderColor)} completed request for returning with asset{" "}
-          {highlight(assetName, "#059669")}
+          {highlight(senderName, senderColor)} completed request for returning with asset(
+          {highlight(assetName, "#059669")})
         </>
       );
     case "RETURN_REQUEST_REJECTED":
